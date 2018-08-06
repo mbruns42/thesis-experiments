@@ -4,8 +4,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Stopwatch;
 
-import alias.DacongOutOfBudgetException;
-import experiments.demand.driven.sridharan.ManuTimeoutException;
 
 public abstract class AliasQuerySolver {
 	Stopwatch watch = Stopwatch.createUnstarted();
@@ -24,7 +22,7 @@ public abstract class AliasQuerySolver {
 			watch.stop();
 			return new AliasQueryExperimentResult(q, watch.elapsed(TimeUnit.MILLISECONDS) > timeoutMS || sol, watch.elapsed(TimeUnit.MILLISECONDS),  watch.elapsed(TimeUnit.MILLISECONDS) > timeoutMS);
 		} catch(Exception e) {
-			if(!(e instanceof ManuTimeoutException) && !(e instanceof DacongOutOfBudgetException) && !(e instanceof SkipQueryException)) {
+			if(!(e instanceof SkipQueryException)) {
 				e.printStackTrace();
 			}
 		}

@@ -1,38 +1,19 @@
 package experiments.dacapo.demand.driven;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
-
+import boomerang.BackwardQuery;
+import boomerang.Query;
+import boomerang.jimple.Statement;
+import boomerang.jimple.Val;
+import boomerang.preanalysis.PreTransformBodies;
+import boomerang.seedfactory.SeedFactory;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-
-import boomerang.Query;
-import boomerang.WeightedBoomerang;
-import boomerang.jimple.Statement;
-import boomerang.jimple.Val;
-import boomerang.preanalysis.PreTransformBodies;
-import boomerang.BackwardQuery;
-import boomerang.seedfactory.SeedFactory;
 import experiments.dacapo.SootSceneSetupDacapo;
 import heros.solver.Pair;
-import soot.Local;
-import soot.PackManager;
-import soot.Scene;
-import soot.SceneTransformer;
-import soot.SootField;
-import soot.SootMethod;
-import soot.Transform;
-import soot.Unit;
+import soot.*;
 import soot.jimple.AssignStmt;
 import soot.jimple.FieldRef;
 import soot.jimple.InstanceFieldRef;
@@ -41,9 +22,13 @@ import soot.jimple.toolkits.ide.icfg.BiDiInterproceduralCFG;
 import soot.jimple.toolkits.ide.icfg.JimpleBasedInterproceduralCFG;
 import wpds.impl.Weight.NoWeight;
 
-public class DataraceClientExperiment extends SootSceneSetupDacapo {
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.*;
 
-	private boolean DEBUG = false;
+public class DataraceClientExperiment extends SootSceneSetupDacapo {
 
 	 public static void main(String[] args) {
 		DataraceClientExperiment expr = new DataraceClientExperiment(args[0], args[1]);
@@ -53,7 +38,7 @@ public class DataraceClientExperiment extends SootSceneSetupDacapo {
 
 	protected Set<Pair<Local, Stmt>> queries = Sets.newHashSet();
 	private JimpleBasedInterproceduralCFG icfg;
-	private int TIMEOUT_IN_MS = 1000;
+	private static final int TIMEOUT_IN_MS = 1000;
 	protected Multimap<SootField, BackwardQuery> fieldToQuery = HashMultimap.create();
 
 	public DataraceClientExperiment(String benchmarkFolder, String benchFolder) {
@@ -111,10 +96,10 @@ public class DataraceClientExperiment extends SootSceneSetupDacapo {
 				Set<BackwardQuery> excludeDoubles = Sets.newHashSet();
 				int skipped = 0;
 				for (SootField field : fieldToQuery.keySet()) {
-					Collection<BackwardQuery> queries = fieldToQuery.get(field);
-					for (BackwardQuery q1 : queries) {
+					Collection<BackwardQuery> backwardQueries = fieldToQuery.get(field);
+					for (BackwardQuery q1 : backwardQueries) {
 						excludeDoubles.add(q1);
-						for (BackwardQuery q2 : queries) {
+						for (BackwardQuery q2 : backwardQueries) {
 							if (excludeDoubles.contains(q2))
 								continue;
 							if (isDataracePair(q1.stmt(), q2.stmt())) {
@@ -129,8 +114,6 @@ public class DataraceClientExperiment extends SootSceneSetupDacapo {
 					}
 				}
 				BoomerangAliasQuerySolver bSolver = new BoomerangAliasQuerySolver(TIMEOUT_IN_MS,icfg, seedFactory);
-				DacongAliasQuerySolver dSolver = new DacongAliasQuerySolver(TIMEOUT_IN_MS);
-				SridharanAliasQuerySolver sSolver = new SridharanAliasQuerySolver(TIMEOUT_IN_MS);
 				System.out.println("Solving queries "+  dataraceQueries.size() + " skipped, cause spark reports false:" + skipped);
 				
 				int solved = 0;
@@ -139,19 +122,6 @@ public class DataraceClientExperiment extends SootSceneSetupDacapo {
 						System.out.println(String.format("Status, #Solved queries: %s ", solved));
 					}
 					AliasQueryExperimentResult bRes = bSolver.computeQuery(q);
-					AliasQueryExperimentResult dRes = dSolver.computeQuery(q);
-					AliasQueryExperimentResult sRes = sSolver.computeQuery(q);
-					if(DEBUG) {
-						if(bRes.queryResult == false && (sRes.queryResult == true || dRes.queryResult == true)) {
-							BoomerangAliasQuerySolver.VISUALIZATION = true;
-							WeightedBoomerang.DEBUG = true;
-							System.out.println("Re-run boomerang");
-							BoomerangAliasQuerySolver s = new BoomerangAliasQuerySolver(10000,icfg, seedFactory);
-							s.computeQuery(q);
-							BoomerangAliasQuerySolver.VISUALIZATION = false;
-							WeightedBoomerang.DEBUG = false;
-						}
-					}
 					solved++;
 					File f = new File("outputDataraceDacapo" + File.separator+ DataraceClientExperiment.this.getBenchName() + "-datarace.csv");
 					if (!f.getParentFile().exists()) {
@@ -171,12 +141,6 @@ public class DataraceClientExperiment extends SootSceneSetupDacapo {
 							header.add("Boomerang_res");
 							header.add("Boomerang_time(ms)");
 							header.add("Boomerang_timeout");
-							header.add("Sridharan_res");
-							header.add("Sridharan_time(ms)");
-							header.add("Sridharan_timeout");
-							header.add("Dacong_res");
-							header.add("Dacong_time(ms)");
-							header.add("Dacong_timeout");
 							writer.write(Joiner.on(";").join(header));
 							writer.write("\n");
 						} else {
@@ -189,19 +153,15 @@ public class DataraceClientExperiment extends SootSceneSetupDacapo {
 						row.add(bRes.queryResult);
 						row.add(bRes.analysisTimeMs);
 						row.add(bRes.timeout);
-						row.add(sRes.queryResult);
-						row.add(sRes.analysisTimeMs);
-						row.add(sRes.timeout);
-						row.add(dRes.queryResult);
-						row.add(dRes.analysisTimeMs);
-						row.add(dRes.timeout);
 						writer.write(Joiner.on(";").join(row));
 						writer.write("\n");
 						writer.flush();
 						writer.close();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
+					}
+					finally {
+						writer.close();
 					}
 					
 				}
@@ -225,7 +185,7 @@ public class DataraceClientExperiment extends SootSceneSetupDacapo {
 
 	protected boolean isDataracePair(Statement s1, Statement s2) {
 		boolean a = isFieldLoad(s1.getUnit().get());
-		boolean b = isFieldLoad(s2.getUnit().get());;
+		boolean b = isFieldLoad(s2.getUnit().get());
 		return !(a && b);
 	}
 
