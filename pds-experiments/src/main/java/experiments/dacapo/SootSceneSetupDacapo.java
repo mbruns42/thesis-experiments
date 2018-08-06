@@ -13,6 +13,8 @@ import java.util.Properties;
 
 import com.google.common.base.Joiner;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import soot.G;
 import soot.Scene;
 import soot.SootClass;
@@ -20,10 +22,12 @@ import soot.SootMethod;
 import soot.options.Options;
 
 public class SootSceneSetupDacapo {
-	protected Properties benchProperties = new Properties();
+	Properties benchProperties = new Properties();
 	private Properties generalProperties = new Properties();
 	private String project;
 	private String benchmarkFolder;
+
+	private static final Logger logger = LogManager.getLogger();
 
 	public SootSceneSetupDacapo(String benchmarkFolder, String project) {
 		this.benchmarkFolder = benchmarkFolder;
@@ -31,7 +35,7 @@ public class SootSceneSetupDacapo {
 		try {
 			this.benchLoad();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Could not load benchmark properties." , e.getLocalizedMessage());
 		}
 	}
 
@@ -60,8 +64,8 @@ public class SootSceneSetupDacapo {
 			path.add(prependBasePath(spl));
 		}
 		String soot_cp = Joiner.on(":").join(path);
-		System.out.println(soot_cp);
-//		Options.v().set_soot_classpath(soot_cp);
+		logger.info("Soot class path :", soot_cp);
+
 		Options.v().set_prepend_classpath(true);
 		Options.v().set_whole_program(true);
 		 Options.v().set_include_all(true);
@@ -71,7 +75,7 @@ public class SootSceneSetupDacapo {
 		Options.v().set_process_dir(new LinkedList<String>(Collections.singleton(process_dir)));
 		Options.v().set_output_format(Options.output_format_none);
 		Options.v().set_main_class(this.getMainClass());
-//		Options.v().setPhaseOption("cg.spark", "on,verbose:true,simulate-natives:true,merge-stringbuffer:false,string-constants:true");
+
 		Options.v().setPhaseOption("cg", "implicit-entry:false,trim-clinit:false");
 		Options.v().setPhaseOption("cg.spark", "enabled:true,verbose:true,simulate-natives:false,empties-as-allocs:true,merge-stringbuffer:false,string-constants:true");
 		readDynamicClasses();
@@ -80,9 +84,9 @@ public class SootSceneSetupDacapo {
 		LinkedList<SootMethod> entryPoint = new LinkedList<>();
 		entryPoint.add(Scene.v().getMainMethod());
 		Scene.v().setEntryPoints(entryPoint);
-		// Scene.v()
-		System.out.println(Scene.v().getSootClassPath());
-		System.out.println(Scene.v().getEntryPoints());
+
+		logger.info("Soot class path: ", Scene.v().getSootClassPath());
+		logger.info("Soot entry points: ", Scene.v().getEntryPoints());
 
 	}
 
@@ -116,12 +120,11 @@ public class SootSceneSetupDacapo {
 				dynClasses.add(line);
 			}
 		} catch (IOException | NullPointerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error reading dynmaic classes. ", e.getLocalizedMessage());
 		}
 
 		Options.v().set_dynamic_class(dynClasses);
-		System.out.println(dynClasses);
+		logger.info("Dynamic classes read: ", dynClasses);
 	}
 
 	private String prependBasePath(String jar) {
@@ -131,7 +134,7 @@ public class SootSceneSetupDacapo {
 		return path + jar;
 	}
 
-	protected String getMainClass() {
+	String getMainClass() {
 		return benchProperties.getProperty("main_class");
 	}
 
