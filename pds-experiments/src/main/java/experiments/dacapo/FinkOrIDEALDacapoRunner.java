@@ -4,75 +4,75 @@ import java.io.File;
 import java.util.regex.Pattern;
 
 public class FinkOrIDEALDacapoRunner extends SootSceneSetupDacapo {
-	private static String project;
-	private static String benchFolder;
+    private static String project;
+    private static String benchFolder;
 
-	public FinkOrIDEALDacapoRunner(String benchmarkFolder, String benchFolder) {
-		super(benchmarkFolder, benchFolder);
-	}
+    public FinkOrIDEALDacapoRunner(String benchmarkFolder, String benchFolder) {
+        super(benchmarkFolder, benchFolder);
+    }
 
-	public static void main(String[] args) throws Exception {
-		System.setProperty("analysis", args[0]);
-		System.setProperty("rule", args[1]);
-		benchFolder = args[2];
-		project =  args[3];
-		new FinkOrIDEALDacapoRunner(benchFolder,project).run();
-	}
+    public static void main(String[] args) throws Exception {
+        System.setProperty("analysis", args[0]);
+        System.setProperty("rule", args[1]);
+        benchFolder = args[2];
+        project = args[3];
+        new FinkOrIDEALDacapoRunner(benchFolder, project).run();
+    }
 
-	private void run() {
-		String analysis = System.getProperty("analysis");
+    private void run() {
+        String analysis = System.getProperty("analysis");
 
-		String library_jar_files = benchProperties.getProperty("application_includes");
-		System.setProperty("application_includes", library_jar_files);
-		if(analysis == null)
-			throw new RuntimeException("Add -Danalysis to JVM arguments");
-		String rule = System.getProperty("rule");
-		if(Pattern.matches("PipedInputStream|InputStreamCloseThenRead|OutputStreamCloseThenWrite|PipedOutputStream|PrintStream|PrintWriter", rule)){
-			rule = "IO";
-		}
-		System.setProperty("ruleIdentifier",rule);
-		String outputDirectory = "outputDacapo";
-		File outputDir = new File(outputDirectory);
-		if(!outputDir.exists())
-			outputDir.mkdir();
-		String outputFile = outputDirectory+File.separator+getMainClass() +"-"+analysis+"-" + rule+".csv";
-		System.setProperty("outputCsvFile", outputFile);
-		
-		System.out.println("Writing output to file " +outputFile);
-		if(analysis.equalsIgnoreCase("ideal")){
-			System.setProperty("rule", selectTypestateMachine(System.getProperty("rule")).getName());
-			System.out.println("running " + System.getProperty("rule"));
-			System.setProperty("dacapo", "true");
-			new IDEALRunner(benchFolder,project).run(outputFile);
-		}
-	}
+        String library_jar_files = benchProperties.getProperty("application_includes");
+        System.setProperty("application_includes", library_jar_files);
+        if (analysis == null)
+            throw new RuntimeException("Add -Danalysis to JVM arguments");
+        String rule = System.getProperty("rule");
+        if (Pattern.matches("PipedInputStream|InputStreamCloseThenRead|OutputStreamCloseThenWrite|PipedOutputStream|PrintStream|PrintWriter", rule)) {
+            rule = "IO";
+        }
+        System.setProperty("ruleIdentifier", rule);
+        String outputDirectory = "outputDacapo";
+        File outputDir = new File(outputDirectory);
+        if (!outputDir.exists())
+            outputDir.mkdir();
+        String outputFile = outputDirectory + File.separator + getMainClass() + "-" + analysis + "-" + rule + ".csv";
+        System.setProperty("outputCsvFile", outputFile);
 
-	public static Class selectTypestateMachine(String rule) {
-		switch (rule) {
-			case "IteratorHasNext":
-				return typestate.impl.statemachines.HasNextStateMachine.class;
-			case "KeyStore":
-				return typestate.impl.statemachines.KeyStoreStateMachine.class;
-			case "URLConnection":
-				return typestate.impl.statemachines.URLConnStateMachine.class;
-			case "EmptyVector":
-				return typestate.impl.statemachines.VectorStateMachine.class;
-			case "InputStreamCloseThenRead":
-				return typestate.impl.statemachines.alloc.InputStreamStateMachine.class;
-			case "PipedInputStream":
-				return typestate.impl.statemachines.PipedInputStreamStateMachine.class;
-			case "OutputStreamCloseThenWrite":
-				return typestate.impl.statemachines.alloc.OutputStreamStateMachine.class;
-			case "PipedOutputStream":
-				return typestate.impl.statemachines.PipedOutputStreamStateMachine.class;
-			case "PrintStream":
-				return typestate.impl.statemachines.alloc.PrintStreamStateMachine.class;
-			case "PrintWriter":
-				return typestate.impl.statemachines.alloc.PrintWriterStateMachine.class;
-			case "Signature":
-				return typestate.impl.statemachines.SignatureStateMachine.class;
-		}
-		throw new RuntimeException("Select an appropriate rule");
-	}
+        System.out.println("Writing output to file " + outputFile);
+        if (analysis.equalsIgnoreCase("ideal")) {
+            System.setProperty("rule", selectTypestateMachine(System.getProperty("rule")).getName());
+            System.out.println("running " + System.getProperty("rule"));
+            System.setProperty("dacapo", "true");
+            new IDEALRunner(benchFolder, project).run(outputFile);
+        }
+    }
+
+    public static Class selectTypestateMachine(String rule) {
+        switch (rule) {
+            case "IteratorHasNext":
+                return typestate.impl.statemachines.HasNextStateMachine.class;
+            case "KeyStore":
+                return typestate.impl.statemachines.KeyStoreStateMachine.class;
+            case "URLConnection":
+                return typestate.impl.statemachines.URLConnStateMachine.class;
+            case "EmptyVector":
+                return typestate.impl.statemachines.VectorStateMachine.class;
+            case "InputStreamCloseThenRead":
+                return typestate.impl.statemachines.alloc.InputStreamStateMachine.class;
+            case "PipedInputStream":
+                return typestate.impl.statemachines.PipedInputStreamStateMachine.class;
+            case "OutputStreamCloseThenWrite":
+                return typestate.impl.statemachines.alloc.OutputStreamStateMachine.class;
+            case "PipedOutputStream":
+                return typestate.impl.statemachines.PipedOutputStreamStateMachine.class;
+            case "PrintStream":
+                return typestate.impl.statemachines.alloc.PrintStreamStateMachine.class;
+            case "PrintWriter":
+                return typestate.impl.statemachines.alloc.PrintWriterStateMachine.class;
+            case "Signature":
+                return typestate.impl.statemachines.SignatureStateMachine.class;
+        }
+        throw new RuntimeException("Select an appropriate rule");
+    }
 
 }
