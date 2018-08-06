@@ -1,0 +1,3 @@
+[submodule "WPDS"]
+	path = WPDS
+	url = https://github.com/CROSSINGTUD/WPDS
