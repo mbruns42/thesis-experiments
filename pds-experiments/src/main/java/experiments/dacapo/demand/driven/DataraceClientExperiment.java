@@ -160,10 +160,6 @@ public class DataraceClientExperiment extends SootSceneSetupDacapo {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					finally {
-						writer.close();
-					}
-					
 				}
 			}
 
