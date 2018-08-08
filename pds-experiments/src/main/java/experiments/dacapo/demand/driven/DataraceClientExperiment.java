@@ -7,7 +7,7 @@ import boomerang.callgraph.ObservableStaticICFG;
 import boomerang.jimple.Statement;
 import boomerang.jimple.Val;
 import boomerang.preanalysis.PreTransformBodies;
-import boomerang.seedfactory.SeedFactory;
+import boomerang.seedfactory.SimpleSeedFactory;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -21,7 +21,6 @@ import soot.jimple.FieldRef;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.Stmt;
 import soot.jimple.toolkits.ide.icfg.JimpleBasedInterproceduralCFG;
-import wpds.impl.Weight.NoWeight;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -55,11 +54,7 @@ public class DataraceClientExperiment extends SootSceneSetupDacapo {
 
                 icfg = new ObservableStaticICFG(new JimpleBasedInterproceduralCFG(false));
                 System.out.println("Application Classes: " + Scene.v().getApplicationClasses().size());
-                final SeedFactory<NoWeight> seedFactory = new SeedFactory<NoWeight>() {
-                    @Override
-                    public ObservableICFG<Unit, SootMethod> icfg() {
-                        return icfg;
-                    }
+                final SimpleSeedFactory seedFactory = new SimpleSeedFactory(icfg) {
 
                     @Override
                     protected Collection<? extends Query> generate(SootMethod method, Stmt u,

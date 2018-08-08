@@ -8,7 +8,7 @@ import boomerang.callgraph.ObservableICFG;
 import boomerang.debugger.Debugger;
 import boomerang.debugger.IDEVizDebugger;
 import boomerang.results.BackwardBoomerangResults;
-import boomerang.seedfactory.SeedFactory;
+import boomerang.seedfactory.SimpleSeedFactory;
 import com.beust.jcommander.internal.Sets;
 import soot.SootMethod;
 import soot.Unit;
@@ -25,12 +25,11 @@ public class BoomerangAliasQuerySolver extends AliasQuerySolver {
 
     public static boolean VISUALIZATION = false;
     protected final ObservableICFG<Unit, SootMethod> icfg;
-    protected final SeedFactory<NoWeight> seedFactory;
+    protected final SimpleSeedFactory seedFactory;
     private Boomerang solver;
     private Set<BackwardQuery> crashed = Sets.newHashSet();
-    private int query = 0;
 
-    public BoomerangAliasQuerySolver(int timeoutMS, ObservableICFG<Unit, SootMethod> icfg, SeedFactory<NoWeight> seedFactory) {
+    public BoomerangAliasQuerySolver(int timeoutMS, ObservableICFG<Unit, SootMethod> icfg, SimpleSeedFactory seedFactory) {
         super(timeoutMS);
         this.icfg = icfg;
         this.seedFactory = seedFactory;
@@ -111,11 +110,10 @@ public class BoomerangAliasQuerySolver extends AliasQuerySolver {
             }
 
             @Override
-            public SeedFactory<NoWeight> getSeedFactory() {
+            public SimpleSeedFactory getSeedFactory() {
                 return seedFactory;
             }
         };
-        query++;
     }
 
 }
