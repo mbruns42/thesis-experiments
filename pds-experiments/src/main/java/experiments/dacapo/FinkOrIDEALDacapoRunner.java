@@ -37,7 +37,8 @@ public class FinkOrIDEALDacapoRunner extends SootSceneSetupDacapo {
         File outputDir = new File(outputDirectory);
         if (!outputDir.exists())
             outputDir.mkdir();
-        String outputFile = outputDirectory + File.separator + getMainClass() + "-" + analysis + "-" + rule + ".csv";
+        String outputFile = outputDirectory + File.separator + getMainClass() + "-" + analysis + "-" + rule + "-"
+                + callGraphMode + ".csv";
         System.setProperty("outputCsvFile", outputFile);
 
         System.out.println("Writing output to file " + outputFile);
