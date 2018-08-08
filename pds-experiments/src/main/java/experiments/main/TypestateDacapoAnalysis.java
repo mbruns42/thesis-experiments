@@ -1,5 +1,6 @@
 package experiments.main;
 
+import experiments.dacapo.CallGraphMode;
 import experiments.dacapo.FinkOrIDEALDacapoRunner;
 
 import java.io.File;
@@ -23,9 +24,11 @@ public class TypestateDacapoAnalysis {
             "Signature", "EmptyVector",};
 
     public static void main(String... args) {
-        if (args.length < 1) {
-            System.out.println("Please supply path to dacapo benchmark (must end in slash)!");
+        if (args.length < 2) {
+            System.out.println("Please supply path to dacapo benchmark (must end in slash) " +
+                    "and Call Graph Mode (CHA, SPARK, DD)");
         }
+        CallGraphMode cgMode = parseCallGraphMode(args[2]);
         for (String analysis : analyses) {
             for (String bench : dacapo) {
                 for (String rule : rules) {
@@ -42,7 +45,8 @@ public class TypestateDacapoAnalysis {
                     String javaBin = javaHome +
                             File.separator + "bin" +
                             File.separator + "java";
-                    ProcessBuilder builder = new ProcessBuilder(new String[]{javaBin, "-Xmx12g", "-Xss164m", "-cp", System.getProperty("java.class.path"), FinkOrIDEALDacapoRunner.class.getName(), analysis, rule, args[0], bench});
+
+                    ProcessBuilder builder = new ProcessBuilder(new String[]{javaBin, "-Xmx12g", "-Xss164m", "-cp", System.getProperty("java.class.path"), FinkOrIDEALDacapoRunner.class.getName(), analysis, rule, args[0], bench, cgMode.name()});
                     builder.inheritIO();
                     Process process;
                     try {
@@ -53,6 +57,20 @@ public class TypestateDacapoAnalysis {
                     }
                 }
             }
+        }
+    }
+
+    private static CallGraphMode parseCallGraphMode(String callGraphArgument) {
+        switch (callGraphArgument.toUpperCase()){
+            case "CHA":
+                return CallGraphMode.CHA;
+            case "SPARK":
+                return CallGraphMode.SPARK;
+            case "DD":
+                return CallGraphMode.DD;
+            default:
+                System.out.println("Could not read call graph argument, will take SPARK as default");
+                return CallGraphMode.SPARK;
         }
     }
 

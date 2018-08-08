@@ -21,15 +21,19 @@ public class SootSceneSetupDacapo {
     private String project;
     private String benchmarkFolder;
 
-    public enum CallGraphMode { CHA, SPARK, DD};
-
-    private CallGraphMode callGraphMode= CallGraphMode.DD;
+    private CallGraphMode callGraphMode = CallGraphMode.CHA;
 
     private static final Logger logger = LogManager.getLogger();
+
+    public SootSceneSetupDacapo(String benchmarkFolder, String project, CallGraphMode callGraphMode) {
+        this(benchmarkFolder, project);
+        this.callGraphMode = callGraphMode;
+    }
 
     public SootSceneSetupDacapo(String benchmarkFolder, String project) {
         this.benchmarkFolder = benchmarkFolder;
         this.project = project;
+
         try {
             this.benchLoad();
         } catch (IOException e) {
@@ -77,8 +81,10 @@ public class SootSceneSetupDacapo {
         //Set call graph options
         Options.v().setPhaseOption("cg", "implicit-entry:false,trim-clinit:false");
         if (getCallGraphMode() == CallGraphMode.SPARK) {
+            logger.info("Computing spark call graph");
             Options.v().setPhaseOption("cg.spark", "enabled:true,verbose:true,simulate-natives:false,empties-as-allocs:true,merge-stringbuffer:false,string-constants:true");
         } else {
+            logger.info("Computing cha call graph");
             Options.v().setPhaseOption("cg.cha", "enabled:true,verbose:true");
         }
 

@@ -9,6 +9,7 @@ import boomerang.debugger.Debugger;
 import boomerang.jimple.Field;
 import boomerang.jimple.Statement;
 import boomerang.jimple.Val;
+import experiments.dacapo.CallGraphMode;
 import experiments.dacapo.SootSceneSetupDacapo;
 import soot.*;
 import soot.jimple.toolkits.ide.icfg.JimpleBasedInterproceduralCFG;

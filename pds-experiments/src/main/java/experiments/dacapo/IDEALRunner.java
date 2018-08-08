@@ -33,8 +33,8 @@ import java.util.concurrent.TimeUnit;
 
 public class IDEALRunner extends SootSceneSetupDacapo {
 
-    public IDEALRunner(String benchmarkFolder, String benchFolder) {
-        super(benchmarkFolder, benchFolder);
+    public IDEALRunner(String benchmarkFolder, String benchFolder, CallGraphMode callGraphMode) {
+        super(benchmarkFolder, benchFolder, callGraphMode);
     }
 
     protected IDEALAnalysis<TransitionFunction> createAnalysis() {

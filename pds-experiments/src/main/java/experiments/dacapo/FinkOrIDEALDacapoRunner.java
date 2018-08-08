@@ -6,9 +6,10 @@ import java.util.regex.Pattern;
 public class FinkOrIDEALDacapoRunner extends SootSceneSetupDacapo {
     private static String project;
     private static String benchFolder;
+    private static CallGraphMode callGraphMode;
 
-    public FinkOrIDEALDacapoRunner(String benchmarkFolder, String benchFolder) {
-        super(benchmarkFolder, benchFolder);
+    public FinkOrIDEALDacapoRunner(String benchmarkFolder, String benchFolder, CallGraphMode callGraphMode) {
+        super(benchmarkFolder, benchFolder, callGraphMode);
     }
 
     public static void main(String[] args) throws Exception {
@@ -16,7 +17,8 @@ public class FinkOrIDEALDacapoRunner extends SootSceneSetupDacapo {
         System.setProperty("rule", args[1]);
         benchFolder = args[2];
         project = args[3];
-        new FinkOrIDEALDacapoRunner(benchFolder, project).run();
+        callGraphMode = CallGraphMode.valueOf(args[4]);
+        new FinkOrIDEALDacapoRunner(benchFolder, project, callGraphMode).run();
     }
 
     private void run() {
@@ -43,7 +45,7 @@ public class FinkOrIDEALDacapoRunner extends SootSceneSetupDacapo {
             System.setProperty("rule", selectTypestateMachine(System.getProperty("rule")).getName());
             System.out.println("Running " + System.getProperty("rule"));
             System.setProperty("dacapo", "true");
-            new IDEALRunner(benchFolder, project).run(outputFile);
+            new IDEALRunner(benchFolder, project, callGraphMode).run(outputFile);
         }
     }
 
