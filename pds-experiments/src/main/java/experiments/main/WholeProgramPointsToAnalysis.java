@@ -3,13 +3,14 @@ package experiments.main;
 import boomerang.DefaultBoomerangOptions;
 import boomerang.ForwardQuery;
 import boomerang.WholeProgramBoomerang;
+import boomerang.callgraph.ObservableICFG;
+import boomerang.callgraph.ObservableStaticICFG;
 import boomerang.debugger.Debugger;
 import boomerang.jimple.Field;
 import boomerang.jimple.Statement;
 import boomerang.jimple.Val;
 import experiments.dacapo.SootSceneSetupDacapo;
 import soot.*;
-import soot.jimple.toolkits.ide.icfg.BiDiInterproceduralCFG;
 import soot.jimple.toolkits.ide.icfg.JimpleBasedInterproceduralCFG;
 import sync.pds.solver.OneWeightFunctions;
 import sync.pds.solver.WeightFunctions;
@@ -22,8 +23,6 @@ public class WholeProgramPointsToAnalysis extends SootSceneSetupDacapo {
     public WholeProgramPointsToAnalysis(String benchmarkFolder, String benchFolder) {
         super(benchmarkFolder, benchFolder);
     }
-
-    protected long analysisTime;
 
     public static void main(String... args) {
         new WholeProgramPointsToAnalysis(args[0], args[1]).run();
@@ -47,7 +46,6 @@ public class WholeProgramPointsToAnalysis extends SootSceneSetupDacapo {
                     }
                 }
 
-                final JimpleBasedInterproceduralCFG icfg = new JimpleBasedInterproceduralCFG(false);
                 WholeProgramBoomerang<NoWeight> solver = new WholeProgramBoomerang<NoWeight>(
                         new DefaultBoomerangOptions() {
                             @Override
@@ -56,7 +54,12 @@ public class WholeProgramPointsToAnalysis extends SootSceneSetupDacapo {
                             }
                         }) {
                     @Override
-                    public BiDiInterproceduralCFG<Unit, SootMethod> icfg() {
+                    public ObservableICFG<Unit, SootMethod> icfg() {
+                        if (icfg == null){
+                            if (getCallGraphMode() != CallGraphMode.DD)
+                            icfg = new ObservableStaticICFG(new JimpleBasedInterproceduralCFG(false));
+                        }
+
                         return icfg;
                     }
 
