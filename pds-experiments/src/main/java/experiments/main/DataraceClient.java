@@ -11,6 +11,9 @@ public class DataraceClient {
             "xalan", "fop", "bloat", "pmd"};
 
     public static void main(String... args) {
+        if (args.length < 1) {
+            System.out.println("Please supply path to dacapo benchmark (must end in slash)!");
+        }
         for (String bench : dacapo) {
             if (ignore(bench)) {
                 continue;
