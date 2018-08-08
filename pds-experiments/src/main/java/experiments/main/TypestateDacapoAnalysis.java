@@ -28,7 +28,7 @@ public class TypestateDacapoAnalysis {
             System.out.println("Please supply path to dacapo benchmark (must end in slash) " +
                     "and Call Graph Mode (CHA, SPARK, DD)");
         }
-        CallGraphMode cgMode = parseCallGraphMode(args[2]);
+        CallGraphMode cgMode = parseCallGraphMode(args[1]);
         for (String analysis : analyses) {
             for (String bench : dacapo) {
                 for (String rule : rules) {

@@ -66,7 +66,7 @@ public class SootSceneSetupDacapo {
             path.add(prependBasePath(spl));
         }
         String soot_cp = Joiner.on(":").join(path);
-        logger.info("Soot class path :", soot_cp);
+        logger.info("Soot class path {}:", soot_cp);
 
         Options.v().set_prepend_classpath(true);
         Options.v().set_whole_program(true);
@@ -81,10 +81,10 @@ public class SootSceneSetupDacapo {
         //Set call graph options
         Options.v().setPhaseOption("cg", "implicit-entry:false,trim-clinit:false");
         if (getCallGraphMode() == CallGraphMode.SPARK) {
-            logger.info("Computing spark call graph");
+            logger.info("Computing spark call graph.");
             Options.v().setPhaseOption("cg.spark", "enabled:true,verbose:true,simulate-natives:false,empties-as-allocs:true,merge-stringbuffer:false,string-constants:true");
         } else {
-            logger.info("Computing cha call graph");
+            logger.info("Computing cha call graph.");
             Options.v().setPhaseOption("cg.cha", "enabled:true,verbose:true");
         }
 
@@ -95,8 +95,8 @@ public class SootSceneSetupDacapo {
         entryPoint.add(Scene.v().getMainMethod());
         Scene.v().setEntryPoints(entryPoint);
 
-        logger.info("Soot class path: ", Scene.v().getSootClassPath());
-        logger.info("Soot entry points: ", Scene.v().getEntryPoints());
+        logger.info("Soot class path in scene: {}", Scene.v().getSootClassPath());
+        logger.info("Soot entry points in scene: {}", Scene.v().getEntryPoints());
 
     }
 
@@ -134,7 +134,7 @@ public class SootSceneSetupDacapo {
         }
 
         Options.v().set_dynamic_class(dynClasses);
-        logger.info("Dynamic classes read: ", dynClasses);
+        logger.info("Dynamic classes read: {}", dynClasses);
     }
 
     private String prependBasePath(String jar) {
