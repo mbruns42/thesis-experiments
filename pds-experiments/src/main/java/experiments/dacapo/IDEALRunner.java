@@ -177,6 +177,7 @@ public class IDEALRunner extends SootSceneSetupDacapo {
         String seedString = key.toString().replace(",", "");
         Stmt seedStmt = key.stmt().getUnit().get();
         SootMethod seedMethod = key.stmt().getMethod();
+        String seedMethodString = seedMethod.toString().replace(",", "");
         SootClass seedClass = seedMethod.getDeclaringClass();
         boolean isInErrorState = isInErrorState(key, forwardBoomerangResults);
         boolean isTimedout = getAnalysis().isTimedout(key);
@@ -187,7 +188,7 @@ public class IDEALRunner extends SootSceneSetupDacapo {
         boolean containsCallLoop = forwardBoomerangResults.containsCallRecursion();
         boolean containsFieldLoop = forwardBoomerangResults.containsFieldLoop();
         long usedMemory = forwardBoomerangResults.getMaxMemory();
-        return String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;\n", analysis, rule, seedString, seedStmt, seedMethod, seedClass, isInErrorState, isTimedout, analysisTime, propagationCount, visitedMethods, reachableMethods, containsCallLoop, containsFieldLoop, 0, usedMemory);
+        return String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;\n", analysis, rule, seedString, seedStmt, seedMethodString, seedClass, isInErrorState, isTimedout, analysisTime, propagationCount, visitedMethods, reachableMethods, containsCallLoop, containsFieldLoop, 0, usedMemory);
     }
 
     private boolean isInErrorState(WeightedForwardQuery<TransitionFunction> key, ForwardBoomerangResults<TransitionFunction> forwardBoomerangResults) {
