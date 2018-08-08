@@ -17,9 +17,13 @@ import java.util.Properties;
 
 public class SootSceneSetupDacapo {
     Properties benchProperties = new Properties();
-    private Properties generalProperties = new Properties();
+
     private String project;
     private String benchmarkFolder;
+
+    public enum CallGraphMode { CHA, SPARK, DD};
+
+    private CallGraphMode callGraphMode= CallGraphMode.DD;
 
     private static final Logger logger = LogManager.getLogger();
 
@@ -70,8 +74,14 @@ public class SootSceneSetupDacapo {
         Options.v().set_output_format(Options.output_format_none);
         Options.v().set_main_class(this.getMainClass());
 
+        //Set call graph options
         Options.v().setPhaseOption("cg", "implicit-entry:false,trim-clinit:false");
-        Options.v().setPhaseOption("cg.spark", "enabled:true,verbose:true,simulate-natives:false,empties-as-allocs:true,merge-stringbuffer:false,string-constants:true");
+        if (getCallGraphMode() == CallGraphMode.SPARK) {
+            Options.v().setPhaseOption("cg.spark", "enabled:true,verbose:true,simulate-natives:false,empties-as-allocs:true,merge-stringbuffer:false,string-constants:true");
+        } else {
+            Options.v().setPhaseOption("cg.cha", "enabled:true,verbose:true");
+        }
+
         readDynamicClasses();
         Scene.v().addBasicClass("java.security.Signature", SootClass.HIERARCHY);
         Scene.v().loadNecessaryClasses();
@@ -138,18 +148,11 @@ public class SootSceneSetupDacapo {
         return split;
     }
 
-    protected String getBasePath() {
-        String path = benchmarkFolder + project + "/";
-        if (path == null)
-            throw new RuntimeException("Set property -DbenchmarkFolder= as VM argument");
-        return path;
-    }
-
-    public String getOutputDir() {
-        return generalProperties.getProperty("output_dir");
-    }
-
     public String getBenchName() {
         return this.project;
+    }
+
+    protected CallGraphMode getCallGraphMode(){
+        return callGraphMode;
     }
 }

@@ -3,6 +3,8 @@ package experiments.dacapo;
 import boomerang.BoomerangOptions;
 import boomerang.DefaultBoomerangOptions;
 import boomerang.WeightedForwardQuery;
+import boomerang.callgraph.ObservableICFG;
+import boomerang.callgraph.ObservableStaticICFG;
 import boomerang.debugger.Debugger;
 import boomerang.jimple.Statement;
 import boomerang.jimple.Val;
@@ -14,7 +16,6 @@ import ideal.IDEALResultHandler;
 import ideal.IDEALSeedSolver;
 import soot.*;
 import soot.jimple.Stmt;
-import soot.jimple.toolkits.ide.icfg.BiDiInterproceduralCFG;
 import soot.jimple.toolkits.ide.icfg.JimpleBasedInterproceduralCFG;
 import sync.pds.solver.WeightFunctions;
 import typestate.TransitionFunction;
@@ -38,14 +39,16 @@ public class IDEALRunner extends SootSceneSetupDacapo {
 
     protected IDEALAnalysis<TransitionFunction> createAnalysis() {
         String className = System.getProperty("rule");
+
+        JimpleBasedInterproceduralCFG staticIcfg = new JimpleBasedInterproceduralCFG(false);
+
         try {
-            final JimpleBasedInterproceduralCFG icfg = new JimpleBasedInterproceduralCFG(false);
+
             System.out.println("Reachable Methods: " + Scene.v().getReachableMethods().size());
             final TypeStateMachineWeightFunctions genericsType = (TypeStateMachineWeightFunctions) Class.forName(className).getConstructor()
                     .newInstance();
 
             return new IDEALAnalysis<TransitionFunction>(new IDEALAnalysisDefinition<TransitionFunction>() {
-
 
                 @Override
                 public Collection<WeightedForwardQuery<TransitionFunction>> generate(SootMethod method, Unit stmt, Collection<SootMethod> calledMethod) {
@@ -60,10 +63,11 @@ public class IDEALRunner extends SootSceneSetupDacapo {
                 }
 
                 @Override
-                public BiDiInterproceduralCFG<Unit, SootMethod> icfg() {
+                public ObservableICFG<Unit, SootMethod> icfg() {
+                    if (getCallGraphMode() != CallGraphMode.DD)
+                        icfg = new ObservableStaticICFG(staticIcfg);
                     return icfg;
                 }
-
 
                 @Override
                 public BoomerangOptions boomerangOptions() {
@@ -132,12 +136,13 @@ public class IDEALRunner extends SootSceneSetupDacapo {
     }
 
     private IDEALAnalysis<TransitionFunction> analysis;
-    protected long analysisTime;
     private String outputFile;
 
     public void run(final String outputFile) {
+
         G.v().reset();
         this.outputFile = outputFile;
+
         setupSoot();
         Transform transform = new Transform("wjtp.ifds", new SceneTransformer() {
             protected void internalTransform(String phaseName,

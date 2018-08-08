@@ -4,6 +4,7 @@ import boomerang.BackwardQuery;
 import boomerang.Boomerang;
 import boomerang.DefaultBoomerangOptions;
 import boomerang.ForwardQuery;
+import boomerang.callgraph.ObservableICFG;
 import boomerang.debugger.Debugger;
 import boomerang.debugger.IDEVizDebugger;
 import boomerang.results.BackwardBoomerangResults;
@@ -11,7 +12,6 @@ import boomerang.seedfactory.SeedFactory;
 import com.beust.jcommander.internal.Sets;
 import soot.SootMethod;
 import soot.Unit;
-import soot.jimple.toolkits.ide.icfg.BiDiInterproceduralCFG;
 import wpds.impl.Weight.NoWeight;
 
 import java.io.File;
@@ -24,13 +24,13 @@ import java.util.Set;
 public class BoomerangAliasQuerySolver extends AliasQuerySolver {
 
     public static boolean VISUALIZATION = false;
-    protected final BiDiInterproceduralCFG<Unit, SootMethod> icfg;
+    protected final ObservableICFG<Unit, SootMethod> icfg;
     protected final SeedFactory<NoWeight> seedFactory;
     private Boomerang solver;
     private Set<BackwardQuery> crashed = Sets.newHashSet();
     private int query = 0;
 
-    public BoomerangAliasQuerySolver(int timeoutMS, BiDiInterproceduralCFG<Unit, SootMethod> icfg, SeedFactory<NoWeight> seedFactory) {
+    public BoomerangAliasQuerySolver(int timeoutMS, ObservableICFG<Unit, SootMethod> icfg, SeedFactory<NoWeight> seedFactory) {
         super(timeoutMS);
         this.icfg = icfg;
         this.seedFactory = seedFactory;
@@ -43,9 +43,7 @@ public class BoomerangAliasQuerySolver extends AliasQuerySolver {
         Set<ForwardQuery> allocsA = getPointsTo(q.queryA, q);
         if (allocsA.isEmpty())
             return false;
-//		System.out.println(allocsA);
         Set<ForwardQuery> allocsB = getPointsTo(q.queryB, q);
-//		System.out.println(allocsB);
         for (ForwardQuery a : allocsA) {
             if (allocsB.contains(a))
                 return true;
@@ -86,7 +84,7 @@ public class BoomerangAliasQuerySolver extends AliasQuerySolver {
         };
         solver = new Boomerang(options) {
             @Override
-            public BiDiInterproceduralCFG<Unit, SootMethod> icfg() {
+            public ObservableICFG<Unit, SootMethod> icfg() {
                 return icfg;
             }
 

@@ -2,6 +2,8 @@ package experiments.dacapo.demand.driven;
 
 import boomerang.BackwardQuery;
 import boomerang.Query;
+import boomerang.callgraph.ObservableICFG;
+import boomerang.callgraph.ObservableStaticICFG;
 import boomerang.jimple.Statement;
 import boomerang.jimple.Val;
 import boomerang.preanalysis.PreTransformBodies;
@@ -18,7 +20,6 @@ import soot.jimple.AssignStmt;
 import soot.jimple.FieldRef;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.Stmt;
-import soot.jimple.toolkits.ide.icfg.BiDiInterproceduralCFG;
 import soot.jimple.toolkits.ide.icfg.JimpleBasedInterproceduralCFG;
 import wpds.impl.Weight.NoWeight;
 
@@ -37,7 +38,7 @@ public class DataraceClientExperiment extends SootSceneSetupDacapo {
 
 
     protected Set<Pair<Local, Stmt>> queries = Sets.newHashSet();
-    private JimpleBasedInterproceduralCFG icfg;
+    private ObservableICFG<Unit, SootMethod> icfg;
     private static final int TIMEOUT_IN_MS = 1000;
     protected Multimap<SootField, BackwardQuery> fieldToQuery = HashMultimap.create();
 
@@ -52,11 +53,11 @@ public class DataraceClientExperiment extends SootSceneSetupDacapo {
 
             protected void internalTransform(String phaseName, @SuppressWarnings("rawtypes") Map options) {
 
-                icfg = new JimpleBasedInterproceduralCFG(false);
+                icfg = new ObservableStaticICFG(new JimpleBasedInterproceduralCFG(false));
                 System.out.println("Application Classes: " + Scene.v().getApplicationClasses().size());
                 final SeedFactory<NoWeight> seedFactory = new SeedFactory<NoWeight>() {
                     @Override
-                    public BiDiInterproceduralCFG<Unit, SootMethod> icfg() {
+                    public ObservableICFG<Unit, SootMethod> icfg() {
                         return icfg;
                     }
 
