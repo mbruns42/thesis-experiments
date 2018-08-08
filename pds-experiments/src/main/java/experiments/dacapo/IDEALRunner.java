@@ -64,8 +64,9 @@ public class IDEALRunner extends SootSceneSetupDacapo {
 
                 @Override
                 public ObservableICFG<Unit, SootMethod> icfg() {
-                    if (getCallGraphMode() != CallGraphMode.DD)
+                    if (icfg == null && (getCallGraphMode() != CallGraphMode.DD)){
                         icfg = new ObservableStaticICFG(staticIcfg);
+                    }
                     return icfg;
                 }
 
