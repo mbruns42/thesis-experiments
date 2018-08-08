@@ -5,6 +5,7 @@ import boomerang.DefaultBoomerangOptions;
 import boomerang.WeightedForwardQuery;
 import boomerang.callgraph.ObservableICFG;
 import boomerang.callgraph.ObservableStaticICFG;
+import boomerang.debugger.CallGraphDebugger;
 import boomerang.debugger.Debugger;
 import boomerang.jimple.Statement;
 import boomerang.jimple.Val;
@@ -39,6 +40,9 @@ public class IDEALRunner extends SootSceneSetupDacapo {
 
     protected IDEALAnalysis<TransitionFunction> createAnalysis() {
         String className = System.getProperty("rule");
+
+        String dotFileName = outputFile.replace(".csv", ".dot");
+        File dotFile = new File(dotFileName);
 
         JimpleBasedInterproceduralCFG staticIcfg = new JimpleBasedInterproceduralCFG(false);
 
@@ -88,7 +92,7 @@ public class IDEALRunner extends SootSceneSetupDacapo {
 
                 @Override
                 public Debugger<TransitionFunction> debugger(IDEALSeedSolver<TransitionFunction> solver) {
-                    return new Debugger<>();
+                    return new CallGraphDebugger(dotFile, icfg().getCallGraphCopy());
                 }
 
                 @Override
