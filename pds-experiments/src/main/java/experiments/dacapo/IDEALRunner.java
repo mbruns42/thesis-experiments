@@ -189,6 +189,7 @@ public class IDEALRunner extends SootSceneSetupDacapo {
         String rule = System.getProperty("ruleIdentifier");
         String seedString = key.toString().replaceAll(",", "");
         Stmt seedStmt = key.stmt().getUnit().get();
+        String seedStmtString = seedStmt.toString().replaceAll(",", "");
         SootMethod seedMethod = key.stmt().getMethod();
         String seedMethodString = seedMethod.toString().replaceAll(",", "");
         SootClass seedClass = seedMethod.getDeclaringClass();
@@ -201,7 +202,7 @@ public class IDEALRunner extends SootSceneSetupDacapo {
         boolean containsCallLoop = forwardBoomerangResults.containsCallRecursion();
         boolean containsFieldLoop = forwardBoomerangResults.containsFieldLoop();
         long usedMemory = forwardBoomerangResults.getMaxMemory();
-        return String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\n", analysis, rule, seedString, seedStmt, seedMethodString, seedClass, isInErrorState, isTimedout, analysisTime, propagationCount, visitedMethods, reachableMethods, containsCallLoop, containsFieldLoop, 0, usedMemory, callGraphDebuggerCSV);
+        return String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\n", analysis, rule, seedString, seedStmtString, seedMethodString, seedClass, isInErrorState, isTimedout, analysisTime, propagationCount, visitedMethods, reachableMethods, containsCallLoop, containsFieldLoop, 0, usedMemory, callGraphDebuggerCSV);
     }
 
     private boolean isInErrorState(WeightedForwardQuery<TransitionFunction> key, ForwardBoomerangResults<TransitionFunction> forwardBoomerangResults) {
