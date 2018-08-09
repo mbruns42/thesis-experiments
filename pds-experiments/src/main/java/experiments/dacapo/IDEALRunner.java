@@ -187,10 +187,10 @@ public class IDEALRunner extends SootSceneSetupDacapo {
         // the headers from the call graph debugger
         String analysis = "ideal";
         String rule = System.getProperty("ruleIdentifier");
-        String seedString = key.toString().replace(",", "");
+        String seedString = key.toString().replaceAll(",", "");
         Stmt seedStmt = key.stmt().getUnit().get();
         SootMethod seedMethod = key.stmt().getMethod();
-        String seedMethodString = seedMethod.toString().replace(",", "");
+        String seedMethodString = seedMethod.toString().replaceAll(",", "");
         SootClass seedClass = seedMethod.getDeclaringClass();
         boolean isInErrorState = isInErrorState(key, forwardBoomerangResults);
         boolean isTimedout = getAnalysis().isTimedout(key);
