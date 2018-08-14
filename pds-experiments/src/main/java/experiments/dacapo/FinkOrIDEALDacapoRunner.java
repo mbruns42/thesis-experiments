@@ -40,7 +40,7 @@ public class FinkOrIDEALDacapoRunner extends SootSceneSetupDacapo {
             System.setProperty("rule", selectTypestateMachine(System.getProperty("rule")).getName());
             System.out.println("Running " + System.getProperty("rule"));
             System.setProperty("dacapo", "true");
-            new IDEALRunner(benchmarkFolder, project, callGraphMode).run(outputFile);
+            new IDEALRunner(benchmarkFolder, project, callGraphMode.toString()).run(outputFile);
         }
     }
 
