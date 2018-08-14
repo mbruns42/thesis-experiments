@@ -4,21 +4,15 @@ import java.io.File;
 import java.util.regex.Pattern;
 
 public class FinkOrIDEALDacapoRunner extends SootSceneSetupDacapo {
-    private static String project;
-    private static String benchFolder;
-    private static CallGraphMode callGraphMode;
 
-    public FinkOrIDEALDacapoRunner(String benchmarkFolder, String benchFolder, CallGraphMode callGraphMode) {
+    public FinkOrIDEALDacapoRunner(String benchmarkFolder, String benchFolder, String callGraphMode) {
         super(benchmarkFolder, benchFolder, callGraphMode);
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args){
         System.setProperty("analysis", args[0]);
         System.setProperty("rule", args[1]);
-        benchFolder = args[2];
-        project = args[3];
-        callGraphMode = CallGraphMode.valueOf(args[4]);
-        new FinkOrIDEALDacapoRunner(benchFolder, project, callGraphMode).run();
+        new FinkOrIDEALDacapoRunner(args[2], args[3], args[4]).run();
     }
 
     private void run() {
@@ -46,7 +40,7 @@ public class FinkOrIDEALDacapoRunner extends SootSceneSetupDacapo {
             System.setProperty("rule", selectTypestateMachine(System.getProperty("rule")).getName());
             System.out.println("Running " + System.getProperty("rule"));
             System.setProperty("dacapo", "true");
-            new IDEALRunner(benchFolder, project, callGraphMode).run(outputFile);
+            new IDEALRunner(benchmarkFolder, project, callGraphMode).run(outputFile);
         }
     }
 

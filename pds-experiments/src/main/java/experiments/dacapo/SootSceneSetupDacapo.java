@@ -18,16 +18,15 @@ import java.util.Properties;
 public class SootSceneSetupDacapo {
     Properties benchProperties = new Properties();
 
-    private String project;
-    private String benchmarkFolder;
-
-    private CallGraphMode callGraphMode = CallGraphMode.CHA;
+    protected String project;
+    protected String benchmarkFolder;
+    protected CallGraphMode callGraphMode = CallGraphMode.CHA;
 
     private static final Logger logger = LogManager.getLogger();
 
-    public SootSceneSetupDacapo(String benchmarkFolder, String project, CallGraphMode callGraphMode) {
+    public SootSceneSetupDacapo(String benchmarkFolder, String project, String callGraphMode) {
         this(benchmarkFolder, project);
-        this.callGraphMode = callGraphMode;
+        this.callGraphMode = CallGraphMode.valueOf(callGraphMode);
     }
 
     public SootSceneSetupDacapo(String benchmarkFolder, String project) {
