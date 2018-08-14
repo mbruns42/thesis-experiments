@@ -54,6 +54,7 @@ public class IDEALRunner extends SootSceneSetupDacapo {
 
             return new IDEALAnalysis<TransitionFunction>(new IDEALAnalysisDefinition<TransitionFunction>() {
                 private CallGraphDebugger callGraphDebugger;
+                private boolean staticIcfgWasInitialized = false;
 
                 @Override
                 public Collection<WeightedForwardQuery<TransitionFunction>> generate(SootMethod method, Unit stmt, Collection<SootMethod> calledMethod) {
@@ -69,8 +70,9 @@ public class IDEALRunner extends SootSceneSetupDacapo {
 
                 @Override
                 public ObservableICFG<Unit, SootMethod> icfg() {
-                    if (icfg == null && (getCallGraphMode() != CallGraphMode.DD)){
+                    if ((getCallGraphMode() != CallGraphMode.DD) && !staticIcfgWasInitialized){
                         icfg = new ObservableStaticICFG(staticIcfg);
+                        staticIcfgWasInitialized = true;
                     }
                     return icfg;
                 }
