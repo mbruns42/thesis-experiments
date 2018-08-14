@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 public class IDEALRunner extends SootSceneSetupDacapo {
 
-    public IDEALRunner(String benchmarkFolder, String benchFolder, CallGraphMode callGraphMode) {
+    public IDEALRunner(String benchmarkFolder, String benchFolder, String callGraphMode) {
         super(benchmarkFolder, benchFolder, callGraphMode);
     }
 
