@@ -1,23 +1,16 @@
 package experiments.dacapo;
 
-import boomerang.WeightedForwardQuery;
+import boomerang.callgraph.ObservableDynamicICFG;
 import boomerang.callgraph.ObservableICFG;
 import boomerang.callgraph.ObservableStaticICFG;
-import boomerang.debugger.Debugger;
-import boomerang.jimple.Statement;
-import boomerang.jimple.Val;
-import ideal.IDEALAnalysis;
-import ideal.IDEALAnalysisDefinition;
-import ideal.IDEALSeedSolver;
 import soot.*;
 import soot.jimple.toolkits.ide.icfg.JimpleBasedInterproceduralCFG;
-import sync.pds.solver.WeightFunctions;
-import typestate.TransitionFunction;
+import wpds.impl.Weight;
 
-import java.util.Collection;
 import java.util.Map;
 
 public class CallGraphRunner extends SootSceneSetupDacapo {
+    ObservableICFG<Unit, SootMethod> icfg;
 
     public static void main(String[] args){
         new CallGraphRunner(args[0], args[1], args[2]).run();
@@ -25,44 +18,6 @@ public class CallGraphRunner extends SootSceneSetupDacapo {
 
     public CallGraphRunner(String benchmarkFolder, String benchFolder, String callGraphMode) {
         super(benchmarkFolder, benchFolder, callGraphMode);
-    }
-
-    protected IDEALAnalysis<TransitionFunction> createAnalysis() {
-
-        JimpleBasedInterproceduralCFG staticIcfg = new JimpleBasedInterproceduralCFG(false);
-
-        System.out.println("Reachable Methods: " + Scene.v().getReachableMethods().size());
-
-        return new IDEALAnalysis<TransitionFunction>(new IDEALAnalysisDefinition<TransitionFunction>() {
-            private boolean staticIcfgWasInitialized = false;
-
-
-            @Override
-            public Collection<WeightedForwardQuery<TransitionFunction>> generate(SootMethod method, Unit stmt, Collection<SootMethod> calledMethod) {
-                return null;
-            }
-
-            @Override
-            public WeightFunctions<Statement, Val, Statement, TransitionFunction> weightFunctions() {
-                return null;
-            }
-
-            @Override
-            public ObservableICFG<Unit, SootMethod> icfg() {
-                if ((getCallGraphMode() != CallGraphMode.DD) && !staticIcfgWasInitialized) {
-                    icfg = new ObservableStaticICFG(staticIcfg);
-                    staticIcfgWasInitialized = true;
-                }
-                return icfg;
-            }
-
-            @Override
-            public Debugger<TransitionFunction> debugger(IDEALSeedSolver<TransitionFunction> idealSeedSolver) {
-                return null;
-            }
-
-            }
-        );
     }
 
 
@@ -85,8 +40,14 @@ public class CallGraphRunner extends SootSceneSetupDacapo {
                         }
                     }
                 }
+                JimpleBasedInterproceduralCFG staticIcfg = new JimpleBasedInterproceduralCFG(false);
+                if ((getCallGraphMode() == CallGraphMode.DD)) {
+                    icfg = new ObservableDynamicICFG<Weight.NoWeight>(null);
+                } else {
+                    icfg = new ObservableStaticICFG(staticIcfg);
+                }
                 System.out.println("Application Classes: " + Scene.v().getApplicationClasses().size());
-                createAnalysis();
+                System.out.println("Reachable Methods: " + Scene.v().getReachableMethods().size());
 
             }
         });
@@ -94,10 +55,10 @@ public class CallGraphRunner extends SootSceneSetupDacapo {
         long startTime = System.currentTimeMillis();
         PackManager.v().getPack("wjtp").add(transform);
         PackManager.v().getPack("cg").apply();
-        long endTime = System.currentTimeMillis();
         PackManager.v().getPack("wjtp").apply();
+        long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime);
-        System.out.println("! "+ callGraphMode +","+ getBenchName() + "," + duration);
+        System.out.println("! "+ callGraphMode +","+ getBenchName() + "," + duration + "," + icfg.getCallGraphCopy().size());
     }
 
 }
