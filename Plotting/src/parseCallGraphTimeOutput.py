@@ -12,31 +12,26 @@ def autolabel(ax, rects, xpos='center'):
 
     for rect in rects:
         height = rect.get_height()
-        ax.text(rect.get_x() + rect.get_width()*offset[xpos], 1.01*height,
-                '{:,}'.format(height), ha=ha[xpos], va='bottom')
+        ax.text(rect.get_x() + rect.get_width()*offset[xpos], 1.0*height,
+                '{:,}'.format(height), ha=ha[xpos], va='bottom', fontsize=10)
 
 def plot(bench, chaEdges, chaTimes, sparkEdges, sparkTimes):
     ind = np.arange(len(bench))  # the x locations for the groups
-    width = 0.3  # the width of the bars
+    width = 0.35  # the width of the bars
 
     fig, ax = plt.subplots()
-    bar1 = ax.bar(ind - width/2, chaTimes, width, color='SkyBlue', label='CHA')
-    bar2 = ax.bar(ind + width/2, sparkTimes, width, color='LightGreen', label='Spark')
-    #bar3 = ax.bar(ind + width/2, chaEdges, width, color='Blue', label='CHA Edges')
-    #bar4 = ax.bar(ind + width*1.5, sparkEdges, width, color='Black', label='Spark Edges')
+    bar1 = ax.bar(ind - width/2, chaEdges, width, color='SkyBlue', label='CHA')
+    bar2 = ax.bar(ind + width/2, sparkEdges, width, color='LightGreen', label='Spark')
 
-    # Add some text for labels, title and custom x-axis tick labels, etc.
-    ax.set_ylabel('Time in ms')
-    ax.set_title('Runtime for call graph construction')
+    ax.set_ylabel('Number of edges')
     ax.set_xticks(ind)
     ax.set_xticklabels(bench)
+    plt.xticks(rotation=30)
     ax.legend()
     autolabel(ax, bar1)
     autolabel(ax, bar2)
-    #autolabel(ax, bar3)
-    #autolabel(ax, bar4)
-    #plt.yscale('symlog')
-    plt.show()
+    plt.savefig("CallGraphEdges.pdf", dpi = 300)
+    plt.close()
 
 def main(filename):
     with open(filename,'rb') as file:
