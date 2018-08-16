@@ -81,7 +81,7 @@ public class SootSceneSetupDacapo {
         Options.v().setPhaseOption("cg", "implicit-entry:false,trim-clinit:false");
         if (getCallGraphMode() == CallGraphMode.SPARK) {
             logger.info("Computing spark call graph.");
-            Options.v().setPhaseOption("cg.spark", "enabled:true,verbose:true,simulate-natives:false,empties-as-allocs:true,merge-stringbuffer:false,string-constants:true");
+            Options.v().setPhaseOption("cg.spark", "enabled:true,verbose:true,simulate-natives:false,empties-as-allocs:true,merge-stringbuffer:false,string-constants:true, library:any-subtype");
         } else {
             logger.info("Computing cha call graph.");
             Options.v().setPhaseOption("cg.cha", "enabled:true,verbose:true");
