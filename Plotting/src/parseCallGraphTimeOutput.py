@@ -20,17 +20,17 @@ def plot(bench, chaEdges, chaTimes, sparkEdges, sparkTimes):
     width = 0.35  # the width of the bars
 
     fig, ax = plt.subplots()
-    bar1 = ax.bar(ind - width/2, chaEdges, width, color='SkyBlue', label='CHA')
-    bar2 = ax.bar(ind + width/2, sparkEdges, width, color='LightGreen', label='Spark')
+    bar1 = ax.bar(ind - width/2, chaTimes, width, color='SkyBlue', label='CHA')
+    bar2 = ax.bar(ind + width/2, sparkTimes, width, color='LightGreen', label='Spark')
 
-    ax.set_ylabel('Number of edges')
+    ax.set_ylabel('Runtime in milliseconds')
     ax.set_xticks(ind)
     ax.set_xticklabels(bench)
     plt.xticks(rotation=30)
     ax.legend()
     autolabel(ax, bar1)
     autolabel(ax, bar2)
-    plt.savefig("CallGraphEdges.pdf", dpi = 300)
+    plt.savefig("CallGraphRuntimes.pdf", dpi = 300)
     plt.close()
 
 def main(filename):

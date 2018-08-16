@@ -1,0 +1,265 @@
+Soot class path dacapo/antlr/antlr.jar:dacapo/antlr/antlr-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [sun.nio.cs.ISO_8859_1, antlr.CommonToken, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, antlr.JavaCodeGenerator, antlr.CSharpCodeGenerator, sun.security.provider.SHA, sun.security.provider.Sun, antlr.CppCodeGenerator, sun.net.www.protocol.jar.Handler, sun.text.resources.LocaleElements, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/antlr/antlr.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.antlr.Main: void main(java.lang.String[])>]
+Application Classes: 229
+Reachable Methods: 15112
+! CHA,antlr,20676,179968
+Soot class path dacapo/chart/chart.jar:dacapo/chart/chart-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [sun.nio.cs.ISO_8859_1, org.jfree.resources.JCommonResources, sun.security.provider.MD5, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, sun.text.resources.BreakIteratorRules, sun.text.resources.DateFormatZoneData, sun.awt.X11GraphicsEnvironment, sun.security.provider.SHA, sun.security.provider.Sun, sun.text.resources.DateFormatZoneData_en, org.jfree.chart.resources.JFreeChartResources, org.jfree.base.log.DefaultLogModule, sun.net.www.protocol.jar.Handler, sun.awt.resources.awt, sun.text.resources.LocaleElements, javax.swing.plaf.metal.MetalLookAndFeel, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/chart/chart.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.chart.Main2: void main(java.lang.String[])>]
+Application Classes: 516
+Reachable Methods: 17202
+! CHA,chart,19751,241441
+Soot class path dacapo/eclipse/eclipse.jar:dacapo/eclipse/eclipse-deps.jar:
+Computing cha call graph.
+Dynamic classes read: []
+Soot class path in scene: dacapo/eclipse/eclipse.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.eclipse.Main2: void main(java.lang.String[])>]
+Application Classes: 414
+Reachable Methods: 16025
+! CHA,eclipse,23069,199823
+Soot class path dacapo/hsqldb/hsqldb.jar:dacapo/hsqldb/hsqldb-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [sun.security.provider.SHA, sun.security.provider.Sun, sun.text.resources.DateFormatZoneData_en, sun.nio.cs.ISO_8859_1, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, sun.net.www.protocol.jar.Handler, sun.text.resources.LocaleElements, org.hsqldb.DatabaseInformationFull, sun.text.resources.DateFormatZoneData, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler, org.hsqldb.jdbcDriver]
+Soot class path in scene: dacapo/hsqldb/hsqldb.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<org.hsqldb.hsqldbDoopDriver: void main(java.lang.String[])>]
+Application Classes: 417
+Reachable Methods: 17110
+! CHA,hsqldb,22166,198177
+Soot class path dacapo/jython/jython.jar:dacapo/jython/jython-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [org.python.core.CollectionIter2, org.python.core.InternalTables2, org.python.core.ZipFileImporter, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, org.python.core.ThreadStateMapping2, org.python.core.BytecodeLoader2, org.python.core.CollectionIter, sun.security.provider.SHA, sun.text.resources.DateFormatZoneData_en, org.python.core.IdImpl2, sun.text.resources.LocaleElements, sun.nio.cs.ISO_8859_1, java.lang.reflect.InvocationTargetException, java.io.File, sun.text.resources.DateFormatZoneData, sun.security.provider.Sun, org.python.util.InteractiveConsole, java.io.File, sun.net.www.protocol.jar.Handler, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/jython/jython.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.jython.Main2: void main(java.lang.String[])>]
+Application Classes: 920
+Reachable Methods: 19930
+! CHA,jython,24760,291981
+Soot class path dacapo/luindex/luindex.jar:dacapo/luindex/luindex-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [sun.security.provider.SHA, sun.security.provider.Sun, sun.text.resources.DateFormatZoneData_en, org.apache.lucene.store.FSDirectory, java.lang.ref.Finalizer, sun.nio.cs.ISO_8859_1, org.apache.lucene.index.SegmentReader, sun.security.provider.MD5, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, sun.net.www.protocol.jar.Handler, sun.text.resources.LocaleElements, sun.text.resources.DateFormatZoneData, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/luindex/luindex.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.luindex.Main2: void main(java.lang.String[])>]
+Application Classes: 351
+Reachable Methods: 15245
+! CHA,luindex,17352,180384
+Soot class path dacapo/lusearch/lusearch.jar:dacapo/lusearch/lusearch-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [java.io.ExpiringCache, java.io.ExpiringCache$Entry, java.io.UnixFileSystem, java.lang.Compiler, java.lang.Compiler$1, java.util.CurrencyData, sun.net.www.protocol.file.FileURLConnection, sun.net.www.protocol.file.Handler, sun.net.www.protocol.jar.Handler, sun.net.www.protocol.jar.JarFileFactory, sun.net.www.protocol.jar.JarURLConnection, sun.net.www.protocol.jar.JarURLConnection$JarURLInputStream, sun.net.www.protocol.jar.URLJarFile, sun.net.www.protocol.jar.URLJarFile$URLJarFileEntry, sun.nio.cs.ISO_8859_1, sun.nio.cs.ISO_8859_1$Decoder, sun.nio.cs.Surrogate, sun.nio.cs.Surrogate$Generator, sun.nio.cs.Surrogate$Parser, sun.nio.cs.Surrogate$Parser, sun.nio.cs.UTF_8, sun.nio.cs.UTF_8$Decoder, sun.nio.cs.UTF_8$Encoder, sun.security.provider.MD5, sun.security.provider.SHA, sun.text.resources.LocaleElements, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US]
+Soot class path in scene: dacapo/lusearch/lusearch.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.lusearch.Main2: void main(java.lang.String[])>]
+Application Classes: 351
+Reachable Methods: 15336
+! CHA,lusearch,18281,180648
+Soot class path dacapo/pmd/pmd.jar:dacapo/pmd/pmd-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [org.apache.xerces.jaxp.DocumentBuilderFactoryImpl, sun.nio.cs.ISO_8859_1, org.apache.xerces.parsers.XML11Configuration, net.sourceforge.pmd.rules.UnnecessaryConversionTemporary, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, net.sourceforge.pmd.rules.XPathRule, javax.xml.parsers.FactoryFinder$ClassLoaderFinderConcrete, net.sourceforge.pmd.rules.DoubleCheckedLocking, sun.security.provider.SHA, sun.security.provider.Sun, org.jaxen.saxpath.base.XPathReader, sun.net.www.protocol.jar.Handler, org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl, net.sourceforge.pmd.rules.UselessOverridingMethod, sun.text.resources.LocaleElements, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/pmd/pmd.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.pmd.Main2: void main(java.lang.String[])>]
+Application Classes: 554
+Reachable Methods: 16711
+! CHA,pmd,21056,215397
+Soot class path dacapo/fop/fop.jar:dacapo/fop/fop-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [sun.nio.cs.ISO_8859_1, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, javax.xml.parsers.FactoryFinder$ClassLoaderFinderConcrete, org.apache.xerces.jaxp.SAXParserFactoryImpl, sun.security.provider.SHA, sun.security.provider.Sun, org.apache.fop.fo.StandardElementMapping, sun.net.www.protocol.jar.Handler, org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl, org.apache.fop.svg.SVGElementMapping, sun.awt.resources.awt, sun.text.resources.LocaleElements, sun.nio.cs.US_ASCII, org.apache.xerces.parsers.IntegratedParserConfiguration, org.apache.fop.extensions.ExtensionElementMapping, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/fop/fop.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.fop.Main2: void main(java.lang.String[])>]
+Application Classes: 999
+Reachable Methods: 18485
+! CHA,fop,23514,198852
+Soot class path dacapo/xalan/xalan.jar:dacapo/xalan/xalan-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [org.apache.xpath.functions.FuncNot, java.io.StringWriter, org.apache.xalan.templates.ElemForEach, org.apache.xml.dtm.ref.DTMManagerDefault, org.apache.xpath.functions.FuncStartsWith, org.apache.xalan.templates.ElemVariable, org.apache.xpath.functions.FuncLocalPart, sun.nio.cs.ISO_8859_1, org.apache.xalan.templates.ElemOtherwise, org.apache.xalan.templates.ElemNumber, org.apache.xalan.templates.ElemCopy, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, org.apache.xalan.templates.ElemIf, org.apache.xalan.templates.ElemText, javax.xml.parsers.FactoryFinder$ClassLoaderFinderConcrete, org.apache.xpath.functions.FuncId, org.apache.xalan.processor.TransformerFactoryImpl, org.apache.xerces.jaxp.SAXParserFactoryImpl, org.apache.xalan.serialize.SerializerToText, org.apache.xpath.functions.FuncQname, org.apache.xpath.functions.FuncPosition, org.apache.xalan.templates.ElemMessage, sun.security.provider.SHA, sun.security.provider.Sun, org.apache.xalan.templates.ElemLiteralResult, org.apache.xalan.templates.ElemValueOf, org.apache.xalan.serialize.SerializerToHTML, org.apache.xml.utils.FastStringBuffer, org.apache.xalan.transformer.ResultTreeHandler, sun.io.CharToByteISO8859_1, javax.xml.transform.FactoryFinder$ClassLoaderFinderConcrete, org.apache.xalan.templates.ElemChoose, org.apache.xpath.functions.FuncGenerateId, org.apache.xalan.templates.ElemTemplate, org.apache.xalan.templates.ElemCallTemplate, org.apache.xalan.templates.ElemParam, org.apache.xalan.templates.ElemAttribute, sun.net.www.protocol.jar.Handler, org.apache.xalan.templates.ElemWhen, org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl, sun.text.resources.LocaleElements, org.apache.xalan.templates.ElemWithParam, org.apache.xalan.templates.ElemApplyTemplates, org.apache.xml.utils.res.XResources_en, org.apache.xerces.parsers.IntegratedParserConfiguration, org.apache.xpath.functions.FuncCount, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/xalan/xalan.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.xalan.Main2: void main(java.lang.String[])>]
+Application Classes: 567
+Reachable Methods: 17377
+! CHA,xalan,20615,193747
+Soot class path dacapo/bloat/bloat.jar:dacapo/bloat/bloat-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [sun.nio.cs.ISO_8859_1, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, sun.text.resources.DateFormatZoneData, sun.security.provider.SHA, sun.security.provider.Sun, sun.text.resources.DateFormatZoneData_en, sun.net.www.protocol.jar.Handler, sun.text.resources.LocaleElements, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/bloat/bloat.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.bloat.Main2: void main(java.lang.String[])>]
+Application Classes: 361
+Reachable Methods: 16598
+! CHA,bloat,24263,282753
+Soot class path dacapo/antlr/antlr.jar:dacapo/antlr/antlr-deps.jar:
+Computing spark call graph.
+Dynamic classes read: [sun.nio.cs.ISO_8859_1, antlr.CommonToken, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, antlr.JavaCodeGenerator, antlr.CSharpCodeGenerator, sun.security.provider.SHA, sun.security.provider.Sun, antlr.CppCodeGenerator, sun.net.www.protocol.jar.Handler, sun.text.resources.LocaleElements, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/antlr/antlr.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.antlr.Main: void main(java.lang.String[])>]
+Application Classes: 229
+Reachable Methods: 2788
+! SPARK,antlr,16556,24684
+Soot class path dacapo/chart/chart.jar:dacapo/chart/chart-deps.jar:
+Computing spark call graph.
+Dynamic classes read: [sun.nio.cs.ISO_8859_1, org.jfree.resources.JCommonResources, sun.security.provider.MD5, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, sun.text.resources.BreakIteratorRules, sun.text.resources.DateFormatZoneData, sun.awt.X11GraphicsEnvironment, sun.security.provider.SHA, sun.security.provider.Sun, sun.text.resources.DateFormatZoneData_en, org.jfree.chart.resources.JFreeChartResources, org.jfree.base.log.DefaultLogModule, sun.net.www.protocol.jar.Handler, sun.awt.resources.awt, sun.text.resources.LocaleElements, javax.swing.plaf.metal.MetalLookAndFeel, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/chart/chart.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.chart.Main2: void main(java.lang.String[])>]
+Application Classes: 516
+Reachable Methods: 2653
+! SPARK,chart,9441,9894
+Soot class path dacapo/eclipse/eclipse.jar:dacapo/eclipse/eclipse-deps.jar:
+Computing spark call graph.
+Dynamic classes read: []
+Soot class path in scene: dacapo/eclipse/eclipse.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.eclipse.Main2: void main(java.lang.String[])>]
+Application Classes: 414
+Reachable Methods: 3062
+! SPARK,eclipse,10664,14227
+Soot class path dacapo/hsqldb/hsqldb.jar:dacapo/hsqldb/hsqldb-deps.jar:
+Computing spark call graph.
+Dynamic classes read: [sun.security.provider.SHA, sun.security.provider.Sun, sun.text.resources.DateFormatZoneData_en, sun.nio.cs.ISO_8859_1, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, sun.net.www.protocol.jar.Handler, sun.text.resources.LocaleElements, org.hsqldb.DatabaseInformationFull, sun.text.resources.DateFormatZoneData, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler, org.hsqldb.jdbcDriver]
+Soot class path in scene: dacapo/hsqldb/hsqldb.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<org.hsqldb.hsqldbDoopDriver: void main(java.lang.String[])>]
+Application Classes: 417
+Reachable Methods: 5989
+! SPARK,hsqldb,21559,35193
+Soot class path dacapo/jython/jython.jar:dacapo/jython/jython-deps.jar:
+Computing spark call graph.
+Dynamic classes read: [org.python.core.CollectionIter2, org.python.core.InternalTables2, org.python.core.ZipFileImporter, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, org.python.core.ThreadStateMapping2, org.python.core.BytecodeLoader2, org.python.core.CollectionIter, sun.security.provider.SHA, sun.text.resources.DateFormatZoneData_en, org.python.core.IdImpl2, sun.text.resources.LocaleElements, sun.nio.cs.ISO_8859_1, java.lang.reflect.InvocationTargetException, java.io.File, sun.text.resources.DateFormatZoneData, sun.security.provider.Sun, org.python.util.InteractiveConsole, java.io.File, sun.net.www.protocol.jar.Handler, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/jython/jython.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.jython.Main2: void main(java.lang.String[])>]
+Application Classes: 920
+Reachable Methods: 4438
+! SPARK,jython,18479,24384
+Soot class path dacapo/luindex/luindex.jar:dacapo/luindex/luindex-deps.jar:
+Computing spark call graph.
+Dynamic classes read: [sun.security.provider.SHA, sun.security.provider.Sun, sun.text.resources.DateFormatZoneData_en, org.apache.lucene.store.FSDirectory, java.lang.ref.Finalizer, sun.nio.cs.ISO_8859_1, org.apache.lucene.index.SegmentReader, sun.security.provider.MD5, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, sun.net.www.protocol.jar.Handler, sun.text.resources.LocaleElements, sun.text.resources.DateFormatZoneData, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/luindex/luindex.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.luindex.Main2: void main(java.lang.String[])>]
+Application Classes: 351
+Reachable Methods: 2603
+! SPARK,luindex,9305,10273
+Soot class path dacapo/lusearch/lusearch.jar:dacapo/lusearch/lusearch-deps.jar:
+Computing spark call graph.
+Dynamic classes read: [java.io.ExpiringCache, java.io.ExpiringCache$Entry, java.io.UnixFileSystem, java.lang.Compiler, java.lang.Compiler$1, java.util.CurrencyData, sun.net.www.protocol.file.FileURLConnection, sun.net.www.protocol.file.Handler, sun.net.www.protocol.jar.Handler, sun.net.www.protocol.jar.JarFileFactory, sun.net.www.protocol.jar.JarURLConnection, sun.net.www.protocol.jar.JarURLConnection$JarURLInputStream, sun.net.www.protocol.jar.URLJarFile, sun.net.www.protocol.jar.URLJarFile$URLJarFileEntry, sun.nio.cs.ISO_8859_1, sun.nio.cs.ISO_8859_1$Decoder, sun.nio.cs.Surrogate, sun.nio.cs.Surrogate$Generator, sun.nio.cs.Surrogate$Parser, sun.nio.cs.Surrogate$Parser, sun.nio.cs.UTF_8, sun.nio.cs.UTF_8$Decoder, sun.nio.cs.UTF_8$Encoder, sun.security.provider.MD5, sun.security.provider.SHA, sun.text.resources.LocaleElements, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US]
+Soot class path in scene: dacapo/lusearch/lusearch.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.lusearch.Main2: void main(java.lang.String[])>]
+Application Classes: 351
+Reachable Methods: 2662
+! SPARK,lusearch,8285,10490
+Soot class path dacapo/pmd/pmd.jar:dacapo/pmd/pmd-deps.jar:
+Computing spark call graph.
+Dynamic classes read: [org.apache.xerces.jaxp.DocumentBuilderFactoryImpl, sun.nio.cs.ISO_8859_1, org.apache.xerces.parsers.XML11Configuration, net.sourceforge.pmd.rules.UnnecessaryConversionTemporary, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, net.sourceforge.pmd.rules.XPathRule, javax.xml.parsers.FactoryFinder$ClassLoaderFinderConcrete, net.sourceforge.pmd.rules.DoubleCheckedLocking, sun.security.provider.SHA, sun.security.provider.Sun, org.jaxen.saxpath.base.XPathReader, sun.net.www.protocol.jar.Handler, org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl, net.sourceforge.pmd.rules.UselessOverridingMethod, sun.text.resources.LocaleElements, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/pmd/pmd.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.pmd.Main2: void main(java.lang.String[])>]
+Application Classes: 554
+Reachable Methods: 4349
+! SPARK,pmd,16113,18786
+Soot class path dacapo/fop/fop.jar:dacapo/fop/fop-deps.jar:
+Computing spark call graph.
+Dynamic classes read: [sun.nio.cs.ISO_8859_1, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, javax.xml.parsers.FactoryFinder$ClassLoaderFinderConcrete, org.apache.xerces.jaxp.SAXParserFactoryImpl, sun.security.provider.SHA, sun.security.provider.Sun, org.apache.fop.fo.StandardElementMapping, sun.net.www.protocol.jar.Handler, org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl, org.apache.fop.svg.SVGElementMapping, sun.awt.resources.awt, sun.text.resources.LocaleElements, sun.nio.cs.US_ASCII, org.apache.xerces.parsers.IntegratedParserConfiguration, org.apache.fop.extensions.ExtensionElementMapping, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/fop/fop.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.fop.Main2: void main(java.lang.String[])>]
+Application Classes: 999
+Reachable Methods: 3750
+! SPARK,fop,16488,17714
+Soot class path dacapo/xalan/xalan.jar:dacapo/xalan/xalan-deps.jar:
+Computing spark call graph.
+Dynamic classes read: [org.apache.xpath.functions.FuncNot, java.io.StringWriter, org.apache.xalan.templates.ElemForEach, org.apache.xml.dtm.ref.DTMManagerDefault, org.apache.xpath.functions.FuncStartsWith, org.apache.xalan.templates.ElemVariable, org.apache.xpath.functions.FuncLocalPart, sun.nio.cs.ISO_8859_1, org.apache.xalan.templates.ElemOtherwise, org.apache.xalan.templates.ElemNumber, org.apache.xalan.templates.ElemCopy, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, org.apache.xalan.templates.ElemIf, org.apache.xalan.templates.ElemText, javax.xml.parsers.FactoryFinder$ClassLoaderFinderConcrete, org.apache.xpath.functions.FuncId, org.apache.xalan.processor.TransformerFactoryImpl, org.apache.xerces.jaxp.SAXParserFactoryImpl, org.apache.xalan.serialize.SerializerToText, org.apache.xpath.functions.FuncQname, org.apache.xpath.functions.FuncPosition, org.apache.xalan.templates.ElemMessage, sun.security.provider.SHA, sun.security.provider.Sun, org.apache.xalan.templates.ElemLiteralResult, org.apache.xalan.templates.ElemValueOf, org.apache.xalan.serialize.SerializerToHTML, org.apache.xml.utils.FastStringBuffer, org.apache.xalan.transformer.ResultTreeHandler, sun.io.CharToByteISO8859_1, javax.xml.transform.FactoryFinder$ClassLoaderFinderConcrete, org.apache.xalan.templates.ElemChoose, org.apache.xpath.functions.FuncGenerateId, org.apache.xalan.templates.ElemTemplate, org.apache.xalan.templates.ElemCallTemplate, org.apache.xalan.templates.ElemParam, org.apache.xalan.templates.ElemAttribute, sun.net.www.protocol.jar.Handler, org.apache.xalan.templates.ElemWhen, org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl, sun.text.resources.LocaleElements, org.apache.xalan.templates.ElemWithParam, org.apache.xalan.templates.ElemApplyTemplates, org.apache.xml.utils.res.XResources_en, org.apache.xerces.parsers.IntegratedParserConfiguration, org.apache.xpath.functions.FuncCount, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/xalan/xalan.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.xalan.Main2: void main(java.lang.String[])>]
+Application Classes: 567
+Reachable Methods: 5916
+! SPARK,xalan,24794,32816
+Soot class path dacapo/bloat/bloat.jar:dacapo/bloat/bloat-deps.jar:
+Computing spark call graph.
+Dynamic classes read: [sun.nio.cs.ISO_8859_1, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, sun.text.resources.DateFormatZoneData, sun.security.provider.SHA, sun.security.provider.Sun, sun.text.resources.DateFormatZoneData_en, sun.net.www.protocol.jar.Handler, sun.text.resources.LocaleElements, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/bloat/bloat.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.bloat.Main2: void main(java.lang.String[])>]
+Application Classes: 361
+Reachable Methods: 4581
+! SPARK,bloat,16470,34535
+Soot class path dacapo/antlr/antlr.jar:dacapo/antlr/antlr-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [sun.nio.cs.ISO_8859_1, antlr.CommonToken, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, antlr.JavaCodeGenerator, antlr.CSharpCodeGenerator, sun.security.provider.SHA, sun.security.provider.Sun, antlr.CppCodeGenerator, sun.net.www.protocol.jar.Handler, sun.text.resources.LocaleElements, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/antlr/antlr.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.antlr.Main: void main(java.lang.String[])>]
+Application Classes: 229
+Reachable Methods: 15112
+! DD,antlr,19123,0
+Soot class path dacapo/chart/chart.jar:dacapo/chart/chart-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [sun.nio.cs.ISO_8859_1, org.jfree.resources.JCommonResources, sun.security.provider.MD5, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, sun.text.resources.BreakIteratorRules, sun.text.resources.DateFormatZoneData, sun.awt.X11GraphicsEnvironment, sun.security.provider.SHA, sun.security.provider.Sun, sun.text.resources.DateFormatZoneData_en, org.jfree.chart.resources.JFreeChartResources, org.jfree.base.log.DefaultLogModule, sun.net.www.protocol.jar.Handler, sun.awt.resources.awt, sun.text.resources.LocaleElements, javax.swing.plaf.metal.MetalLookAndFeel, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/chart/chart.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.chart.Main2: void main(java.lang.String[])>]
+Application Classes: 516
+Reachable Methods: 17202
+! DD,chart,24129,0
+Soot class path dacapo/eclipse/eclipse.jar:dacapo/eclipse/eclipse-deps.jar:
+Computing cha call graph.
+Dynamic classes read: []
+Soot class path in scene: dacapo/eclipse/eclipse.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.eclipse.Main2: void main(java.lang.String[])>]
+Application Classes: 414
+Reachable Methods: 16025
+! DD,eclipse,21543,0
+Soot class path dacapo/hsqldb/hsqldb.jar:dacapo/hsqldb/hsqldb-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [sun.security.provider.SHA, sun.security.provider.Sun, sun.text.resources.DateFormatZoneData_en, sun.nio.cs.ISO_8859_1, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, sun.net.www.protocol.jar.Handler, sun.text.resources.LocaleElements, org.hsqldb.DatabaseInformationFull, sun.text.resources.DateFormatZoneData, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler, org.hsqldb.jdbcDriver]
+Soot class path in scene: dacapo/hsqldb/hsqldb.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<org.hsqldb.hsqldbDoopDriver: void main(java.lang.String[])>]
+Application Classes: 417
+Reachable Methods: 17110
+! DD,hsqldb,21892,0
+Soot class path dacapo/jython/jython.jar:dacapo/jython/jython-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [org.python.core.CollectionIter2, org.python.core.InternalTables2, org.python.core.ZipFileImporter, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, org.python.core.ThreadStateMapping2, org.python.core.BytecodeLoader2, org.python.core.CollectionIter, sun.security.provider.SHA, sun.text.resources.DateFormatZoneData_en, org.python.core.IdImpl2, sun.text.resources.LocaleElements, sun.nio.cs.ISO_8859_1, java.lang.reflect.InvocationTargetException, java.io.File, sun.text.resources.DateFormatZoneData, sun.security.provider.Sun, org.python.util.InteractiveConsole, java.io.File, sun.net.www.protocol.jar.Handler, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/jython/jython.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.jython.Main2: void main(java.lang.String[])>]
+Application Classes: 920
+Reachable Methods: 19930
+! DD,jython,24335,0
+Soot class path dacapo/luindex/luindex.jar:dacapo/luindex/luindex-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [sun.security.provider.SHA, sun.security.provider.Sun, sun.text.resources.DateFormatZoneData_en, org.apache.lucene.store.FSDirectory, java.lang.ref.Finalizer, sun.nio.cs.ISO_8859_1, org.apache.lucene.index.SegmentReader, sun.security.provider.MD5, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, sun.net.www.protocol.jar.Handler, sun.text.resources.LocaleElements, sun.text.resources.DateFormatZoneData, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/luindex/luindex.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.luindex.Main2: void main(java.lang.String[])>]
+Application Classes: 351
+Reachable Methods: 15245
+! DD,luindex,19888,0
+Soot class path dacapo/lusearch/lusearch.jar:dacapo/lusearch/lusearch-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [java.io.ExpiringCache, java.io.ExpiringCache$Entry, java.io.UnixFileSystem, java.lang.Compiler, java.lang.Compiler$1, java.util.CurrencyData, sun.net.www.protocol.file.FileURLConnection, sun.net.www.protocol.file.Handler, sun.net.www.protocol.jar.Handler, sun.net.www.protocol.jar.JarFileFactory, sun.net.www.protocol.jar.JarURLConnection, sun.net.www.protocol.jar.JarURLConnection$JarURLInputStream, sun.net.www.protocol.jar.URLJarFile, sun.net.www.protocol.jar.URLJarFile$URLJarFileEntry, sun.nio.cs.ISO_8859_1, sun.nio.cs.ISO_8859_1$Decoder, sun.nio.cs.Surrogate, sun.nio.cs.Surrogate$Generator, sun.nio.cs.Surrogate$Parser, sun.nio.cs.Surrogate$Parser, sun.nio.cs.UTF_8, sun.nio.cs.UTF_8$Decoder, sun.nio.cs.UTF_8$Encoder, sun.security.provider.MD5, sun.security.provider.SHA, sun.text.resources.LocaleElements, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US]
+Soot class path in scene: dacapo/lusearch/lusearch.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.lusearch.Main2: void main(java.lang.String[])>]
+Application Classes: 351
+Reachable Methods: 15336
+! DD,lusearch,19461,0
+Soot class path dacapo/pmd/pmd.jar:dacapo/pmd/pmd-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [org.apache.xerces.jaxp.DocumentBuilderFactoryImpl, sun.nio.cs.ISO_8859_1, org.apache.xerces.parsers.XML11Configuration, net.sourceforge.pmd.rules.UnnecessaryConversionTemporary, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, net.sourceforge.pmd.rules.XPathRule, javax.xml.parsers.FactoryFinder$ClassLoaderFinderConcrete, net.sourceforge.pmd.rules.DoubleCheckedLocking, sun.security.provider.SHA, sun.security.provider.Sun, org.jaxen.saxpath.base.XPathReader, sun.net.www.protocol.jar.Handler, org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl, net.sourceforge.pmd.rules.UselessOverridingMethod, sun.text.resources.LocaleElements, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/pmd/pmd.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.pmd.Main2: void main(java.lang.String[])>]
+Application Classes: 554
+Reachable Methods: 16711
+! DD,pmd,22307,0
+Soot class path dacapo/fop/fop.jar:dacapo/fop/fop-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [sun.nio.cs.ISO_8859_1, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, javax.xml.parsers.FactoryFinder$ClassLoaderFinderConcrete, org.apache.xerces.jaxp.SAXParserFactoryImpl, sun.security.provider.SHA, sun.security.provider.Sun, org.apache.fop.fo.StandardElementMapping, sun.net.www.protocol.jar.Handler, org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl, org.apache.fop.svg.SVGElementMapping, sun.awt.resources.awt, sun.text.resources.LocaleElements, sun.nio.cs.US_ASCII, org.apache.xerces.parsers.IntegratedParserConfiguration, org.apache.fop.extensions.ExtensionElementMapping, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/fop/fop.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.fop.Main2: void main(java.lang.String[])>]
+Application Classes: 999
+Reachable Methods: 18485
+! DD,fop,22964,0
+Soot class path dacapo/xalan/xalan.jar:dacapo/xalan/xalan-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [org.apache.xpath.functions.FuncNot, java.io.StringWriter, org.apache.xalan.templates.ElemForEach, org.apache.xml.dtm.ref.DTMManagerDefault, org.apache.xpath.functions.FuncStartsWith, org.apache.xalan.templates.ElemVariable, org.apache.xpath.functions.FuncLocalPart, sun.nio.cs.ISO_8859_1, org.apache.xalan.templates.ElemOtherwise, org.apache.xalan.templates.ElemNumber, org.apache.xalan.templates.ElemCopy, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, org.apache.xalan.templates.ElemIf, org.apache.xalan.templates.ElemText, javax.xml.parsers.FactoryFinder$ClassLoaderFinderConcrete, org.apache.xpath.functions.FuncId, org.apache.xalan.processor.TransformerFactoryImpl, org.apache.xerces.jaxp.SAXParserFactoryImpl, org.apache.xalan.serialize.SerializerToText, org.apache.xpath.functions.FuncQname, org.apache.xpath.functions.FuncPosition, org.apache.xalan.templates.ElemMessage, sun.security.provider.SHA, sun.security.provider.Sun, org.apache.xalan.templates.ElemLiteralResult, org.apache.xalan.templates.ElemValueOf, org.apache.xalan.serialize.SerializerToHTML, org.apache.xml.utils.FastStringBuffer, org.apache.xalan.transformer.ResultTreeHandler, sun.io.CharToByteISO8859_1, javax.xml.transform.FactoryFinder$ClassLoaderFinderConcrete, org.apache.xalan.templates.ElemChoose, org.apache.xpath.functions.FuncGenerateId, org.apache.xalan.templates.ElemTemplate, org.apache.xalan.templates.ElemCallTemplate, org.apache.xalan.templates.ElemParam, org.apache.xalan.templates.ElemAttribute, sun.net.www.protocol.jar.Handler, org.apache.xalan.templates.ElemWhen, org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl, sun.text.resources.LocaleElements, org.apache.xalan.templates.ElemWithParam, org.apache.xalan.templates.ElemApplyTemplates, org.apache.xml.utils.res.XResources_en, org.apache.xerces.parsers.IntegratedParserConfiguration, org.apache.xpath.functions.FuncCount, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/xalan/xalan.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.xalan.Main2: void main(java.lang.String[])>]
+Application Classes: 567
+Reachable Methods: 17377
+! DD,xalan,23198,0
+Soot class path dacapo/bloat/bloat.jar:dacapo/bloat/bloat-deps.jar:
+Computing cha call graph.
+Dynamic classes read: [sun.nio.cs.ISO_8859_1, sun.text.resources.LocaleElements_en, sun.text.resources.LocaleElements_en_US, sun.text.resources.DateFormatZoneData, sun.security.provider.SHA, sun.security.provider.Sun, sun.text.resources.DateFormatZoneData_en, sun.net.www.protocol.jar.Handler, sun.text.resources.LocaleElements, java.io.UnixFileSystem, sun.net.www.protocol.file.Handler]
+Soot class path in scene: dacapo/bloat/bloat.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+Soot entry points in scene: [<dacapo.bloat.Main2: void main(java.lang.String[])>]
+Application Classes: 361
+Reachable Methods: 16598
+! DD,bloat,20921,0
+
