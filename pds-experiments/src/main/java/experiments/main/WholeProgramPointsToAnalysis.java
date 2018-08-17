@@ -57,7 +57,7 @@ public class WholeProgramPointsToAnalysis extends SootSceneSetupDacapo {
                     @Override
                     public ObservableICFG<Unit, SootMethod> icfg() {
                         if (icfg == null){
-                            if (getCallGraphMode() != CallGraphMode.DD)
+                            if (getCallGraphMode() == CallGraphMode.CHA || getCallGraphMode() == CallGraphMode.SPARK)
                             icfg = new ObservableStaticICFG(new JimpleBasedInterproceduralCFG(false));
                         }
 

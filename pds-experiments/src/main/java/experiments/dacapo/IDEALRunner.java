@@ -70,7 +70,9 @@ public class IDEALRunner extends SootSceneSetupDacapo {
 
                 @Override
                 public ObservableICFG<Unit, SootMethod> icfg() {
-                    if ((getCallGraphMode() != CallGraphMode.DD) && !staticIcfgWasInitialized){
+                    if ((getCallGraphMode() == CallGraphMode.CHA || getCallGraphMode() == CallGraphMode.SPARK)
+                            && !staticIcfgWasInitialized){
+                        System.out.println("Initializing ObservableStaticICFG");
                         icfg = new ObservableStaticICFG(staticIcfg);
                         staticIcfgWasInitialized = true;
                     }

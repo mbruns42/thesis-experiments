@@ -41,7 +41,7 @@ public class CallGraphRunner extends SootSceneSetupDacapo {
                     }
                 }
                 JimpleBasedInterproceduralCFG staticIcfg = new JimpleBasedInterproceduralCFG(false);
-                if ((getCallGraphMode() == CallGraphMode.DD)) {
+                if ((getCallGraphMode() == CallGraphMode.CHA_DD) || (getCallGraphMode() == CallGraphMode.SPARK_DD)) {
                     icfg = new ObservableDynamicICFG<Weight.NoWeight>(null);
                 } else {
                     icfg = new ObservableStaticICFG(staticIcfg);

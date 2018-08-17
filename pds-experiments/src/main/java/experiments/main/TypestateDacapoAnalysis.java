@@ -66,11 +66,12 @@ public class TypestateDacapoAnalysis {
                 return CallGraphMode.CHA;
             case "SPARK":
                 return CallGraphMode.SPARK;
-            case "DD":
-                return CallGraphMode.DD;
+            case "CHA_DD":
+                return CallGraphMode.CHA_DD;
+            case "SPARK_DD":
+                return CallGraphMode.SPARK_DD;
             default:
-                System.out.println("Could not read call graph argument, will take SPARK as default");
-                return CallGraphMode.SPARK;
+                throw new RuntimeException("Could not read call graph argument!");
         }
     }
 
