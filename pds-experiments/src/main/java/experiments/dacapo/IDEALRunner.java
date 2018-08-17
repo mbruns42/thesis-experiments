@@ -97,7 +97,7 @@ public class IDEALRunner extends SootSceneSetupDacapo {
 
                 @Override
                 public Debugger<TransitionFunction> debugger(IDEALSeedSolver<TransitionFunction> solver) {
-                    callGraphDebugger =  new CallGraphDebugger(dotFile, icfg().getCallGraphCopy());
+                    callGraphDebugger =  new CallGraphDebugger(dotFile, icfg().getCallGraphCopy(), icfg);
                     return callGraphDebugger;
                 }
 
@@ -114,8 +114,8 @@ public class IDEALRunner extends SootSceneSetupDacapo {
                                 writer = new FileWriter(file, true);
                                 if (!fileExisted)
                                     writer.write(
-                                            "Analysis;Rule;Seed;SeedStatement;SeedMethod;SeedClass;Is_In_Error;" +
-                                                    "Timedout;AnalysisTimes;PropagationCount;VisitedMethod;" +
+                                            "Analysis;Rule;Seed;SeedStatement;SeedMethod;SeedClass;CallGraphMode;" +
+                                                    "Is_In_Error;Timedout;AnalysisTimes;PropagationCount;VisitedMethod;"+
                                                     "ReachableMethods;CallRecursion;FieldLoop;MaxAccessPath;MaxMemory;"+
                                                     callGraphDebugger.getCsvHeader() + "\n");
                                 writer.write(asCSVLine(seed, res, callGraphDebugger.getCallGraphStatisticsAsCsv()));
@@ -206,7 +206,7 @@ public class IDEALRunner extends SootSceneSetupDacapo {
         boolean containsCallLoop = forwardBoomerangResults.containsCallRecursion();
         boolean containsFieldLoop = forwardBoomerangResults.containsFieldLoop();
         long usedMemory = forwardBoomerangResults.getMaxMemory();
-        return String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\n", analysis, rule, seedString, seedStmtString, seedMethodString, seedClass, isInErrorState, isTimedout, analysisTime, propagationCount, visitedMethods, reachableMethods, containsCallLoop, containsFieldLoop, 0, usedMemory, callGraphDebuggerCSV);
+        return String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\n", analysis, rule, seedString, seedStmtString, seedMethodString, seedClass, callGraphMode, isInErrorState, isTimedout, analysisTime, propagationCount, visitedMethods, reachableMethods, containsCallLoop, containsFieldLoop, 0, usedMemory, callGraphDebuggerCSV);
     }
 
     private boolean isInErrorState(WeightedForwardQuery<TransitionFunction> key, ForwardBoomerangResults<TransitionFunction> forwardBoomerangResults) {
