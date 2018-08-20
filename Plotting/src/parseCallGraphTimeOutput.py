@@ -9,6 +9,9 @@ import numpy as np
 # All relevant lines are assumed to follow the scheme "! CALLGRAPHMODE,BENCHMARK,RUNTIME_IN_MS,EDGES_IN_GRAPH",
 # e.g., "! CHA,antlr,18890,179968". Other lines will be ignored.
 # Slashes at the beginning of the file may cause problems, so be sure not to include a first line, like "/bin/java .."
+#
+# Run with file containing output as only parameter, see example file callGraphTimes.txt, like
+# python src/parseCallGraphTimeOutput.py callGraphTimes.txt
 
 
 def autolabel(ax, rects, xpos='center'):
