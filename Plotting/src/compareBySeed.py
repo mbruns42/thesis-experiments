@@ -12,13 +12,16 @@ def readData(dirname):
             raw_df = raw_df.append(data_from_this_csv)
     return raw_df
 
-
-
-
-
 def main(dirname):
     rawData = readData(dirname)
-    print(rawData)
+    data = rawData.drop(columns=['Analysis', 'Unnamed: 26'])
+    #print(data.dtypes)
+    timedout = data.loc[data['Timedout']]
+    if (timedout.empty):
+        print("Data contains no timeouts.")
+    else:
+        print("Runs that timed out:", timedout)
+
 
 if __name__== "__main__":
     main(sys.argv[1])
