@@ -5,11 +5,11 @@ import pandas as pd
 
 
 def readData(dirname):
-    raw_df = []
+    raw_df = pd.DataFrame()
     for file in os.listdir(dirname):
         if file.endswith(".csv"):
             data_from_this_csv = pd.read_csv(os.path.join(dirname, file), sep=';')
-            raw_df.append(data_from_this_csv)
+            raw_df = raw_df.append(data_from_this_csv)
     return raw_df
 
 
