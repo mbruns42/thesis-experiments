@@ -23,12 +23,11 @@ def split_and_merge_data(data):
     spark_dd_data = data[data['CallGraphMode'] == 'SPARK_DD'].drop(columns=['CallGraphMode'])
     print("SPARK DD Data ", spark_dd_data.shape)
     cha_vs_cha_dd = cha_data.merge(cha_dd_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass'],
-                                   how='outer', suffixes=('_cha', '_cha_dd'), validate='one_to_one')
+                                   how='outer', suffixes=('_cha', '_cha_dd'))
     cha_vs_cha_dd_vs_spark = cha_vs_cha_dd.merge(spark_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod',
-                                                                 'SeedClass'], how='outer', validate='one_to_one')
+                                                                 'SeedClass'], how='outer')
     all_data_per_seed = cha_vs_cha_dd_vs_spark.merge(spark_dd_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod',
-                                                                        'SeedClass'],
-                                                     how='outer',suffixes=('_spark','_spark_dd'), validate='one_to_one')
+                                                            'SeedClass'],how='outer',suffixes=('_spark','_spark_dd'))
     return all_data_per_seed
 
 def main(dirname):
@@ -39,13 +38,17 @@ def main(dirname):
     if (timedout.empty):
         print("Data contains no timeouts.")
     else:
-        print("Runs that timed out:", timedout)
+        print("Runs that timed out:", timedout[['Rule','Seed','CallGraphMode']])
     data = data.drop(data['Timedout'])
 
     all_data_per_seed = split_and_merge_data(data)
     print("Columns of final data: ", list(all_data_per_seed))
 
-    all_data_per_seed[['SeedStatement','AnalysisTimes_cha', 'AnalysisTimes_cha_dd']].plot(kind='bar')
+    #all_data_per_seed[['SeedStatement','AnalysisTimes_cha', 'AnalysisTimes_cha_dd', 'AnalysisTimes_spark',
+    #                   'AnalysisTimes_spark_dd']].plot(kind='bar')
+    ax = all_data_per_seed.plot(kind='bar', x='SeedStatement',
+                    y=['AnalysisTimes_cha', 'AnalysisTimes_cha_dd', 'AnalysisTimes_spark', 'AnalysisTimes_spark_dd'])
+    ax.set_ylabel('Runtime in milliseconds')
     plt.show()
 
 
