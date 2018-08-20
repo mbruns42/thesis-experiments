@@ -5,7 +5,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+# This script parses the output from the CallGraphTimer.
+# All relevant lines are assumed to follow the scheme "! CALLGRAPHMODE,BENCHMARK,RUNTIME_IN_MS,EDGES_IN_GRAPH",
+# e.g., "! CHA,antlr,18890,179968". Other lines will be ignored.
+# Slashes at the beginning of the file may cause problems, so be sure not to include a first line, like "/bin/java .."
+
+
 def autolabel(ax, rects, xpos='center'):
+    """ Writes the value the bar represents on top of the bar. Can be configured to arrange it to the left or right
+        by passing the strings 'left' or 'right' as the xpos parameter. Labeling in the center of the bar is default.
+    """
     xpos = xpos.lower()  # normalize the case of the parameter
     ha = {'center': 'center', 'right': 'left', 'left': 'right'}
     offset = {'center': 0.5, 'right': 0.57, 'left': 0.43}  # x_txt = x + w*off
@@ -16,6 +25,8 @@ def autolabel(ax, rects, xpos='center'):
                 '{:,}'.format(height), ha=ha[xpos], va='bottom', fontsize=10)
 
 def plot(bench, chaEdges, chaTimes, sparkEdges, sparkTimes):
+    """ Makes the bar chart and stores it to a high-res pdf
+    """
     ind = np.arange(len(bench))  # the x locations for the groups
     width = 0.35  # the width of the bars
 
@@ -33,15 +44,7 @@ def plot(bench, chaEdges, chaTimes, sparkEdges, sparkTimes):
     plt.savefig("CallGraphRuntimes.pdf", dpi = 300)
     plt.close()
 
-def main(filename):
-    with open(filename,'rb') as file:
-        lines = file.readlines()
-    bench = []
-    chaTimes = []
-    chaEdges = []
-    sparkTimes = []
-    sparkEdges = []
-
+def parseResults(lines, bench, chaTimes, chaEdges, sparkTimes, sparkEdges):
     for line in lines:
         line =  line.decode(encoding="utf-8", errors="strict")
         match = re.match("! (\w+),(\w+),(\d+),(\d+)", line)
@@ -55,7 +58,19 @@ def main(filename):
         if match.group(1) == 'SPARK':
             sparkTimes.append(int(match.group(3)))
             sparkEdges.append(int(match.group(4)))
+
+def main(filename):
+    with open(filename,'rb') as file:
+        lines = file.readlines()
+    bench = []
+    chaTimes = []
+    chaEdges = []
+    sparkTimes = []
+    sparkEdges = []
+
+    parseResults(lines, bench, chaTimes, chaEdges, sparkTimes, sparkEdges)
     plot(bench, chaEdges, chaTimes, sparkEdges, sparkTimes)
+    # This prints out a latex table with results
     for i in range(len(bench)):
         print(bench[i], " & ", "{:,}".format(chaTimes[i]), " & ", "{:,}".format(sparkTimes[i]), " & ",
               "{:,}".format(chaEdges[i]), " & ", "{:,}".format(sparkEdges[i]), "\\\\")
