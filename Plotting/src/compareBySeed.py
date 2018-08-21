@@ -33,8 +33,12 @@ def split_and_merge_data(data):
     return all_data_per_seed
 
 
-def handle_timeouts(data):
+def plot_timeouts(data):
+    over_ten_minutes = data.loc[data['AnalysisTimes']>600_000]
+    print("Over 10 minutes: ", over_ten_minutes.shape[0])
+
     timedout = data.loc[data['Timedout']]
+    print("Average time for timeout:", str(int((timedout[['AnalysisTimes']].mean()))))
     if (timedout.empty):
         print("Data contains no timeouts.")
     else:
@@ -43,31 +47,37 @@ def handle_timeouts(data):
         timeouts_per_cgmode = timedout[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('sum')
         ax = timeouts_per_cgmode.plot(kind='bar', rot=10, legend=False)
         for p in ax.patches:
-            ax.annotate(str(int(p.get_height())), (p.get_x() * 1.005, p.get_height() * 1.005))
+            ax.annotate(str(int(p.get_height())), (p.get_x() * 1 + 0.15, p.get_height() * 1.005))
         ax.set_ylabel('Timed out analysis runs')
-        plt.show()
-        print ("Dropping timed out analysis runs from here on.")
-        data = data.drop(data['Timedout'])
-        data = data.drop(labels=['Timedout'], axis=1)
-    return data
+        plt.savefig("TimeoutsPerCGMode.pdf", dpi = 300)
+        plt.close()
 
-
-def main(dirname):
-    raw_data = read_data(dirname)
-    data = raw_data.drop(columns=['Analysis', 'Unnamed: 26'])
-
-    data = handle_timeouts(data)
-    all_data_per_seed = split_and_merge_data(data)
-
-    averages = all_data_per_seed[['AnalysisTimes_cha', 'AnalysisTimes_cha_dd',
+def plot_averages_runtimes(data):
+    averages = data[['AnalysisTimes_cha', 'AnalysisTimes_cha_dd',
                                   'AnalysisTimes_spark', 'AnalysisTimes_spark_dd']].mean(axis=0)
     #Convert runtime to seconds
     averages = averages/1000
     ax = averages.plot(kind='bar', rot=10)
     ax.set_ylabel('Average runtime in seconds')
     for p in ax.patches:
-        ax.annotate('{:.{prec}f}'.format(p.get_height(), prec=1), (p.get_x() * 1.005, p.get_height() * 1.005))
-    plt.show()
+        ax.annotate('{:.{prec}f}'.format(p.get_height(), prec=1), (p.get_x() * 1 + 0.15, p.get_height() * 1.005))
+    plt.savefig("RuntimePerCGMode.pdf", dpi = 300)
+
+
+def main(dirname):
+    raw_data = read_data(dirname)
+    # Drop columns without useful information. Analysis always says "ideal" and there is an emtpy column
+    raw_data = raw_data.drop(columns=['Analysis', 'Unnamed: 26'])
+
+    plot_timeouts(raw_data)
+
+    # Limit maximum analysis time to 600_000 as this was our timeout
+    raw_data['AnalysisTimes'] = raw_data['AnalysisTimes'].clip(upper=600_000)
+
+    data = split_and_merge_data(raw_data)
+
+    plot_averages_runtimes(data)
+
 
 
 if __name__== "__main__":
