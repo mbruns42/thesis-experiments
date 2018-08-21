@@ -44,28 +44,15 @@ def plot_timeouts(data):
         return
     print("Number of runs that timed out:", timedout.shape[0])
     timeouts_per_cgmode = timedout[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('sum')
-    ax = timeouts_per_cgmode.plot(kind='bar', rot=10, legend=False)
-    for p in ax.patches:
-        ax.annotate(str(int(p.get_height())), (p.get_x() * 1 + 0.15, p.get_height() * 1.005))
-    ax.set_ylabel('Timed out analysis runs')
-    plt.tight_layout()
-    plt.savefig("TimeoutsPerCGMode.pdf", dpi = 300)
+    makeBarPlot(timeouts_per_cgmode, 'Timed out analysis runs', 'TimeoutsPerCGMode.pdf')
 
     timeouts_per_rule = timedout[['Rule', 'Timedout']].groupby('Rule').aggregate('sum')
-    ax = timeouts_per_rule.plot(kind='bar', rot=10, legend=False)
-    for p in ax.patches:
-        ax.annotate(str(int(p.get_height())), (p.get_x() * 1 + 0.15, p.get_height() * 1.005))
-    ax.set_ylabel('Timed out analysis runs')
-    plt.tight_layout()
-    plt.savefig("TimeoutsPerRule.pdf", dpi = 300)
-    plt.close()
-    timeouts_per_rule_per_cg = timedout[['CallGraphMode','Rule', 'Timedout']].groupby(['CallGraphMode','Rule']).aggregate('sum')
-    ax = timeouts_per_rule_per_cg.plot(kind='bar', legend=False)
-    for p in ax.patches:
-        ax.annotate(str(int(p.get_height())), (p.get_x() * 1 + 0.1, p.get_height() * 1.005))
-    ax.set_ylabel('Timed out analysis runs')
-    plt.tight_layout()
-    plt.savefig("TimeoutsPerRulePerCGMode.pdf", dpi = 300)
+    makeBarPlot(timeouts_per_rule, 'Timed out analysis runs', 'TimeoutsPerRule.pdf')
+
+    timeouts_per_rule_per_cg = timedout[['CallGraphMode','Rule', 'Timedout']].groupby(['CallGraphMode',
+                                                                                       'Rule']).aggregate('sum')
+    makeBarPlot(timeouts_per_rule_per_cg, 'Timed out analysis runs', 'TimeoutsPerRulePerCGMode.pdf', rotation=90,
+                label_offset=0.1)
 
 
 def plot_averages_runtimes(data):
@@ -127,15 +114,25 @@ def analyze_difference_in_results(data):
     print("Errors according to Spark DD: ", spark_dd_errors.shape[0])
 
     errors_per_cgmode = all_errors[['CallGraphMode', 'Is_In_Error']].groupby('CallGraphMode').aggregate('sum')
-    makeBarPlot(errors_per_cgmode, 'Errors detected', 'DetectedErrorsPerCGMode.pdf')
+    makeBarPlot(errors_per_cgmode, 'Detected errors', 'ErrorsPerCGMode.pdf')
+
+    runs_no_timeout = data.query('Timedout == False')[['CallGraphMode', 'Timedout']].groupby('CallGraphMode')\
+                                                                                                .aggregate('count')
+    errors_per_cgmode_normalized =  errors_per_cgmode['Is_In_Error']/runs_no_timeout['Timedout']
+    ax = errors_per_cgmode_normalized.plot(kind='bar', rot=10, legend=False)
+    for p in ax.patches:
+        ax.annotate('{:.{prec}}'.format(p.get_height(), prec=2), (p.get_x() * 1 + 0.15, p.get_height() * 1.005))
+    ax.set_ylabel('Error detection rate for non-timedout runs')
+    plt.tight_layout()
+    plt.savefig('ErrorsPerCGModeNormalized.pdf', dpi = 300)
+    plt.close()
 
     errors_per_rule = all_errors[['Rule', 'Is_In_Error']].groupby('Rule').aggregate('sum')
-    makeBarPlot(errors_per_rule, 'Errors detected', 'DetectedErrorsPerRule.pdf')
-
+    makeBarPlot(errors_per_rule, 'Detected errors', 'ErrorsPerRule.pdf')
 
     errors_per_rule_per_cg = all_errors[['CallGraphMode','Rule','Is_In_Error']].groupby(['CallGraphMode',
                                                                                  'Rule']).aggregate('sum')
-    makeBarPlot(errors_per_rule_per_cg, 'Errors detected', 'ErrorsPerRulePerCGMode.pdf',90, 0.05)
+    makeBarPlot(errors_per_rule_per_cg, 'Detected errors', 'ErrorsPerRulePerCGMode.pdf',90, 0.05)
 
 
 def makeBarPlot(data, ylabel, figurename, rotation=10, label_offset = 0.15):
@@ -145,6 +142,7 @@ def makeBarPlot(data, ylabel, figurename, rotation=10, label_offset = 0.15):
     ax.set_ylabel(ylabel)
     plt.tight_layout()
     plt.savefig(figurename, dpi = 300)
+    plt.close()
 
 def main(dirname):
     #Option to see the printed output more easily
