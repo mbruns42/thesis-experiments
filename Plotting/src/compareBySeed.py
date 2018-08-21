@@ -68,10 +68,20 @@ def analyze_difference_in_seeds(raw_data):
                                                                     'SeedMethod', 'SeedClass']]
     spark_seeds = raw_data[raw_data['CallGraphMode'] == 'SPARK'][['Rule', 'Seed', 'SeedStatement',
                                                                   'SeedMethod', 'SeedClass']]
+    print("Total seeds in CHA: ", cha_dd_seeds.shape[0])
+    print("Total seeds in Spark: ", spark_seeds.shape[0])
+    merged = cha_dd_seeds.merge(spark_seeds, indicator=True, how='outer')
+    print("Seeds in Spark but not in CHA: ", merged[merged['_merge'] == 'right_only'].shape[0])
+    merged = spark_seeds.merge(cha_dd_seeds, indicator=True, how='outer')
+    print("Seeds in CHA but not in Spark: ", merged[merged['_merge'] == 'right_only'].shape[0])
+    #Uncomment next line to see what spark had that CHA didn't
+    #print(merged[merged['_merge'] == 'right_only'][['Rule','SeedStatement', 'SeedMethod', 'SeedClass']])
 
 
 
 def main(dirname):
+    pd.set_option('display.width', 1000)
+    pd.set_option('display.max_columns', 5)
     raw_data = read_data(dirname)
 
     # Drop columns without useful information. Analysis always says "ideal" and there is an emtpy column
@@ -79,7 +89,7 @@ def main(dirname):
 
     #Drop rows of which duplicates of seeds and call graph mode exist (those are not analysis of actual benchmarks)
     raw_data = raw_data.drop_duplicates(subset= ['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass',
-                                                     'CallGraphMode'], keep=False)
+                                                    'CallGraphMode'], keep=False)
     plot_timeouts(raw_data)
 
     analyze_difference_in_seeds(raw_data)
@@ -90,6 +100,8 @@ def main(dirname):
     data = split_and_merge_data(raw_data)
 
     plot_averages_runtimes(data)
+
+
 
 
 if __name__== "__main__":
