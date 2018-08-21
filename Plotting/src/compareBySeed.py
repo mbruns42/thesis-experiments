@@ -43,12 +43,15 @@ def main(dirname):
 
     all_data_per_seed = split_and_merge_data(data)
     print("Columns of final data: ", list(all_data_per_seed))
+    print("Size of final data:", all_data_per_seed.shape)
 
-    #all_data_per_seed[['SeedStatement','AnalysisTimes_cha', 'AnalysisTimes_cha_dd', 'AnalysisTimes_spark',
-    #                   'AnalysisTimes_spark_dd']].plot(kind='bar')
-    ax = all_data_per_seed.plot(kind='bar', x='SeedStatement',
-                    y=['AnalysisTimes_cha', 'AnalysisTimes_cha_dd', 'AnalysisTimes_spark', 'AnalysisTimes_spark_dd'])
-    ax.set_ylabel('Runtime in milliseconds')
+    averages = all_data_per_seed[['AnalysisTimes_cha', 'AnalysisTimes_cha_dd',
+                                  'AnalysisTimes_spark', 'AnalysisTimes_spark_dd']].mean(axis=0)
+    print(averages.shape)
+    ax = averages.plot(kind='bar')
+    ax.set_ylabel('Average runtime in milliseconds')
+    for p in ax.patches:
+        ax.annotate('{:,}'.format(p.get_height()), (p.get_x() * 1.005, p.get_height() * 1.005))
     plt.show()
 
 
