@@ -41,15 +41,33 @@ def plot_timeouts(data):
     print("Average time for timeout:", str(int((timedout[['AnalysisTimes']].mean()))))
     if (timedout.empty):
         print("Data contains no timeouts.")
-    else:
-        print("Number of runs that timed out:", timedout.shape[0])
-        timeouts_per_cgmode = timedout[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('sum')
-        ax = timeouts_per_cgmode.plot(kind='bar', rot=10, legend=False)
-        for p in ax.patches:
-            ax.annotate(str(int(p.get_height())), (p.get_x() * 1 + 0.15, p.get_height() * 1.005))
-        ax.set_ylabel('Timed out analysis runs')
-        plt.savefig("TimeoutsPerCGMode.pdf", dpi = 300)
-        plt.close()
+        return
+    print("Number of runs that timed out:", timedout.shape[0])
+    timeouts_per_cgmode = timedout[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('sum')
+    ax = timeouts_per_cgmode.plot(kind='bar', rot=10, legend=False)
+    for p in ax.patches:
+        ax.annotate(str(int(p.get_height())), (p.get_x() * 1 + 0.15, p.get_height() * 1.005))
+    ax.set_ylabel('Timed out analysis runs')
+    plt.savefig("TimeoutsPerCGMode.pdf", dpi = 300)
+    plt.tight_layout()
+    plt.close()
+    timeouts_per_rule = timedout[['Rule', 'Timedout']].groupby('Rule').aggregate('sum')
+    ax = timeouts_per_rule.plot(kind='bar', rot=10, legend=False)
+    for p in ax.patches:
+        ax.annotate(str(int(p.get_height())), (p.get_x() * 1 + 0.15, p.get_height() * 1.005))
+    ax.set_ylabel('Timed out analysis runs')
+    plt.tight_layout()
+    plt.savefig("TimeoutsPerRule.pdf", dpi = 300)
+    plt.close()
+    timeouts_per_rule_per_cg = timedout[['CallGraphMode','Rule', 'Timedout']].groupby(['CallGraphMode','Rule']).aggregate('sum')
+    ax = timeouts_per_rule_per_cg.plot(kind='bar', legend=False)
+    for p in ax.patches:
+        ax.annotate(str(int(p.get_height())), (p.get_x() * 1 + 0.1, p.get_height() * 1.005))
+    ax.set_ylabel('Timed out analysis runs')
+    plt.tight_layout()
+    plt.savefig("TimeoutsPerRulePerCGMode.pdf", dpi = 300)
+    plt.close()
+
 
 def plot_averages_runtimes(data):
     averages = data[['AnalysisTimes_cha', 'AnalysisTimes_cha_dd',
@@ -78,30 +96,44 @@ def analyze_difference_in_seeds(raw_data):
     #print(merged[merged['_merge'] == 'right_only'][['Rule','SeedStatement', 'SeedMethod', 'SeedClass']])
 
 
+def plot_runtime_curve(data):
+    cha_times = data[data['CallGraphMode']=='CHA']['AnalysisTimes'].sort_values()
+    cha_dd_times = data[data['CallGraphMode']=='CHA_DD']['AnalysisTimes'].sort_values()
+    spark_times = data[data['CallGraphMode']=='SPARK']['AnalysisTimes'].sort_values()
+    spark_dd_times = data[data['CallGraphMode']=='SPARK_DD']['AnalysisTimes'].sort_values()
+    #plt.plot(cha_times)
+    #plt.plot(cha_dd_times)# spark_times, spark_dd_times])
+    #plt.show()
+
+
 
 def main(dirname):
-    pd.set_option('display.width', 1000)
+    #Option to see the printed output more easily
+    pd.set_option('display.width', 250)
     pd.set_option('display.max_columns', 5)
+
     raw_data = read_data(dirname)
 
-    # Drop columns without useful information. Analysis always says "ideal" and there is an emtpy column
-    raw_data = raw_data.drop(columns=['Analysis', 'Unnamed: 26'])
+    #Drop columns without useful information. Analysis always says "ideal" and there is an emtpy column
+    data = raw_data.drop(columns=['Analysis', 'Unnamed: 26'])
 
     #Drop rows of which duplicates of seeds and call graph mode exist (those are not analysis of actual benchmarks)
-    raw_data = raw_data.drop_duplicates(subset= ['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass',
+    data = data.drop_duplicates(subset= ['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass',
                                                     'CallGraphMode'], keep=False)
-    plot_timeouts(raw_data)
+    plot_timeouts(data)
 
-    analyze_difference_in_seeds(raw_data)
+    analyze_difference_in_seeds(data)
+
+    plot_runtime_curve(data)
 
     # Limit maximum analysis time to 600_000 as this was our timeout
-    raw_data['AnalysisTimes'] = raw_data['AnalysisTimes'].clip(upper=600_000)
+    data['AnalysisTimes'] = data['AnalysisTimes'].clip(upper=600_000)
 
-    data = split_and_merge_data(raw_data)
+    #data = data.query('Timedout == False')
 
-    plot_averages_runtimes(data)
+    merged_data = split_and_merge_data(data)
 
-
+    plot_averages_runtimes(merged_data)
 
 
 if __name__== "__main__":
