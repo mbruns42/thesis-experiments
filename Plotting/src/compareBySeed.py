@@ -43,7 +43,6 @@ def plot_timeouts(data):
         print("Data contains no timeouts.")
     else:
         print("Number of runs that timed out:", timedout.shape[0])
-        print("Call Graph Algorithms leading to timeout:", timedout[['CallGraphMode', 'Seed']].groupby('CallGraphMode').count())
         timeouts_per_cgmode = timedout[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('sum')
         ax = timeouts_per_cgmode.plot(kind='bar', rot=10, legend=False)
         for p in ax.patches:
@@ -64,12 +63,26 @@ def plot_averages_runtimes(data):
     plt.savefig("RuntimePerCGMode.pdf", dpi = 300)
 
 
+def analyze_difference_in_seeds(raw_data):
+    cha_dd_seeds = raw_data[raw_data['CallGraphMode'] == 'CHA_DD'][['Rule', 'Seed', 'SeedStatement',
+                                                                    'SeedMethod', 'SeedClass']]
+    spark_seeds = raw_data[raw_data['CallGraphMode'] == 'SPARK'][['Rule', 'Seed', 'SeedStatement',
+                                                                  'SeedMethod', 'SeedClass']]
+
+
+
 def main(dirname):
     raw_data = read_data(dirname)
+
     # Drop columns without useful information. Analysis always says "ideal" and there is an emtpy column
     raw_data = raw_data.drop(columns=['Analysis', 'Unnamed: 26'])
 
+    #Drop rows of which duplicates of seeds and call graph mode exist (those are not analysis of actual benchmarks)
+    raw_data = raw_data.drop_duplicates(subset= ['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass',
+                                                     'CallGraphMode'], keep=False)
     plot_timeouts(raw_data)
+
+    analyze_difference_in_seeds(raw_data)
 
     # Limit maximum analysis time to 600_000 as this was our timeout
     raw_data['AnalysisTimes'] = raw_data['AnalysisTimes'].clip(upper=600_000)
@@ -77,7 +90,6 @@ def main(dirname):
     data = split_and_merge_data(raw_data)
 
     plot_averages_runtimes(data)
-
 
 
 if __name__== "__main__":
