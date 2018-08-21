@@ -48,9 +48,9 @@ def plot_timeouts(data):
     for p in ax.patches:
         ax.annotate(str(int(p.get_height())), (p.get_x() * 1 + 0.15, p.get_height() * 1.005))
     ax.set_ylabel('Timed out analysis runs')
-    plt.savefig("TimeoutsPerCGMode.pdf", dpi = 300)
     plt.tight_layout()
-    plt.close()
+    plt.savefig("TimeoutsPerCGMode.pdf", dpi = 300)
+
     timeouts_per_rule = timedout[['Rule', 'Timedout']].groupby('Rule').aggregate('sum')
     ax = timeouts_per_rule.plot(kind='bar', rot=10, legend=False)
     for p in ax.patches:
@@ -66,7 +66,6 @@ def plot_timeouts(data):
     ax.set_ylabel('Timed out analysis runs')
     plt.tight_layout()
     plt.savefig("TimeoutsPerRulePerCGMode.pdf", dpi = 300)
-    plt.close()
 
 
 def plot_averages_runtimes(data):
@@ -111,9 +110,41 @@ def plot_runtime_curve(data):
 
     plt.legend()
     plt.tight_layout()
-    plt.savefig("RuntimeDistributionPerCGMode", dpi = 300)
+    plt.savefig("RuntimeDistributionPerCGMode.pdf", dpi = 300)
 
 
+def analyze_difference_in_results(data):
+    all_errors = data.loc[data['Is_In_Error']]
+    cha_errors = all_errors.query('CallGraphMode == "CHA"')
+    cha_dd_errors = all_errors.query('CallGraphMode == "CHA_DD"')
+    spark_errors = all_errors.query('CallGraphMode == "SPARK"')
+    spark_dd_errors = all_errors.query('CallGraphMode == "SPARK_DD"')
+
+    print("Total errors: ", all_errors.shape[0])
+    print("Errors according to CHA: ", cha_errors.shape[0])
+    print("Errors according to CHA DD: ", cha_dd_errors.shape[0])
+    print("Errors according to Spark: ", spark_errors.shape[0])
+    print("Errors according to Spark DD: ", spark_dd_errors.shape[0])
+
+    errors_per_cgmode = all_errors[['CallGraphMode', 'Is_In_Error']].groupby('CallGraphMode').aggregate('sum')
+    makeBarPlot(errors_per_cgmode, 'Errors detected', 'DetectedErrorsPerCGMode.pdf')
+
+    errors_per_rule = all_errors[['Rule', 'Is_In_Error']].groupby('Rule').aggregate('sum')
+    makeBarPlot(errors_per_rule, 'Errors detected', 'DetectedErrorsPerRule.pdf')
+
+
+    errors_per_rule_per_cg = all_errors[['CallGraphMode','Rule','Is_In_Error']].groupby(['CallGraphMode',
+                                                                                 'Rule']).aggregate('sum')
+    makeBarPlot(errors_per_rule_per_cg, 'Errors detected', 'ErrorsPerRulePerCGMode.pdf',90, 0.05)
+
+
+def makeBarPlot(data, ylabel, figurename, rotation=10, label_offset = 0.15):
+    ax = data.plot(kind='bar', rot=rotation, legend=False)
+    for p in ax.patches:
+        ax.annotate(str(int(p.get_height())), (p.get_x() * 1 + label_offset, p.get_height() * 1.005))
+    ax.set_ylabel(ylabel)
+    plt.tight_layout()
+    plt.savefig(figurename, dpi = 300)
 
 def main(dirname):
     #Option to see the printed output more easily
@@ -129,16 +160,14 @@ def main(dirname):
     data = data.drop_duplicates(subset= ['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass',
                                                     'CallGraphMode'], keep=False)
     plot_timeouts(data)
-
     analyze_difference_in_seeds(data)
-
+    analyze_difference_in_results(data)
 
     #Convert times to seconds and limit maximum analysis time to 10 minutes as this was our timeout
     data['AnalysisTimes'] = data['AnalysisTimes']/1000
     data['AnalysisTimes'] = data['AnalysisTimes'].clip(upper=600)
 
     plot_runtime_curve(data)
-
     #data = data.query('Timedout == False')
 
     merged_data = split_and_merge_data(data)
