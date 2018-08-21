@@ -34,7 +34,7 @@ def split_and_merge_data(data):
 
 
 def plot_timeouts(data):
-    over_ten_minutes = data.loc[data['AnalysisTimes']>600_000]
+    over_ten_minutes = data.loc[data['AnalysisTimes']>600]
     print("Over 10 minutes: ", over_ten_minutes.shape[0])
 
     timedout = data.loc[data['Timedout']]
@@ -73,7 +73,6 @@ def plot_averages_runtimes(data):
     averages = data[['AnalysisTimes_cha', 'AnalysisTimes_cha_dd',
                                   'AnalysisTimes_spark', 'AnalysisTimes_spark_dd']].mean(axis=0)
     #Convert runtime to seconds
-    averages = averages/1000
     ax = averages.plot(kind='bar', rot=10)
     ax.set_ylabel('Average runtime in seconds')
     for p in ax.patches:
@@ -97,13 +96,22 @@ def analyze_difference_in_seeds(raw_data):
 
 
 def plot_runtime_curve(data):
-    cha_times = data[data['CallGraphMode']=='CHA']['AnalysisTimes'].sort_values()
-    cha_dd_times = data[data['CallGraphMode']=='CHA_DD']['AnalysisTimes'].sort_values()
-    spark_times = data[data['CallGraphMode']=='SPARK']['AnalysisTimes'].sort_values()
-    spark_dd_times = data[data['CallGraphMode']=='SPARK_DD']['AnalysisTimes'].sort_values()
-    #plt.plot(cha_times)
-    #plt.plot(cha_dd_times)# spark_times, spark_dd_times])
-    #plt.show()
+    cha_times = data[data['CallGraphMode']=='CHA']['AnalysisTimes'].sample(500).sort_values().reset_index(drop=True)
+    cha_dd_times = data[data['CallGraphMode']=='CHA_DD']['AnalysisTimes'].sample(500).sort_values().reset_index(drop=True)
+    spark_times = data[data['CallGraphMode']=='SPARK']['AnalysisTimes'].sample(500).sort_values().reset_index(drop=True)
+    spark_dd_times = data[data['CallGraphMode']=='SPARK_DD']['AnalysisTimes'].sample(500).sort_values().reset_index(drop=True)
+
+    plt.plot(cha_times, label='CHA')
+    plt.plot(cha_dd_times, label='CHA DD')
+    plt.plot(spark_times, label='SPARK')
+    plt.plot(spark_dd_times, label='SPARK DD')
+
+    plt.xlabel("Analysis runs ordered by runtimes")
+    plt.ylabel("Runtime in seconds")
+
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig("RuntimeDistributionPerCGMode", dpi = 300)
 
 
 
@@ -124,10 +132,12 @@ def main(dirname):
 
     analyze_difference_in_seeds(data)
 
-    plot_runtime_curve(data)
 
-    # Limit maximum analysis time to 600_000 as this was our timeout
-    data['AnalysisTimes'] = data['AnalysisTimes'].clip(upper=600_000)
+    #Convert times to seconds and limit maximum analysis time to 10 minutes as this was our timeout
+    data['AnalysisTimes'] = data['AnalysisTimes']/1000
+    data['AnalysisTimes'] = data['AnalysisTimes'].clip(upper=600)
+
+    plot_runtime_curve(data)
 
     #data = data.query('Timedout == False')
 
