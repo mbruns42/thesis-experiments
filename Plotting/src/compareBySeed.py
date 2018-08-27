@@ -13,12 +13,13 @@ def read_data(dirname):
             raw_df = raw_df.append(data_from_this_csv)
     return raw_df
 
+
 def plot_timeouts(data):
-    over_ten_minutes = data.loc[data['AnalysisTimes']>600]
+    over_ten_minutes = data.loc[data['AnalysisTimes'] > 600]
     print("Runs that took over 10 minutes: ", over_ten_minutes.shape[0])
 
     timedout = data.loc[data['Timedout']]
-    if (timedout.empty):
+    if timedout.empty:
         print("Data contains no timeouts.")
         return
     print("Average time for runs with timeout in seconds:", str(int(((timedout[['AnalysisTimes']]/1000).mean()))))
@@ -29,15 +30,14 @@ def plot_timeouts(data):
     timeouts_per_rule = timedout[['Rule', 'Timedout']].groupby('Rule').aggregate('sum')
     makeBarPlot(timeouts_per_rule, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerRule.pdf', 10, 0.35, 1)
 
-    timeouts_per_rule_per_cg = timedout[['CallGraphMode','Rule', 'Timedout']].groupby(['CallGraphMode',
+    timeouts_per_rule_per_cg = timedout[['CallGraphMode', 'Rule', 'Timedout']].groupby(['CallGraphMode',
                                                                                        'Rule']).aggregate('sum')
     makeBarPlot(timeouts_per_rule_per_cg, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerRulePerCGMode.pdf',
                 90, 0.1)
     print()
 
 
-
-def plot_averages_runtimes(data):
+def plot_averages_runtime(data):
     cha_data = data[data['CallGraphMode'] == 'CHA'].drop(columns=['CallGraphMode'])
     print("Number of CHA data rows:", cha_data.shape[0])
     cha_dd_data = data[data['CallGraphMode'] == 'CHA_DD'].drop(columns=['CallGraphMode'])
@@ -51,10 +51,10 @@ def plot_averages_runtimes(data):
     cha_vs_cha_dd_vs_spark = cha_vs_cha_dd.merge(spark_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod',
                                                                  'SeedClass'], how='outer')
     data = cha_vs_cha_dd_vs_spark.merge(spark_dd_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod',
-                                                            'SeedClass'],how='outer',suffixes=('_spark','_spark_dd'))
-    #Compute averages
+                                                           'SeedClass'], how='outer', suffixes=('_spark', '_spark_dd'))
+    # Compute averages
     averages = data[['AnalysisTimes_cha', 'AnalysisTimes_cha_dd',
-                                  'AnalysisTimes_spark', 'AnalysisTimes_spark_dd']].mean(axis=0)
+                    'AnalysisTimes_spark', 'AnalysisTimes_spark_dd']].mean(axis=0)
     makeBarPlot(averages, 'Average runtime in seconds', 'Plotting/Results/RuntimePerCGMode.pdf', 10, 0.4, 1)
     print()
 
@@ -70,18 +70,21 @@ def analyze_difference_in_seeds(raw_data):
     print("Seeds in Spark but not in CHA: ", merged[merged['_merge'] == 'right_only'].shape[0])
     merged = spark_seeds.merge(cha_dd_seeds, indicator=True, how='outer')
     print("Seeds in CHA but not in Spark: ", merged[merged['_merge'] == 'right_only'].shape[0])
-    #Uncomment next line to see what spark had that CHA didn't
-    #print(merged[merged['_merge'] == 'right_only'][['Rule','SeedStatement', 'SeedMethod', 'SeedClass']])
+    # Uncomment next line to see what spark had that CHA didn't
+    # print(merged[merged['_merge'] == 'right_only'][['Rule','SeedStatement', 'SeedMethod', 'SeedClass']])
     merged = spark_seeds.merge(cha_dd_seeds, indicator=True, how='inner')
     print("Seeds in both CHA and in Spark: ", merged.shape[0])
     print()
 
 
 def plot_runtime_curve(data):
-    cha_times = data[data['CallGraphMode']=='CHA']['AnalysisTimes'].sample(500).sort_values().reset_index(drop=True)
-    cha_dd_times = data[data['CallGraphMode']=='CHA_DD']['AnalysisTimes'].sample(500).sort_values().reset_index(drop=True)
-    spark_times = data[data['CallGraphMode']=='SPARK']['AnalysisTimes'].sample(500).sort_values().reset_index(drop=True)
-    spark_dd_times = data[data['CallGraphMode']=='SPARK_DD']['AnalysisTimes'].sample(500).sort_values().reset_index(drop=True)
+    cha_times = data[data['CallGraphMode'] == 'CHA']['AnalysisTimes'].sample(500).sort_values().reset_index(drop=True)
+    cha_dd_times = data[data['CallGraphMode'] == 'CHA_DD']['AnalysisTimes'].sample(500).sort_values().\
+        reset_index(drop=True)
+    spark_times = data[data['CallGraphMode'] == 'SPARK']['AnalysisTimes'].sample(500).sort_values()\
+        .reset_index(drop=True)
+    spark_dd_times = data[data['CallGraphMode'] == 'SPARK_DD']['AnalysisTimes'].sample(500).sort_values().\
+        reset_index(drop=True)
 
     plt.plot(cha_times, label='CHA')
     plt.plot(cha_dd_times, label='CHA DD')
@@ -93,7 +96,7 @@ def plot_runtime_curve(data):
 
     plt.legend()
     plt.tight_layout()
-    plt.savefig("Plotting/Results/RuntimeDistributionPerCGMode.pdf", dpi = 300)
+    plt.savefig("Plotting/Results/RuntimeDistributionPerCGMode.pdf", dpi=300)
     plt.close()
 
 
@@ -104,7 +107,7 @@ def analyze_difference_in_results(data):
     spark_errors = all_errors.query('CallGraphMode == "SPARK"')
     spark_dd_errors = all_errors.query('CallGraphMode == "SPARK_DD"')
 
-    #Compute absolute number of error per algorithm
+    # Compute absolute number of error per algorithm
     print("Total errors: ", all_errors.shape[0])
     print("Errors according to CHA: ", cha_errors.shape[0])
     print("Errors according to CHA DD: ", cha_dd_errors.shape[0])
@@ -114,9 +117,9 @@ def analyze_difference_in_results(data):
     errors_per_cgmode = all_errors[['CallGraphMode', 'Is_In_Error']].groupby('CallGraphMode').aggregate('sum')
     makeBarPlot(errors_per_cgmode, 'Detected errors', 'Plotting/Results/ErrorsPerCGMode.pdf', 10,  0.5, 1)
 
-    #Set number of errors in relation to runs
+    # Set number of errors in relation to runs
     runs = data[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('count')
-    errors_per_cgmode_normalized =  errors_per_cgmode['Is_In_Error']/runs['Timedout']
+    errors_per_cgmode_normalized = errors_per_cgmode['Is_In_Error']/runs['Timedout']
     ax = errors_per_cgmode_normalized.plot(kind='bar', rot=10, legend=False)
     for p in ax.patches:
         ax.annotate('{:.{prec}}'.format(p.get_height(), prec=2), (p.get_x() * 1 + 0.15, p.get_height() + 0.001))
@@ -189,12 +192,12 @@ def compare_result_details(data):
     all_data_per_seed.to_csv("Plotting/Results/SharedSeedsTimeoutsIncludedWithErrorsSimple.csv", sep=';')
 
     #Check if there is any error reported by demand-driven analysis and not by whole program analysis
-    all_data_per_seed = all_data_per_seed.loc[ ( (all_data_per_seed['Is_In_Error_cha'] == False) &
+    all_data_per_seed = all_data_per_seed.loc[((all_data_per_seed['Is_In_Error_cha'] == False) &
                                                (all_data_per_seed['Timedout_cha'] == False) &
                                                (all_data_per_seed['Is_In_Error_cha_dd'] == True ) |
-                                                 (all_data_per_seed['Is_In_Error_spark'] == False) &
-                                                 (all_data_per_seed['Timedout_spark'] == False) &
-                                                 (all_data_per_seed['Is_In_Error_spark_dd'] == True ) ) ]
+                                                (all_data_per_seed['Is_In_Error_spark'] == False) &
+                                                (all_data_per_seed['Timedout_spark'] == False) &
+                                                (all_data_per_seed['Is_In_Error_spark_dd'] == True ))]
     print("Seeds for which the whole program did not report errors and the demand-driven version did:",
           all_data_per_seed.shape[0])
     if(not all_data_per_seed.empty):
@@ -225,7 +228,7 @@ def main(dirname):
 
     plot_runtime_curve(data)
 
-    plot_averages_runtimes(data)
+    plot_averages_runtime(data)
 
     compare_result_details(data)
 
