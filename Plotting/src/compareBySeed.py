@@ -21,7 +21,7 @@ def plot_timeouts(data):
     if (timedout.empty):
         print("Data contains no timeouts.")
         return
-    print("Average time for timeout:", str(int((timedout[['AnalysisTimes']].mean()))))
+    print("Average time for runs with timeout in seconds:", str(int(((timedout[['AnalysisTimes']]/1000).mean()))))
     print("Number of runs that timed out:", timedout.shape[0])
     timeouts_per_cgmode = timedout[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('sum')
     makeBarPlot(timeouts_per_cgmode, 'Timed out analysis runs', 'TimeoutsPerCGMode.pdf')
@@ -31,8 +31,7 @@ def plot_timeouts(data):
 
     timeouts_per_rule_per_cg = timedout[['CallGraphMode','Rule', 'Timedout']].groupby(['CallGraphMode',
                                                                                        'Rule']).aggregate('sum')
-    makeBarPlot(timeouts_per_rule_per_cg, 'Timed out analysis runs', 'TimeoutsPerRulePerCGMode.pdf', rotation=90,
-                label_offset=0.1)
+    makeBarPlot(timeouts_per_rule_per_cg, 'Timed out analysis runs', 'TimeoutsPerRulePerCGMode.pdf', 90, 0.1)
     print()
 
 
@@ -51,15 +50,11 @@ def plot_averages_runtimes(data):
     cha_vs_cha_dd_vs_spark = cha_vs_cha_dd.merge(spark_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod',
                                                                  'SeedClass'], how='outer')
     data = cha_vs_cha_dd_vs_spark.merge(spark_dd_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod',
-                                                                        'SeedClass'],how='outer',suffixes=('_spark','_spark_dd'))
+                                                            'SeedClass'],how='outer',suffixes=('_spark','_spark_dd'))
     averages = data[['AnalysisTimes_cha', 'AnalysisTimes_cha_dd',
                                   'AnalysisTimes_spark', 'AnalysisTimes_spark_dd']].mean(axis=0)
     #Convert runtime to seconds
-    ax = averages.plot(kind='bar', rot=10)
-    ax.set_ylabel('Average runtime in seconds')
-    for p in ax.patches:
-        ax.annotate('{:.{prec}f}'.format(p.get_height(), prec=1), (p.get_x() * 1 + 0.15, p.get_height() * 1.005))
-    plt.savefig("RuntimePerCGMode.pdf", dpi = 300)
+    makeBarPlot(averages, 'Average runtime in seconds', 'RuntimePerCGMode.pdf', 10, 0.15)
     print()
 
 
@@ -98,6 +93,7 @@ def plot_runtime_curve(data):
     plt.legend()
     plt.tight_layout()
     plt.savefig("RuntimeDistributionPerCGMode.pdf", dpi = 300)
+    plt.close()
 
 
 def analyze_difference_in_results(data):
@@ -133,14 +129,14 @@ def analyze_difference_in_results(data):
 
     errors_per_rule_per_cg = all_errors[['CallGraphMode','Rule','Is_In_Error']].groupby(['CallGraphMode',
                                                                                  'Rule']).aggregate('sum')
-    makeBarPlot(errors_per_rule_per_cg, 'Detected errors', 'ErrorsPerRulePerCGMode.pdf',80, 0.05)
+    makeBarPlot(errors_per_rule_per_cg, 'Detected errors', 'ErrorsPerRulePerCGMode.pdf',90, 0.05)
     print()
 
 
-def makeBarPlot(data, ylabel, figurename, rotation=10, label_offset = 0.15):
+def makeBarPlot(data, ylabel, figurename, rotation=10, label_x_offset = 0.15, label_y_offset=0.001):
     ax = data.plot(kind='bar', rot=rotation, legend=False)
     for p in ax.patches:
-        ax.annotate(str(int(p.get_height())), (p.get_x() + label_offset, p.get_height() * 1.005))
+        ax.annotate(str(int(p.get_height())), (p.get_x() + label_x_offset, p.get_height() + label_y_offset))
     ax.set_ylabel(ylabel)
     plt.tight_layout()
     plt.savefig(figurename, dpi = 300)
