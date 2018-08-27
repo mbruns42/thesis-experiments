@@ -199,7 +199,7 @@ def compare_result_details(data):
                                                  (all_data_per_seed['Is_In_Error_spark_dd'] == True ) ) ]
     print("Seeds for which the whole program did not report errors and the demand-driven version did:",
           all_data_per_seed.shape[0])
-    if(all_data_per_seed.empty):
+    if(not all_data_per_seed.empty):
         all_data_per_seed.to_csv("SeedsDemandDrivenMoreErrors.csv", sep=';')
     print()
 
