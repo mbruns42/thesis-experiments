@@ -24,14 +24,15 @@ def plot_timeouts(data):
     print("Average time for runs with timeout in seconds:", str(int(((timedout[['AnalysisTimes']]/1000).mean()))))
     print("Number of runs that timed out:", timedout.shape[0])
     timeouts_per_cgmode = timedout[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('sum')
-    makeBarPlot(timeouts_per_cgmode, 'Timed out analysis runs', 'TimeoutsPerCGMode.pdf')
+    makeBarPlot(timeouts_per_cgmode, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerCGMode.pdf', 10, 0.35, 1)
 
     timeouts_per_rule = timedout[['Rule', 'Timedout']].groupby('Rule').aggregate('sum')
-    makeBarPlot(timeouts_per_rule, 'Timed out analysis runs', 'TimeoutsPerRule.pdf')
+    makeBarPlot(timeouts_per_rule, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerRule.pdf', 10, 0.35, 1)
 
     timeouts_per_rule_per_cg = timedout[['CallGraphMode','Rule', 'Timedout']].groupby(['CallGraphMode',
                                                                                        'Rule']).aggregate('sum')
-    makeBarPlot(timeouts_per_rule_per_cg, 'Timed out analysis runs', 'TimeoutsPerRulePerCGMode.pdf', 90, 0.1)
+    makeBarPlot(timeouts_per_rule_per_cg, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerRulePerCGMode.pdf',
+                90, 0.1)
     print()
 
 
@@ -51,10 +52,10 @@ def plot_averages_runtimes(data):
                                                                  'SeedClass'], how='outer')
     data = cha_vs_cha_dd_vs_spark.merge(spark_dd_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod',
                                                             'SeedClass'],how='outer',suffixes=('_spark','_spark_dd'))
+    #Compute averages
     averages = data[['AnalysisTimes_cha', 'AnalysisTimes_cha_dd',
                                   'AnalysisTimes_spark', 'AnalysisTimes_spark_dd']].mean(axis=0)
-    #Convert runtime to seconds
-    makeBarPlot(averages, 'Average runtime in seconds', 'RuntimePerCGMode.pdf', 10, 0.15)
+    makeBarPlot(averages, 'Average runtime in seconds', 'Plotting/Results/RuntimePerCGMode.pdf', 10, 0.4, 1)
     print()
 
 
@@ -92,7 +93,7 @@ def plot_runtime_curve(data):
 
     plt.legend()
     plt.tight_layout()
-    plt.savefig("RuntimeDistributionPerCGMode.pdf", dpi = 300)
+    plt.savefig("Plotting/Results/RuntimeDistributionPerCGMode.pdf", dpi = 300)
     plt.close()
 
 
@@ -111,32 +112,33 @@ def analyze_difference_in_results(data):
     print("Errors according to Spark DD: ", spark_dd_errors.shape[0])
 
     errors_per_cgmode = all_errors[['CallGraphMode', 'Is_In_Error']].groupby('CallGraphMode').aggregate('sum')
-    makeBarPlot(errors_per_cgmode, 'Detected errors', 'ErrorsPerCGMode.pdf')
+    makeBarPlot(errors_per_cgmode, 'Detected errors', 'Plotting/Results/ErrorsPerCGMode.pdf', 10,  0.5, 1)
 
     #Set number of errors in relation to runs
     runs = data[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('count')
     errors_per_cgmode_normalized =  errors_per_cgmode['Is_In_Error']/runs['Timedout']
     ax = errors_per_cgmode_normalized.plot(kind='bar', rot=10, legend=False)
     for p in ax.patches:
-        ax.annotate('{:.{prec}}'.format(p.get_height(), prec=2), (p.get_x() * 1 + 0.15, p.get_height() * 1.005))
+        ax.annotate('{:.{prec}}'.format(p.get_height(), prec=2), (p.get_x() * 1 + 0.15, p.get_height() + 0.001))
     ax.set_ylabel('Error detection rate in relation to runs')
     plt.tight_layout()
-    plt.savefig('ErrorsPerCGModeNormalized.pdf', dpi = 300)
+    plt.savefig('Plotting/Results/ErrorsPerCGModeNormalized.pdf', dpi = 300)
     plt.close()
 
     errors_per_rule = all_errors[['Rule', 'Is_In_Error']].groupby('Rule').aggregate('sum')
-    makeBarPlot(errors_per_rule, 'Detected errors', 'ErrorsPerRule.pdf')
+    makeBarPlot(errors_per_rule, 'Detected errors', 'Plotting/Results/ErrorsPerRule.pdf', 10, 0.4, 2)
 
     errors_per_rule_per_cg = all_errors[['CallGraphMode','Rule','Is_In_Error']].groupby(['CallGraphMode',
                                                                                  'Rule']).aggregate('sum')
-    makeBarPlot(errors_per_rule_per_cg, 'Detected errors', 'ErrorsPerRulePerCGMode.pdf',90, 0.05)
+    makeBarPlot(errors_per_rule_per_cg, 'Detected errors', 'Plotting/Results/ErrorsPerRulePerCGMode.pdf',90, 0.1)
     print()
 
 
 def makeBarPlot(data, ylabel, figurename, rotation=10, label_x_offset = 0.15, label_y_offset=0.001):
     ax = data.plot(kind='bar', rot=rotation, legend=False)
     for p in ax.patches:
-        ax.annotate(str(int(p.get_height())), (p.get_x() + label_x_offset, p.get_height() + label_y_offset))
+        ax.annotate(str(int(p.get_height())), (p.get_x() + (1/len(str(int(p.get_height()))))* label_x_offset,
+                                               p.get_height() + label_y_offset))
     ax.set_ylabel(ylabel)
     plt.tight_layout()
     plt.savefig(figurename, dpi = 300)
@@ -157,7 +159,7 @@ def compare_result_details(data):
     cha_vs_cha_dd_vs_spark = cha_vs_cha_dd.merge(spark_data, on=seed_columns, how='inner')
     all_data_per_seed = cha_vs_cha_dd_vs_spark.merge(spark_dd_data, on=seed_columns,how='inner',
                                                      suffixes=('_spark','_spark_dd'))
-    all_data_per_seed.to_csv("SharedSeedsNoTimeout.csv", sep=';')
+    all_data_per_seed.to_csv("Plotting/Results/SharedSeedsNoTimeout.csv", sep=';')
     print("Seeds for which all runs finished: ", all_data_per_seed.shape[0])
 
     # Include timeouts and compare shared seeds
@@ -169,7 +171,7 @@ def compare_result_details(data):
     cha_vs_cha_dd_vs_spark = cha_vs_cha_dd.merge(spark_data, on=seed_columns, how='inner')
     all_data_per_seed = cha_vs_cha_dd_vs_spark.merge(spark_dd_data, on=seed_columns,how='inner',
                                                      suffixes=('_spark','_spark_dd'))
-    all_data_per_seed.to_csv("SharedSeedsTimeoutsIncluded.csv", sep=';')
+    all_data_per_seed.to_csv("Plotting/Results/SharedSeedsTimeoutsIncluded.csv", sep=';')
     print("Seeds for which all algorithms started: ", all_data_per_seed.shape[0])
 
     #Report only values for which any of the algorithm actually found errors
@@ -177,14 +179,14 @@ def compare_result_details(data):
                                                 (all_data_per_seed['Is_In_Error_cha_dd'] == True) |
                                                 (all_data_per_seed['Is_In_Error_spark'] == True) |
                                                 (all_data_per_seed['Is_In_Error_spark_dd'] == True))]
-    all_data_per_seed.to_csv("SharedSeedsTimeoutsIncludedWithErrors.csv", sep=';')
+    all_data_per_seed.to_csv("Plotting/Results/SharedSeedsTimeoutsIncludedWithErrors.csv", sep=';')
     print("Seeds for which all algorithms started and some contain errors: ", all_data_per_seed.shape[0])
 
     #Store values from above again with subset of columns for easier readability
     all_data_per_seed = all_data_per_seed[['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass',
                                 'Timedout_cha', 'Timedout_cha_dd', 'Timedout_spark', 'Timedout_spark_dd',
                                 'Is_In_Error_cha', 'Is_In_Error_cha_dd', 'Is_In_Error_spark', 'Is_In_Error_spark_dd']]
-    all_data_per_seed.to_csv("SharedSeedsTimeoutsIncludedWithErrorsSimple.csv", sep=';')
+    all_data_per_seed.to_csv("Plotting/Results/SharedSeedsTimeoutsIncludedWithErrorsSimple.csv", sep=';')
 
     #Check if there is any error reported by demand-driven analysis and not by whole program analysis
     all_data_per_seed = all_data_per_seed.loc[ ( (all_data_per_seed['Is_In_Error_cha'] == False) &
@@ -196,7 +198,7 @@ def compare_result_details(data):
     print("Seeds for which the whole program did not report errors and the demand-driven version did:",
           all_data_per_seed.shape[0])
     if(not all_data_per_seed.empty):
-        all_data_per_seed.to_csv("SeedsDemandDrivenMoreErrors.csv", sep=';')
+        all_data_per_seed.to_csv("Plotting/Results//SeedsDemandDrivenMoreErrors.csv", sep=';')
     print()
 
 
