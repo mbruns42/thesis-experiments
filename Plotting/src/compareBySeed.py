@@ -30,18 +30,19 @@ def split_and_merge_data(data):
                                                             'SeedClass'],how='outer',suffixes=('_spark','_spark_dd'))
     print("Columns of final data: ", list(all_data_per_seed))
     print("Number of data rows in data merged by seed:", all_data_per_seed.shape[0])
+    print()
     return all_data_per_seed
 
 
 def plot_timeouts(data):
     over_ten_minutes = data.loc[data['AnalysisTimes']>600]
-    print("Over 10 minutes: ", over_ten_minutes.shape[0])
+    print("Runs that took over 10 minutes: ", over_ten_minutes.shape[0])
 
     timedout = data.loc[data['Timedout']]
-    print("Average time for timeout:", str(int((timedout[['AnalysisTimes']].mean()))))
     if (timedout.empty):
         print("Data contains no timeouts.")
         return
+    print("Average time for timeout:", str(int((timedout[['AnalysisTimes']].mean()))))
     print("Number of runs that timed out:", timedout.shape[0])
     timeouts_per_cgmode = timedout[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('sum')
     makeBarPlot(timeouts_per_cgmode, 'Timed out analysis runs', 'TimeoutsPerCGMode.pdf')
@@ -53,6 +54,8 @@ def plot_timeouts(data):
                                                                                        'Rule']).aggregate('sum')
     makeBarPlot(timeouts_per_rule_per_cg, 'Timed out analysis runs', 'TimeoutsPerRulePerCGMode.pdf', rotation=90,
                 label_offset=0.1)
+    print()
+
 
 
 def plot_averages_runtimes(data):
@@ -79,6 +82,9 @@ def analyze_difference_in_seeds(raw_data):
     print("Seeds in CHA but not in Spark: ", merged[merged['_merge'] == 'right_only'].shape[0])
     #Uncomment next line to see what spark had that CHA didn't
     #print(merged[merged['_merge'] == 'right_only'][['Rule','SeedStatement', 'SeedMethod', 'SeedClass']])
+    merged = spark_seeds.merge(cha_dd_seeds, indicator=True, how='inner')
+    print("Seeds in both CHA and in Spark: ", merged.shape[0])
+    print()
 
 
 def plot_runtime_curve(data):
@@ -133,6 +139,7 @@ def analyze_difference_in_results(data):
     errors_per_rule_per_cg = all_errors[['CallGraphMode','Rule','Is_In_Error']].groupby(['CallGraphMode',
                                                                                  'Rule']).aggregate('sum')
     makeBarPlot(errors_per_rule_per_cg, 'Detected errors', 'ErrorsPerRulePerCGMode.pdf',90, 0.05)
+    print()
 
 
 def makeBarPlot(data, ylabel, figurename, rotation=10, label_offset = 0.15):
@@ -166,7 +173,6 @@ def main(dirname):
     data['AnalysisTimes'] = data['AnalysisTimes'].clip(upper=600)
 
     plot_runtime_curve(data)
-    #data = data.query('Timedout == False')
 
     merged_data = split_and_merge_data(data)
 
