@@ -62,6 +62,22 @@ def parseResults(lines, bench, chaTimes, chaEdges, sparkTimes, sparkEdges):
             sparkTimes.append(int(match.group(3)))
             sparkEdges.append(int(match.group(4)))
 
+
+def compute_average_factors(chaEdges, chaTimes, sparkEdges, sparkTimes):
+    avgCHA = sum(chaEdges) / float(len(chaEdges))
+    print("Average number of CHA edges: ", avgCHA)
+    avgSpark = sum(sparkEdges) / float(len(sparkEdges))
+    print("Average number of Spark edges: ", avgSpark)
+    print("Factor of CHA edges to spark edges: ", (avgCHA/avgSpark))
+    print()
+    avgCHA = sum(chaTimes) / float(len(chaTimes))
+    print("Average runtime for CHA: ", avgCHA)
+    avgSpark = sum(sparkTimes) / float(len(sparkTimes))
+    print("Average runtime for Spark: ", avgSpark)
+    print("Factor of CHA runtime to spark runtime: ", (avgCHA/avgSpark))
+    print()
+
+
 def main(filename):
     with open(filename,'rb') as file:
         lines = file.readlines()
@@ -73,6 +89,7 @@ def main(filename):
 
     parseResults(lines, bench, chaTimes, chaEdges, sparkTimes, sparkEdges)
     plot(bench, chaEdges, chaTimes, sparkEdges, sparkTimes)
+    compute_average_factors(chaEdges, chaTimes, sparkEdges, sparkTimes)
     # This prints out a latex table with results
     for i in range(len(bench)):
         print(bench[i], " & ", "{:,}".format(chaTimes[i]), " & ", "{:,}".format(sparkTimes[i]), " & ",
