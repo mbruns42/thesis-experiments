@@ -183,11 +183,23 @@ def compare_result_details(data):
     all_data_per_seed.to_csv("SharedSeedsTimeoutsIncludedWithErrors.csv", sep=';')
     print("Seeds for which all algorithms started and some contain errors: ", all_data_per_seed.shape[0])
 
-    #Store values from aboce again with subset of columns for easier readability
+    #Store values from above again with subset of columns for easier readability
     all_data_per_seed = all_data_per_seed[['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass',
                                 'Timedout_cha', 'Timedout_cha_dd', 'Timedout_spark', 'Timedout_spark_dd',
                                 'Is_In_Error_cha', 'Is_In_Error_cha_dd', 'Is_In_Error_spark', 'Is_In_Error_spark_dd']]
     all_data_per_seed.to_csv("SharedSeedsTimeoutsIncludedWithErrorsSimple.csv", sep=';')
+
+    #Check if there is any error reported by demand-driven analysis and not by whole program analysis
+    all_data_per_seed = all_data_per_seed.loc[ ( (all_data_per_seed['Is_In_Error_cha'] == False) &
+                                               (all_data_per_seed['Timedout_cha'] == False) &
+                                               (all_data_per_seed['Is_In_Error_cha_dd'] == True ) |
+                                                 (all_data_per_seed['Is_In_Error_spark'] == False) &
+                                                 (all_data_per_seed['Timedout_spark'] == False) &
+                                                 (all_data_per_seed['Is_In_Error_spark_dd'] == True ) ) ]
+    print("Seeds for which the whole program did not report errors and the demand-driven version did:",
+          all_data_per_seed.shape[0])
+    if(all_data_per_seed.empty):
+        all_data_per_seed.to_csv("SeedsDemandDrivenMoreErrors.csv", sep=';')
     print()
 
 
