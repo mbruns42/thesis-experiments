@@ -13,27 +13,6 @@ def read_data(dirname):
             raw_df = raw_df.append(data_from_this_csv)
     return raw_df
 
-def split_and_merge_data(data):
-    cha_data = data[data['CallGraphMode'] == 'CHA'].drop(columns=['CallGraphMode'])
-    print("Number of CHA data rows:", cha_data.shape[0])
-    cha_dd_data = data[data['CallGraphMode'] == 'CHA_DD'].drop(columns=['CallGraphMode'])
-    print("Number of CHA DD data rows:", cha_dd_data.shape[0])
-    spark_data = data[data['CallGraphMode'] == 'SPARK'].drop(columns=['CallGraphMode'])
-    print("Number of SPARK data rows:", spark_data.shape[0])
-    spark_dd_data = data[data['CallGraphMode'] == 'SPARK_DD'].drop(columns=['CallGraphMode'])
-    print("Number of SPARK DD data rows:", spark_dd_data.shape[0])
-    cha_vs_cha_dd = cha_data.merge(cha_dd_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass'],
-                                   how='outer', suffixes=('_cha', '_cha_dd'))
-    cha_vs_cha_dd_vs_spark = cha_vs_cha_dd.merge(spark_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod',
-                                                                 'SeedClass'], how='outer')
-    all_data_per_seed = cha_vs_cha_dd_vs_spark.merge(spark_dd_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod',
-                                                            'SeedClass'],how='outer',suffixes=('_spark','_spark_dd'))
-    print("Columns of final data: ", list(all_data_per_seed))
-    print("Number of data rows in data merged by seed:", all_data_per_seed.shape[0])
-    print()
-    return all_data_per_seed
-
-
 def plot_timeouts(data):
     over_ten_minutes = data.loc[data['AnalysisTimes']>600]
     print("Runs that took over 10 minutes: ", over_ten_minutes.shape[0])
@@ -59,6 +38,20 @@ def plot_timeouts(data):
 
 
 def plot_averages_runtimes(data):
+    cha_data = data[data['CallGraphMode'] == 'CHA'].drop(columns=['CallGraphMode'])
+    print("Number of CHA data rows:", cha_data.shape[0])
+    cha_dd_data = data[data['CallGraphMode'] == 'CHA_DD'].drop(columns=['CallGraphMode'])
+    print("Number of CHA DD data rows:", cha_dd_data.shape[0])
+    spark_data = data[data['CallGraphMode'] == 'SPARK'].drop(columns=['CallGraphMode'])
+    print("Number of SPARK data rows:", spark_data.shape[0])
+    spark_dd_data = data[data['CallGraphMode'] == 'SPARK_DD'].drop(columns=['CallGraphMode'])
+    print("Number of SPARK DD data rows:", spark_dd_data.shape[0])
+    cha_vs_cha_dd = cha_data.merge(cha_dd_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass'],
+                                   how='outer', suffixes=('_cha', '_cha_dd'))
+    cha_vs_cha_dd_vs_spark = cha_vs_cha_dd.merge(spark_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod',
+                                                                 'SeedClass'], how='outer')
+    data = cha_vs_cha_dd_vs_spark.merge(spark_dd_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod',
+                                                                        'SeedClass'],how='outer',suffixes=('_spark','_spark_dd'))
     averages = data[['AnalysisTimes_cha', 'AnalysisTimes_cha_dd',
                                   'AnalysisTimes_spark', 'AnalysisTimes_spark_dd']].mean(axis=0)
     #Convert runtime to seconds
@@ -67,6 +60,7 @@ def plot_averages_runtimes(data):
     for p in ax.patches:
         ax.annotate('{:.{prec}f}'.format(p.get_height(), prec=1), (p.get_x() * 1 + 0.15, p.get_height() * 1.005))
     plt.savefig("RuntimePerCGMode.pdf", dpi = 300)
+    print()
 
 
 def analyze_difference_in_seeds(raw_data):
@@ -151,6 +145,48 @@ def makeBarPlot(data, ylabel, figurename, rotation=10, label_offset = 0.15):
     plt.savefig(figurename, dpi = 300)
     plt.close()
 
+
+def compare_result_details(data):
+    seed_columns = ['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass']
+    #Ignore timeouts and compare shared seeds
+    data_no_timeout = data.query('Timedout == False')
+    data_no_timeout = data_no_timeout.drop('Timedout', axis=1)
+    cha_data = data_no_timeout[data_no_timeout['CallGraphMode'] == 'CHA'].drop(columns=['CallGraphMode'])
+    cha_dd_data = data_no_timeout[data_no_timeout['CallGraphMode'] == 'CHA_DD'].drop(columns=['CallGraphMode'])
+    spark_data = data_no_timeout[data_no_timeout['CallGraphMode'] == 'SPARK'].drop(columns=['CallGraphMode'])
+    spark_dd_data = data_no_timeout[data_no_timeout['CallGraphMode'] == 'SPARK_DD'].drop(columns=['CallGraphMode'])
+    cha_vs_cha_dd = cha_data.merge(cha_dd_data, on=seed_columns, how='inner', suffixes=('_cha', '_cha_dd'))
+    cha_vs_cha_dd_vs_spark = cha_vs_cha_dd.merge(spark_data, on=seed_columns, how='inner')
+    all_data_per_seed = cha_vs_cha_dd_vs_spark.merge(spark_dd_data, on=seed_columns,how='inner',
+                                                     suffixes=('_spark','_spark_dd'))
+    all_data_per_seed.to_csv("SharedSeedsNoTimeout.csv", sep=';')
+    print("Seeds for which all runs finished: ", all_data_per_seed.shape[0])
+
+    cha_data = data[data['CallGraphMode'] == 'CHA'].drop(columns=['CallGraphMode'])
+    cha_dd_data = data[data['CallGraphMode'] == 'CHA_DD'].drop(columns=['CallGraphMode'])
+    spark_data = data[data['CallGraphMode'] == 'SPARK'].drop(columns=['CallGraphMode'])
+    spark_dd_data = data[data['CallGraphMode'] == 'SPARK_DD'].drop(columns=['CallGraphMode'])
+    cha_vs_cha_dd = cha_data.merge(cha_dd_data, on=seed_columns, how='inner', suffixes=('_cha', '_cha_dd'))
+    cha_vs_cha_dd_vs_spark = cha_vs_cha_dd.merge(spark_data, on=seed_columns, how='inner')
+    all_data_per_seed = cha_vs_cha_dd_vs_spark.merge(spark_dd_data, on=seed_columns,how='inner',
+                                                     suffixes=('_spark','_spark_dd'))
+    all_data_per_seed.to_csv("SharedSeedsTimeoutsIncluded.csv", sep=';')
+    print("Seeds for which all algorithms started: ", all_data_per_seed.shape[0])
+
+    all_data_per_seed = all_data_per_seed.loc[( (all_data_per_seed['Is_In_Error_cha'] == True) |
+                                                (all_data_per_seed['Is_In_Error_cha_dd'] == True) |
+                                                (all_data_per_seed['Is_In_Error_spark'] == True) |
+                                                (all_data_per_seed['Is_In_Error_spark_dd'] == True))]
+    all_data_per_seed.to_csv("SharedSeedsTimeoutsIncludedWithErrors.csv", sep=';')
+
+    print("Seeds for which all algorithms started and some contain errors: ", all_data_per_seed.shape[0])
+    all_data_per_seed = all_data_per_seed[['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass',
+                                'Timedout_cha', 'Timedout_cha_dd', 'Timedout_spark', 'Timedout_spark_dd',
+                                'Is_In_Error_cha', 'Is_In_Error_cha_dd', 'Is_In_Error_spark', 'Is_In_Error_spark_dd']]
+    all_data_per_seed.to_csv("SharedSeedsTimeoutsIncludedWithErrorsSimple.csv", sep=';')
+    print()
+
+
 def main(dirname):
     #Option to see the printed output more easily
     pd.set_option('display.width', 250)
@@ -174,9 +210,9 @@ def main(dirname):
 
     plot_runtime_curve(data)
 
-    merged_data = split_and_merge_data(data)
+    plot_averages_runtimes(data)
 
-    plot_averages_runtimes(merged_data)
+    compare_result_details(data)
 
 
 if __name__== "__main__":
