@@ -121,7 +121,7 @@ def analyze_difference_in_results(data):
     errors_per_cgmode_normalized =  errors_per_cgmode['Is_In_Error']/runs_no_timeout['Timedout']
     ax = errors_per_cgmode_normalized.plot(kind='bar', rot=10, legend=False)
     for p in ax.patches:
-        ax.annotate('{:.{prec}}'.format(p.get_height(), prec=2), (p.get_x() * 1 + 0.15, p.get_height() * 1.005))
+        ax.annotate('{:.{prec}}'.format(p.get_height(), prec=3), (p.get_x() * 1 + 0.15, p.get_height() * 1.005))
     ax.set_ylabel('Error detection rate for non-timedout runs')
     plt.tight_layout()
     plt.savefig('ErrorsPerCGModeNormalized.pdf', dpi = 300)
