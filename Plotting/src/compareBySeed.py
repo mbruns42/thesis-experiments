@@ -107,6 +107,7 @@ def analyze_difference_in_results(data):
     spark_errors = all_errors.query('CallGraphMode == "SPARK"')
     spark_dd_errors = all_errors.query('CallGraphMode == "SPARK_DD"')
 
+    #Compute absolute number of error per algorithm
     print("Total errors: ", all_errors.shape[0])
     print("Errors according to CHA: ", cha_errors.shape[0])
     print("Errors according to CHA DD: ", cha_dd_errors.shape[0])
@@ -116,13 +117,13 @@ def analyze_difference_in_results(data):
     errors_per_cgmode = all_errors[['CallGraphMode', 'Is_In_Error']].groupby('CallGraphMode').aggregate('sum')
     makeBarPlot(errors_per_cgmode, 'Detected errors', 'ErrorsPerCGMode.pdf')
 
-    runs_no_timeout = data.query('Timedout == False')[['CallGraphMode', 'Timedout']].groupby('CallGraphMode')\
-                                                                                                .aggregate('count')
-    errors_per_cgmode_normalized =  errors_per_cgmode['Is_In_Error']/runs_no_timeout['Timedout']
+    #Set number of errors in relation to runs
+    runs = data[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('count')
+    errors_per_cgmode_normalized =  errors_per_cgmode['Is_In_Error']/runs['Timedout']
     ax = errors_per_cgmode_normalized.plot(kind='bar', rot=10, legend=False)
     for p in ax.patches:
-        ax.annotate('{:.{prec}}'.format(p.get_height(), prec=3), (p.get_x() * 1 + 0.15, p.get_height() * 1.005))
-    ax.set_ylabel('Error detection rate for non-timedout runs')
+        ax.annotate('{:.{prec}}'.format(p.get_height(), prec=2), (p.get_x() * 1 + 0.15, p.get_height() * 1.005))
+    ax.set_ylabel('Error detection rate in relation to runs')
     plt.tight_layout()
     plt.savefig('ErrorsPerCGModeNormalized.pdf', dpi = 300)
     plt.close()
@@ -132,14 +133,14 @@ def analyze_difference_in_results(data):
 
     errors_per_rule_per_cg = all_errors[['CallGraphMode','Rule','Is_In_Error']].groupby(['CallGraphMode',
                                                                                  'Rule']).aggregate('sum')
-    makeBarPlot(errors_per_rule_per_cg, 'Detected errors', 'ErrorsPerRulePerCGMode.pdf',90, 0.05)
+    makeBarPlot(errors_per_rule_per_cg, 'Detected errors', 'ErrorsPerRulePerCGMode.pdf',80, 0.05)
     print()
 
 
 def makeBarPlot(data, ylabel, figurename, rotation=10, label_offset = 0.15):
     ax = data.plot(kind='bar', rot=rotation, legend=False)
     for p in ax.patches:
-        ax.annotate(str(int(p.get_height())), (p.get_x() * 1 + label_offset, p.get_height() * 1.005))
+        ax.annotate(str(int(p.get_height())), (p.get_x() + label_offset, p.get_height() * 1.005))
     ax.set_ylabel(ylabel)
     plt.tight_layout()
     plt.savefig(figurename, dpi = 300)
