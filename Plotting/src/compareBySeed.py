@@ -148,7 +148,8 @@ def makeBarPlot(data, ylabel, figurename, rotation=10, label_offset = 0.15):
 
 def compare_result_details(data):
     seed_columns = ['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass']
-    #Ignore timeouts and compare shared seeds
+
+    #Ignore timeout runs and compare seeds for which all runs finished
     data_no_timeout = data.query('Timedout == False')
     data_no_timeout = data_no_timeout.drop('Timedout', axis=1)
     cha_data = data_no_timeout[data_no_timeout['CallGraphMode'] == 'CHA'].drop(columns=['CallGraphMode'])
@@ -162,6 +163,7 @@ def compare_result_details(data):
     all_data_per_seed.to_csv("SharedSeedsNoTimeout.csv", sep=';')
     print("Seeds for which all runs finished: ", all_data_per_seed.shape[0])
 
+    # Include timeouts and compare shared seeds
     cha_data = data[data['CallGraphMode'] == 'CHA'].drop(columns=['CallGraphMode'])
     cha_dd_data = data[data['CallGraphMode'] == 'CHA_DD'].drop(columns=['CallGraphMode'])
     spark_data = data[data['CallGraphMode'] == 'SPARK'].drop(columns=['CallGraphMode'])
@@ -173,13 +175,15 @@ def compare_result_details(data):
     all_data_per_seed.to_csv("SharedSeedsTimeoutsIncluded.csv", sep=';')
     print("Seeds for which all algorithms started: ", all_data_per_seed.shape[0])
 
+    #Report only values for which any of the algorithm actually found errors
     all_data_per_seed = all_data_per_seed.loc[( (all_data_per_seed['Is_In_Error_cha'] == True) |
                                                 (all_data_per_seed['Is_In_Error_cha_dd'] == True) |
                                                 (all_data_per_seed['Is_In_Error_spark'] == True) |
                                                 (all_data_per_seed['Is_In_Error_spark_dd'] == True))]
     all_data_per_seed.to_csv("SharedSeedsTimeoutsIncludedWithErrors.csv", sep=';')
-
     print("Seeds for which all algorithms started and some contain errors: ", all_data_per_seed.shape[0])
+
+    #Store values from aboce again with subset of columns for easier readability
     all_data_per_seed = all_data_per_seed[['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass',
                                 'Timedout_cha', 'Timedout_cha_dd', 'Timedout_spark', 'Timedout_spark_dd',
                                 'Is_In_Error_cha', 'Is_In_Error_cha_dd', 'Is_In_Error_spark', 'Is_In_Error_spark_dd']]
