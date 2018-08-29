@@ -66,14 +66,13 @@ def analyze_difference_in_seeds(raw_data):
                                                                   'SeedMethod', 'SeedClass']]
     print("Total seeds in CHA: ", cha_dd_seeds.shape[0])
     print("Total seeds in Spark: ", spark_seeds.shape[0])
+
     merged = cha_dd_seeds.merge(spark_seeds, indicator=True, how='outer')
     print("Seeds in Spark but not in CHA: ", merged[merged['_merge'] == 'right_only'].shape[0])
-    merged = spark_seeds.merge(cha_dd_seeds, indicator=True, how='outer')
-    print("Seeds in CHA but not in Spark: ", merged[merged['_merge'] == 'right_only'].shape[0])
+    print("Seeds in CHA but not in Spark: ", merged[merged['_merge'] == 'left_only'].shape[0])
     # Uncomment next line to see what spark had that CHA didn't
     # print(merged[merged['_merge'] == 'right_only'][['Rule','SeedStatement', 'SeedMethod', 'SeedClass']])
-    merged = spark_seeds.merge(cha_dd_seeds, indicator=True, how='inner')
-    print("Seeds in both CHA and in Spark: ", merged.shape[0])
+    print("Seeds in both CHA and in Spark: ", merged[merged['_merge'] == 'both'].shape[0])
     print()
 
 
