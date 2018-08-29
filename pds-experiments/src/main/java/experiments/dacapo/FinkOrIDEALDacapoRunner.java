@@ -1,7 +1,6 @@
 package experiments.dacapo;
 
 import java.io.File;
-import java.util.regex.Pattern;
 
 public class FinkOrIDEALDacapoRunner extends SootSceneSetupDacapo {
 
@@ -23,9 +22,6 @@ public class FinkOrIDEALDacapoRunner extends SootSceneSetupDacapo {
         if (analysis == null)
             throw new RuntimeException("Add -Danalysis to JVM arguments");
         String rule = System.getProperty("rule");
-        if (Pattern.matches("PipedInputStream|InputStreamCloseThenRead|OutputStreamCloseThenWrite|PipedOutputStream|PrintStream|PrintWriter", rule)) {
-            rule = "IO";
-        }
         System.setProperty("ruleIdentifier", rule);
         String outputDirectory = "outputDacapo";
         File outputDir = new File(outputDirectory);

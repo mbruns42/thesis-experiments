@@ -34,6 +34,10 @@ import java.util.concurrent.TimeUnit;
 
 public class IDEALRunner extends SootSceneSetupDacapo {
 
+    private IDEALAnalysis<TransitionFunction> analysis;
+    private String outputFile;
+    private static int seedNumber=0;
+
     public IDEALRunner(String benchmarkFolder, String benchFolder, String callGraphMode) {
         super(benchmarkFolder, benchFolder, callGraphMode);
     }
@@ -106,6 +110,7 @@ public class IDEALRunner extends SootSceneSetupDacapo {
                         @Override
                         public void report(WeightedForwardQuery<TransitionFunction> seed,
                                            ForwardBoomerangResults<TransitionFunction> res) {
+                            seedNumber++;
                             File file = new File(outputFile);
                             boolean fileExisted = file.exists();
                             FileWriter writer;
@@ -149,10 +154,6 @@ public class IDEALRunner extends SootSceneSetupDacapo {
         return null;
     }
 
-    private IDEALAnalysis<TransitionFunction> analysis;
-    private String outputFile;
-    private static int seedNumber=0;
-
     public void run(final String outputFile) {
 
         G.v().reset();
@@ -187,7 +188,6 @@ public class IDEALRunner extends SootSceneSetupDacapo {
     private String asCSVLine(WeightedForwardQuery<TransitionFunction> key,
                              ForwardBoomerangResults<TransitionFunction> forwardBoomerangResults,
                              String callGraphDebuggerCSV) {
-        seedNumber++;
         String analysis = "ideal";
         String rule = System.getProperty("ruleIdentifier");
         String seedString = key.toString();
