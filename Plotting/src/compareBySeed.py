@@ -3,6 +3,7 @@ import sys
 
 import matplotlib.pyplot as plt
 import pandas as pd
+from matplotlib_venn import venn2
 
 
 def read_data(dirname):
@@ -68,11 +69,26 @@ def analyze_difference_in_seeds(raw_data):
     print("Total seeds in Spark: ", spark_seeds.shape[0])
 
     merged = cha_dd_seeds.merge(spark_seeds, indicator=True, how='outer')
-    print("Seeds in Spark but not in CHA: ", merged[merged['_merge'] == 'right_only'].shape[0])
-    print("Seeds in CHA but not in Spark: ", merged[merged['_merge'] == 'left_only'].shape[0])
+    chaOnly = merged[merged['_merge'] == 'left_only'].shape[0]
+    sparkOnly = merged[merged['_merge'] == 'right_only'].shape[0]
+    print("Seeds in CHA but not in Spark: ", chaOnly)
+    print("Seeds in Spark but not in CHA: ", sparkOnly)
     # Uncomment next line to see what spark had that CHA didn't
     # print(merged[merged['_merge'] == 'right_only'][['Rule','SeedStatement', 'SeedMethod', 'SeedClass']])
-    print("Seeds in both CHA and in Spark: ", merged[merged['_merge'] == 'both'].shape[0])
+    seedsBoth = merged[merged['_merge'] == 'both'].shape[0]
+    print("Seeds in both CHA and in Spark: ", seedsBoth)
+
+    venn2(subsets = (cha_dd_seeds.shape[0], spark_seeds.shape[0], seedsBoth),
+          set_labels = ('Seeds found by CHA', 'Seeds found by Spark'))
+    plt.savefig("Plotting/Results/SeedsVennDiagram.pdf", dpi=300)
+    plt.close()
+    p1 = plt.bar([1,2], [seedsBoth, seedsBoth], tick_label=['CHA', 'SPARK'])
+    p2 = plt.bar([1,2], [chaOnly,sparkOnly], bottom=[seedsBoth, seedsBoth])
+    plt.legend((p1[0], p2[0]), ('Found by both', 'Found only by one'))
+    plt.ylabel('Number of seeds found')
+    plt.tight_layout()
+    plt.savefig("Plotting/Results/SeedsByCallGraphMode.pdf", dpi=300)
+    plt.close()
     print()
 
 
