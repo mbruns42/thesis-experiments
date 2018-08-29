@@ -194,7 +194,7 @@ public class IDEALRunner extends SootSceneSetupDacapo {
         Stmt seedStmt = key.stmt().getUnit().get();
         SootMethod seedMethod = key.stmt().getMethod();
         SootClass seedClass = seedMethod.getDeclaringClass();
-        boolean isInErrorState = isInErrorState(key, forwardBoomerangResults);
+        boolean isInErrorState = isInErrorState(forwardBoomerangResults);
         boolean isTimedout = getAnalysis().isTimedout(key);
         long analysisTime = getAnalysis().getAnalysisTime(key).elapsed(TimeUnit.MILLISECONDS);
         int propagationCount = forwardBoomerangResults.getStats().getForwardReachesNodes().size();
@@ -209,8 +209,8 @@ public class IDEALRunner extends SootSceneSetupDacapo {
                 usedMemory, callGraphDebuggerCSV);
     }
 
-    private boolean isInErrorState(WeightedForwardQuery<TransitionFunction> key, ForwardBoomerangResults<TransitionFunction> forwardBoomerangResults) {
-        Table<Statement, Val, TransitionFunction> objectDestructingStatements = forwardBoomerangResults.getObjectDestructingStatements();
+    private boolean isInErrorState(ForwardBoomerangResults<TransitionFunction> forwardBoomerangResults) {
+        Table<Statement, Val, TransitionFunction> objectDestructingStatements = forwardBoomerangResults.asStatementValWeightTable();
         for (Table.Cell<Statement, Val, TransitionFunction> c : objectDestructingStatements.cellSet()) {
             for (ITransition t : c.getValue().values()) {
                 if (t.to() != null) {
