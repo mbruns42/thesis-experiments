@@ -25,14 +25,14 @@ def plot_timeouts(data):
         return
     print("Average time for runs with timeout in seconds:", str(int(((timedout[['AnalysisTimes']]/1000).mean()))))
     print("Number of runs that timed out:", timedout.shape[0])
-    timeouts_per_cgmode = timedout[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('sum')
+    timeouts_per_cgmode = timedout[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('count')
     makeBarPlot(timeouts_per_cgmode, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerCGMode.pdf', 10, 0.35, 1)
 
-    timeouts_per_rule = timedout[['Rule', 'Timedout']].groupby('Rule').aggregate('sum')
+    timeouts_per_rule = timedout[['Rule', 'Timedout']].groupby('Rule').aggregate('count')
     makeBarPlot(timeouts_per_rule, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerRule.pdf', 10, 0.35, 1)
 
     timeouts_per_rule_per_cg = timedout[['CallGraphMode', 'Rule', 'Timedout']].groupby(['CallGraphMode',
-                                                                                       'Rule']).aggregate('sum')
+                                                                                       'Rule']).aggregate('count')
     makeBarPlot(timeouts_per_rule_per_cg, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerRulePerCGMode.pdf',
                 90, 0.1)
     print()
@@ -129,7 +129,7 @@ def analyze_difference_in_results(data):
     print("Errors according to Spark: ", spark_errors.shape[0])
     print("Errors according to Spark DD: ", spark_dd_errors.shape[0])
 
-    errors_per_cgmode = all_errors[['CallGraphMode', 'Is_In_Error']].groupby('CallGraphMode').aggregate('sum')
+    errors_per_cgmode = all_errors[['CallGraphMode', 'Is_In_Error']].groupby('CallGraphMode').aggregate('count')
     makeBarPlot(errors_per_cgmode, 'Detected errors', 'Plotting/Results/ErrorsPerCGMode.pdf', 10,  0.5, 1)
 
     # Set number of errors in relation to runs, second column does not matter
@@ -143,11 +143,11 @@ def analyze_difference_in_results(data):
     plt.savefig('Plotting/Results/ErrorsPerCGModeNormalized.pdf', dpi = 300)
     plt.close()
 
-    errors_per_rule = all_errors[['Rule', 'Is_In_Error']].groupby('Rule').aggregate('sum')
+    errors_per_rule = all_errors[['Rule', 'Is_In_Error']].groupby('Rule').aggregate('count')
     makeBarPlot(errors_per_rule, 'Detected errors', 'Plotting/Results/ErrorsPerRule.pdf', 10, 0.4, 2)
 
     errors_per_rule_per_cg = all_errors[['CallGraphMode','Rule','Is_In_Error']].groupby(['CallGraphMode',
-                                                                                 'Rule']).aggregate('sum')
+                                                                                 'Rule']).aggregate('count')
     makeBarPlot(errors_per_rule_per_cg, 'Detected errors', 'Plotting/Results/ErrorsPerRulePerCGMode.pdf',90, 0.1)
     print()
 
