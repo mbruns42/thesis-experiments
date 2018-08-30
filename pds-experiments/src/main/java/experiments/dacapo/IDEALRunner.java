@@ -100,7 +100,7 @@ public class IDEALRunner extends SootSceneSetupDacapo {
                 public Debugger<TransitionFunction> debugger(IDEALSeedSolver<TransitionFunction> solver) {
                     String dotFileName = outputFile.replace(".csv", ".dot");
                     File dotFile = new File(dotFileName);
-                    callGraphDebugger =  new CallGraphDebugger(dotFile, icfg().getCallGraphCopy(), icfg);
+                    callGraphDebugger =  new CallGraphDebugger(dotFile, icfg);
                     return callGraphDebugger;
                 }
 
