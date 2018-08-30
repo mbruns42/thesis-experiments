@@ -42,24 +42,22 @@ def plot_timeouts(data):
     if timedout.empty:
         print("Data contains no timeouts.")
         return
-    print("Average time for runs with timeout in seconds:", str(int(((timedout[['AnalysisTimes']]).mean()))))
-    print("Number of runs that timed out:", timedout.shape[0])
     timeouts_per_cgmode = timedout[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('count')
-    make_bar_plot(timeouts_per_cgmode, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerCGMode.pdf', 10)
+    make_bar_plot(timeouts_per_cgmode, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerCGMode.pdf', 0)
 
     timeouts_per_rule = timedout[['Rule', 'Timedout']].groupby('Rule').aggregate('count')
-    make_bar_plot(timeouts_per_rule, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerRule.pdf', 10)
+    make_bar_plot(timeouts_per_rule, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerRule.pdf', 0)
 
     timeouts_per_rule_per_cg = timedout[['CallGraphMode', 'Rule', 'Timedout']].groupby(['CallGraphMode',
                                                                                         'Rule']).aggregate('count')
     make_bar_plot(timeouts_per_rule_per_cg.unstack(0), 'Timed out analysis runs', 'Plotting/Results/'
-                                                                                  'TimeoutsPerRulePerCGMode.pdf', 10)
+                                                                                  'TimeoutsPerRulePerCGMode.pdf', 0)
     print()
 
 
 def plot_averages_runtime(data):
     averages = data[['AnalysisTimes', 'CallGraphMode']].groupby('CallGraphMode').agg('mean')
-    make_bar_plot(averages, 'Average runtime in seconds', 'Plotting/Results/RuntimePerCGMode.pdf', 10, 1)
+    make_bar_plot(averages, 'Average runtime in seconds', 'Plotting/Results/RuntimePerCGMode.pdf', 0, 1)
     print()
 
 
@@ -138,7 +136,7 @@ def analyze_errors(data):
     # Set number of errors in relation to runs, second column does not matter
     runs = data[['CallGraphMode', 'Seed']].groupby('CallGraphMode').aggregate('count')
     errors_per_cgmode_normalized = errors_per_cgmode['Is_In_Error'] / runs['Seed']
-    ax = errors_per_cgmode_normalized.plot(kind='bar', rot=10, legend=False)
+    ax = errors_per_cgmode_normalized.plot(kind='bar', rot=0, legend=False)
     for p in ax.patches:
         autolabel(ax, p, 2)
     ax.set_ylabel('Error detection rate in relation to runs')
@@ -234,11 +232,6 @@ def print_performance_correlations(data):
     print("Spark DD corr", data[data['CallGraphMode'] == 'SPARK_DD'][columns].corr(), "\n")
 
 def plot_performance_correlations(data):
-    data[data['CallGraphMode'] == 'SPARK_DD'][['AnalysisTimes', ' edgesFromPrecomputed']].plot(kind='scatter',
-                                                                                               x=' edgesFromPrecomputed', y='AnalysisTimes')
-    plt.savefig("Plotting/Results/CorrelationEdgesFromPrecomputedSparkDD.pdf", dpi=300)
-    plt.close()
-
     corr = data[['AnalysisTimes', ' edgesFromPrecomputed', 'CallGraphMode']]
     ax1 = corr[corr['CallGraphMode'] == 'CHA'].plot(kind='scatter', x=' edgesFromPrecomputed', y='AnalysisTimes',
                                                     color='C0', logx=True, logy=True)
@@ -282,9 +275,10 @@ def main(dirname):
                                 keep=False)
 
     # Convert times to seconds and limit maximum analysis time to 10 minutes as this was our timeout
+    data['AnalysisTimes'] = data['AnalysisTimes'] / 1000
     over_ten_minutes = data.loc[data['AnalysisTimes'] > 600]
     print("Runs that took over 10 minutes: ", over_ten_minutes.shape[0])
-    data['AnalysisTimes'] = data['AnalysisTimes'] / 1000
+    print("Average time for runs with timeout in seconds:", str(int(((over_ten_minutes[['AnalysisTimes']]).mean()))))
     data['AnalysisTimes'] = data['AnalysisTimes'].clip(upper=600)
 
     # Seeds
