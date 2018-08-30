@@ -24,18 +24,19 @@ def autolabel(ax, rects, xpos='center'):
 
     for rect in rects:
         height = rect.get_height()
-        ax.text(rect.get_x() + rect.get_width()*offset[xpos], 1.0*height,
+        ax.text(rect.get_x() + rect.get_width() * offset[xpos], 1.0 * height,
                 '{:,}'.format(height), ha=ha[xpos], va='bottom', fontsize=10)
 
-def plot(bench, chaEdges, chaTimes, sparkEdges, sparkTimes):
+
+def plot(bench, cha_edges, cha_times, spark_edges, spark_times):
     """ Makes the bar chart and stores it to a high-res pdf
     """
     ind = np.arange(len(bench))  # the x locations for the groups
     width = 0.35  # the width of the bars
 
     fig, ax = plt.subplots()
-    bar1 = ax.bar(ind - width/2, chaTimes, width, color='C0', label='CHA')
-    bar2 = ax.bar(ind + width/2, sparkTimes, width, color='C2', label='Spark')
+    bar1 = ax.bar(ind - width / 2, cha_times, width, color='C0', label='CHA')
+    bar2 = ax.bar(ind + width / 2, spark_times, width, color='C2', label='Spark')
     ax.set_ylabel('Runtime in milliseconds')
     ax.set_xticks(ind)
     ax.set_xticklabels(bench)
@@ -43,12 +44,12 @@ def plot(bench, chaEdges, chaTimes, sparkEdges, sparkTimes):
     ax.legend()
     autolabel(ax, bar1)
     autolabel(ax, bar2)
-    plt.savefig("Results/CallGraphRuntimes.pdf", dpi = 300)
+    plt.savefig("Results/CallGraphRuntimes.pdf", dpi=300)
     plt.close()
     fig, ax = plt.subplots()
 
-    bar1 = ax.bar(ind - width/2, chaTimes, width, color='C0', label='CHA')
-    bar2 = ax.bar(ind + width/2, sparkTimes, width, color='C2', label='Spark')
+    bar1 = ax.bar(ind - width / 2, cha_edges, width, color='C0', label='CHA')
+    bar2 = ax.bar(ind + width / 2, spark_edges, width, color='C2', label='Spark')
     ax.set_ylabel('Number of Edges')
     ax.set_xticks(ind)
     ax.set_xticklabels(bench)
@@ -56,57 +57,58 @@ def plot(bench, chaEdges, chaTimes, sparkEdges, sparkTimes):
     ax.legend()
     autolabel(ax, bar1)
     autolabel(ax, bar2)
-    plt.savefig("Results/CallGraphEdges.pdf", dpi = 300)
+    plt.savefig("Results/CallGraphEdges.pdf", dpi=300)
     plt.close()
 
-def parseResults(lines, bench, chaTimes, chaEdges, sparkTimes, sparkEdges):
+
+def parse_results(lines, bench, cha_times, cha_edges, spark_times, spark_edges):
     for line in lines:
-        line =  line.decode(encoding="utf-8", errors="strict")
+        line = line.decode(encoding="utf-8", errors="strict")
         match = re.match("! (\w+),(\w+),(\d+),(\d+)", line)
         # Skip lines not detailing desired metrics
         if match is None:
             continue
         if match.group(1) == 'CHA':
             bench.append(match.group(2))
-            chaTimes.append(int(match.group(3)))
-            chaEdges.append(int(match.group(4)))
+            cha_times.append(int(match.group(3)))
+            cha_edges.append(int(match.group(4)))
         if match.group(1) == 'SPARK':
-            sparkTimes.append(int(match.group(3)))
-            sparkEdges.append(int(match.group(4)))
+            spark_times.append(int(match.group(3)))
+            spark_edges.append(int(match.group(4)))
 
 
-def compute_average_factors(chaEdges, chaTimes, sparkEdges, sparkTimes):
-    avgCHA = sum(chaEdges) / float(len(chaEdges))
-    print("Average number of CHA edges: ", avgCHA)
-    avgSpark = sum(sparkEdges) / float(len(sparkEdges))
-    print("Average number of Spark edges: ", avgSpark)
-    print("Factor of CHA edges to spark edges: ", (avgCHA/avgSpark))
+def compute_average_factors(cha_edges, cha_times, spark_edges, spark_times):
+    avg_cha = sum(cha_edges) / float(len(cha_edges))
+    print("Average number of CHA edges: ", avg_cha)
+    avg_spark = sum(spark_edges) / float(len(spark_edges))
+    print("Average number of Spark edges: ", avg_spark)
+    print("Factor of CHA edges to spark edges: ", (avg_cha / avg_spark))
     print()
-    avgCHA = sum(chaTimes) / float(len(chaTimes))
-    print("Average runtime for CHA: ", avgCHA)
-    avgSpark = sum(sparkTimes) / float(len(sparkTimes))
-    print("Average runtime for Spark: ", avgSpark)
-    print("Factor of CHA runtime to spark runtime: ", (avgCHA/avgSpark))
+    avg_cha = sum(cha_times) / float(len(cha_times))
+    print("Average runtime for CHA: ", avg_cha)
+    avg_spark = sum(spark_times) / float(len(spark_times))
+    print("Average runtime for Spark: ", avg_spark)
+    print("Factor of CHA runtime to spark runtime: ", (avg_cha / avg_spark))
     print()
 
 
 def main(filename):
-    with open(filename,'rb') as file:
+    with open(filename, 'rb') as file:
         lines = file.readlines()
     bench = []
-    chaTimes = []
-    chaEdges = []
-    sparkTimes = []
-    sparkEdges = []
+    cha_times = []
+    cha_edges = []
+    spark_times = []
+    spark_edges = []
 
-    parseResults(lines, bench, chaTimes, chaEdges, sparkTimes, sparkEdges)
-    plot(bench, chaEdges, chaTimes, sparkEdges, sparkTimes)
-    compute_average_factors(chaEdges, chaTimes, sparkEdges, sparkTimes)
+    parse_results(lines, bench, cha_times, cha_edges, spark_times, spark_edges)
+    plot(bench, cha_edges, cha_times, spark_edges, spark_times)
+    compute_average_factors(cha_edges, cha_times, spark_edges, spark_times)
     # This prints out a latex table with results
     for i in range(len(bench)):
-        print(bench[i], " & ", "{:,}".format(chaTimes[i]), " & ", "{:,}".format(sparkTimes[i]), " & ",
-              "{:,}".format(chaEdges[i]), " & ", "{:,}".format(sparkEdges[i]), "\\\\")
+        print(bench[i], " & ", "{:,}".format(cha_times[i]), " & ", "{:,}".format(spark_times[i]), " & ",
+              "{:,}".format(cha_edges[i]), " & ", "{:,}".format(spark_edges[i]), "\\\\")
 
 
-if __name__== "__main__":
+if __name__ == "__main__":
     main(sys.argv[1])
