@@ -15,6 +15,28 @@ def read_data(dirname):
     return raw_df
 
 
+def autolabel(ax, rect, precision, xpos='center'):
+    """ Writes the value the bar represents on top of the bar. Can be configured to arrange it to the left or right
+        by passing the strings 'left' or 'right' as the xpos parameter. Labeling in the center of the bar is default.
+    """
+    xpos = xpos.lower()  # normalize the case of the parameter
+    ha = {'center': 'center', 'right': 'left', 'left': 'right'}
+    offset = {'center': 0.5, 'right': 0.57, 'left': 0.43}  # x_txt = x + w*off
+    height = rect.get_height()
+    ax.text(rect.get_x() + rect.get_width() * offset[xpos], 1.0 * height,
+            '{:.{prec}f}'.format(height, prec=precision), ha=ha[xpos], va='bottom', fontsize=10)
+
+
+def make_bar_plot(data, ylabel, figurename, rotation=10, precision=0, log_y=False):
+    ax = data.plot(kind='bar', rot=rotation, legend=False, logy=log_y)
+    for p in ax.patches:
+        autolabel(ax, p, precision)
+    ax.set_ylabel(ylabel)
+    plt.tight_layout()
+    plt.savefig(figurename, dpi=300)
+    plt.close()
+
+
 def plot_timeouts(data):
     timedout = data.loc[data['Timedout']]
     if timedout.empty:
@@ -23,21 +45,21 @@ def plot_timeouts(data):
     print("Average time for runs with timeout in seconds:", str(int(((timedout[['AnalysisTimes']]).mean()))))
     print("Number of runs that timed out:", timedout.shape[0])
     timeouts_per_cgmode = timedout[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('count')
-    make_bar_plot(timeouts_per_cgmode, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerCGMode.pdf', 10, 0.35, 1)
+    make_bar_plot(timeouts_per_cgmode, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerCGMode.pdf', 10)
 
     timeouts_per_rule = timedout[['Rule', 'Timedout']].groupby('Rule').aggregate('count')
-    make_bar_plot(timeouts_per_rule, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerRule.pdf', 10, 0.35, 1)
+    make_bar_plot(timeouts_per_rule, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerRule.pdf', 10)
 
     timeouts_per_rule_per_cg = timedout[['CallGraphMode', 'Rule', 'Timedout']].groupby(['CallGraphMode',
                                                                                         'Rule']).aggregate('count')
     make_bar_plot(timeouts_per_rule_per_cg.unstack(0), 'Timed out analysis runs', 'Plotting/Results/'
-                                                                                  'TimeoutsPerRulePerCGMode.pdf', 90, 0)
+                                                                                  'TimeoutsPerRulePerCGMode.pdf', 10)
     print()
 
 
 def plot_averages_runtime(data):
     averages = data[['AnalysisTimes', 'CallGraphMode']].groupby('CallGraphMode').agg('mean')
-    make_bar_plot(averages, 'Average runtime in seconds', 'Plotting/Results/RuntimePerCGMode.pdf', 10, 0.4, 1)
+    make_bar_plot(averages, 'Average runtime in seconds', 'Plotting/Results/RuntimePerCGMode.pdf', 10, 1)
     print()
 
 
@@ -111,38 +133,27 @@ def analyze_errors(data):
     print("Errors according to Spark DD: ", spark_dd_errors.shape[0])
 
     errors_per_cgmode = all_errors[['CallGraphMode', 'Is_In_Error']].groupby('CallGraphMode').aggregate('count')
-    make_bar_plot(errors_per_cgmode, 'Detected errors', 'Plotting/Results/ErrorsPerCGMode.pdf', 10, 0.5, 1)
+    make_bar_plot(errors_per_cgmode, 'Detected errors', 'Plotting/Results/ErrorsPerCGMode.pdf', 10)
 
     # Set number of errors in relation to runs, second column does not matter
     runs = data[['CallGraphMode', 'Seed']].groupby('CallGraphMode').aggregate('count')
     errors_per_cgmode_normalized = errors_per_cgmode['Is_In_Error'] / runs['Seed']
     ax = errors_per_cgmode_normalized.plot(kind='bar', rot=10, legend=False)
     for p in ax.patches:
-        ax.annotate('{:.{prec}}'.format(p.get_height(), prec=2), (p.get_x() * 1 + 0.15, p.get_height() + 0.001))
+        autolabel(ax, p, 2)
     ax.set_ylabel('Error detection rate in relation to runs')
     plt.tight_layout()
     plt.savefig('Plotting/Results/ErrorsPerCGModeNormalized.pdf', dpi=300)
     plt.close()
 
     errors_per_rule = all_errors[['Rule', 'Is_In_Error']].groupby('Rule').aggregate('count')
-    make_bar_plot(errors_per_rule, 'Detected errors', 'Plotting/Results/ErrorsPerRule.pdf', 10, 0.4, 2)
+    make_bar_plot(errors_per_rule, 'Detected errors', 'Plotting/Results/ErrorsPerRule.pdf', 10)
 
     errors_per_rule_per_cg = all_errors[['CallGraphMode', 'Rule', 'Is_In_Error']].groupby(['CallGraphMode',
                                                                                            'Rule']).aggregate('count')
     make_bar_plot(errors_per_rule_per_cg.unstack(0), 'Detected errors', 'Plotting/Results/ErrorsPerRulePerCGMode.pdf',
-                  90, 0)
+                  90)
     print()
-
-
-def make_bar_plot(data, ylabel, figurename, rotation=10, label_x_offset=0.15, label_y_offset=0.001, log_y=False):
-    ax = data.plot(kind='bar', rot=rotation, legend=False, logy=log_y)
-    for p in ax.patches:
-        ax.annotate(str(int(p.get_height())), (p.get_x() + (1 / len(str(int(p.get_height())))) * label_x_offset,
-                                               p.get_height() + label_y_offset))
-    ax.set_ylabel(ylabel)
-    plt.tight_layout()
-    plt.savefig(figurename, dpi=300)
-    plt.close()
 
 
 def export_result_details_to_csv(data):
