@@ -118,8 +118,8 @@ public class IDEALRunner extends SootSceneSetupDacapo {
                                 writer = new FileWriter(file, true);
                                 if (!fileExisted)
                                     writer.write(
-                                            "Analysis;Rule;Seed;SeedStatement;SeedMethod;SeedClass;SeedNumber;" +
-                                                    "CallGraphMode;Is_In_Error;Timedout;AnalysisTimes;" +
+                                            "Analysis;Rule;Bench;Seed;SeedStatement;SeedMethod;SeedClass;" +
+                                                    "SeedNumber;CallGraphMode;Is_In_Error;Timedout;AnalysisTimes;" +
                                                     "PropagationCount;VisitedMethod;ReachableMethods;CallRecursion;" +
                                                     "FieldLoop;MaxMemory;"+
                                                     callGraphDebugger.getCsvHeader() + "\n");
@@ -203,9 +203,9 @@ public class IDEALRunner extends SootSceneSetupDacapo {
         boolean containsCallLoop = forwardBoomerangResults.containsCallRecursion();
         boolean containsFieldLoop = forwardBoomerangResults.containsFieldLoop();
         long usedMemory = forwardBoomerangResults.getMaxMemory();
-        return String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\n", analysis, rule, seedString,
-                seedStmt, seedMethod, seedClass, seedNumber, callGraphMode, isInErrorState, isTimedout, analysisTime,
-                propagationCount, visitedMethods, reachableMethods, containsCallLoop, containsFieldLoop,
+        return String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\n", analysis, rule, project,
+                seedString, seedStmt, seedMethod, seedClass, seedNumber, callGraphMode, isInErrorState, isTimedout,
+                analysisTime, propagationCount, visitedMethods, reachableMethods, containsCallLoop, containsFieldLoop,
                 usedMemory, callGraphDebuggerCSV);
     }
 
