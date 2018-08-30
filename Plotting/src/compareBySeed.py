@@ -30,8 +30,8 @@ def plot_timeouts(data):
 
     timeouts_per_rule_per_cg = timedout[['CallGraphMode', 'Rule', 'Timedout']].groupby(['CallGraphMode',
                                                                                        'Rule']).aggregate('count')
-    makeBarPlot(timeouts_per_rule_per_cg, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerRulePerCGMode.pdf',
-                90, 0.1)
+    makeBarPlot(timeouts_per_rule_per_cg.unstack(0), 'Timed out analysis runs',
+                'Plotting/Results/TimeoutsPerRulePerCGMode.pdf', 90, 0)
     print()
 
 
@@ -145,7 +145,8 @@ def analyze_errors(data):
 
     errors_per_rule_per_cg = all_errors[['CallGraphMode','Rule','Is_In_Error']].groupby(['CallGraphMode',
                                                                                  'Rule']).aggregate('count')
-    makeBarPlot(errors_per_rule_per_cg, 'Detected errors', 'Plotting/Results/ErrorsPerRulePerCGMode.pdf',90, 0.1)
+    makeBarPlot(errors_per_rule_per_cg.unstack(0), 'Detected errors', 'Plotting/Results/ErrorsPerRulePerCGMode.pdf',
+                90, 0)
     print()
 
 
