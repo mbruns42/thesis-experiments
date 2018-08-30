@@ -150,8 +150,8 @@ def analyze_errors(data):
     print()
 
 
-def makeBarPlot(data, ylabel, figurename, rotation=10, label_x_offset = 0.15, label_y_offset=0.001):
-    ax = data.plot(kind='bar', rot=rotation, legend=False)
+def makeBarPlot(data, ylabel, figurename, rotation=10, label_x_offset = 0.15, label_y_offset=0.001, log_y=False):
+    ax = data.plot(kind='bar', rot=rotation, legend=False, logy=log_y)
     for p in ax.patches:
         ax.annotate(str(int(p.get_height())), (p.get_x() + (1/len(str(int(p.get_height()))))* label_x_offset,
                                                p.get_height() + label_y_offset))
@@ -223,8 +223,7 @@ def plot_graph_sizes(data):
     not_timedout = data.loc[~data['Timedout']]
     avg_edges = not_timedout[['CallGraphMode', 'numOfEdgesInCallGraph']].groupby('CallGraphMode').agg('mean')
     #avg_edges = avg_edges[['numOfEdgesInCallGraph']].unstack(0)
-    makeBarPlot(avg_edges, 'Average number of edges', 'Plotting/Results/EdgesPerCGMode.pdf')
-
+    makeBarPlot(avg_edges, 'Average number of edges', 'Plotting/Results/EdgesPerCGMode.pdf', log_y=True)
 
 
 def main(dirname):
