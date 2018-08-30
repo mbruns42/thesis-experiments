@@ -16,9 +16,6 @@ def read_data(dirname):
 
 
 def plot_timeouts(data):
-    over_ten_minutes = data.loc[data['AnalysisTimes'] > 600]
-    print("Runs that took over 10 minutes: ", over_ten_minutes.shape[0])
-
     timedout = data.loc[data['Timedout']]
     if timedout.empty:
         print("Data contains no timeouts.")
@@ -60,7 +57,7 @@ def plot_averages_runtime(data):
     print()
 
 
-def analyze_difference_in_seeds(raw_data):
+def analyze_seeds(raw_data):
     cha_dd_seeds = raw_data[raw_data['CallGraphMode'] == 'CHA_DD'][['Rule', 'Seed', 'SeedStatement',
                                                                     'SeedMethod', 'SeedClass']]
     spark_seeds = raw_data[raw_data['CallGraphMode'] == 'SPARK'][['Rule', 'Seed', 'SeedStatement',
@@ -115,7 +112,7 @@ def plot_runtime_curve(data):
     plt.close()
 
 
-def analyze_difference_in_results(data):
+def analyze_errors(data):
     all_errors = data.loc[data['Is_In_Error']]
     cha_errors = all_errors.query('CallGraphMode == "CHA"')
     cha_dd_errors = all_errors.query('CallGraphMode == "CHA_DD"')
@@ -163,7 +160,7 @@ def makeBarPlot(data, ylabel, figurename, rotation=10, label_x_offset = 0.15, la
     plt.close()
 
 
-def compare_result_details(data):
+def export_result_details_to_csv(data):
     seed_columns = ['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass']
 
     #Ignore timeout runs and compare seeds for which all runs finished
@@ -216,8 +213,17 @@ def compare_result_details(data):
     print("Seeds for which the whole program did not report errors and the demand-driven version did:",
           all_data_per_seed.shape[0])
     if(not all_data_per_seed.empty):
-        all_data_per_seed.to_csv("Plotting/Results//SeedsDemandDrivenMoreErrors.csv", sep=';')
+        all_data_per_seed.to_csv("Plotting/Results/SeedsDemandDrivenMoreErrors.csv", sep=';')
     print()
+
+def plot_graph_sizes(data):
+    # Exclude timedout runs. Might give unfair advantage to demand driven since size might be smaller
+    # However might be more advantageous for CHA since that might have timed out less for smaller graphs
+    not_timedout = data.loc[~data['Timedout']]
+    avg_edges = not_timedout[['CallGraphMode', 'numOfEdgesInCallGraph']].groupby('CallGraphMode').agg('mean')
+    #avg_edges = avg_edges[['numOfEdgesInCallGraph']].unstack(0)
+    makeBarPlot(avg_edges, 'Average number of edges', 'Plotting/Results/EdgesPerCGMode.pdf')
+
 
 
 def main(dirname):
@@ -229,23 +235,32 @@ def main(dirname):
 
     #Drop columns without useful information. Analysis always says "ideal" and there is an emtpy column
     data = raw_data.drop(columns=['Analysis', 'Unnamed: 26'])
+    print(list(data))
 
     #Drop rows of which duplicates of seeds and call graph mode exist (those are not analysis of actual benchmarks)
     data = data.drop_duplicates(subset= ['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass',
                                                     'CallGraphMode'], keep=False)
-    plot_timeouts(data)
-    analyze_difference_in_seeds(data)
-    analyze_difference_in_results(data)
 
     #Convert times to seconds and limit maximum analysis time to 10 minutes as this was our timeout
+    over_ten_minutes = data.loc[data['AnalysisTimes'] > 600]
+    print("Runs that took over 10 minutes: ", over_ten_minutes.shape[0])
     data['AnalysisTimes'] = data['AnalysisTimes']/1000
     data['AnalysisTimes'] = data['AnalysisTimes'].clip(upper=600)
 
-    plot_runtime_curve(data)
+    #Seeds
+    analyze_seeds(data)
 
+    #Runtime and timeouts
+    plot_timeouts(data)
+    plot_runtime_curve(data)
     plot_averages_runtime(data)
 
-    compare_result_details(data)
+    #Precision
+    analyze_errors(data)
+    export_result_details_to_csv(data)
+
+    #Demand-driven call graph performance
+    plot_graph_sizes(data)
 
 
 if __name__== "__main__":
