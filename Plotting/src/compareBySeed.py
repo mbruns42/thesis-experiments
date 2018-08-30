@@ -36,23 +36,7 @@ def plot_timeouts(data):
 
 
 def plot_averages_runtime(data):
-    cha_data = data[data['CallGraphMode'] == 'CHA'].drop(columns=['CallGraphMode'])
-    print("Number of CHA data rows:", cha_data.shape[0])
-    cha_dd_data = data[data['CallGraphMode'] == 'CHA_DD'].drop(columns=['CallGraphMode'])
-    print("Number of CHA DD data rows:", cha_dd_data.shape[0])
-    spark_data = data[data['CallGraphMode'] == 'SPARK'].drop(columns=['CallGraphMode'])
-    print("Number of SPARK data rows:", spark_data.shape[0])
-    spark_dd_data = data[data['CallGraphMode'] == 'SPARK_DD'].drop(columns=['CallGraphMode'])
-    print("Number of SPARK DD data rows:", spark_dd_data.shape[0])
-    cha_vs_cha_dd = cha_data.merge(cha_dd_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass'],
-                                   how='outer', suffixes=('_cha', '_cha_dd'))
-    cha_vs_cha_dd_vs_spark = cha_vs_cha_dd.merge(spark_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod',
-                                                                 'SeedClass'], how='outer')
-    data = cha_vs_cha_dd_vs_spark.merge(spark_dd_data, on=['Rule', 'Seed', 'SeedStatement', 'SeedMethod',
-                                                           'SeedClass'], how='outer', suffixes=('_spark', '_spark_dd'))
-    # Compute averages
-    averages = data[['AnalysisTimes_cha', 'AnalysisTimes_cha_dd',
-                     'AnalysisTimes_spark', 'AnalysisTimes_spark_dd']].mean(axis=0)
+    averages = data[['AnalysisTimes', 'CallGraphMode']].groupby('CallGraphMode').agg('mean')
     make_bar_plot(averages, 'Average runtime in seconds', 'Plotting/Results/RuntimePerCGMode.pdf', 10, 0.4, 1)
     print()
 
@@ -246,26 +230,26 @@ def plot_performance_correlations(data):
 
     corr = data[['AnalysisTimes', ' edgesFromPrecomputed', 'CallGraphMode']]
     ax1 = corr[corr['CallGraphMode'] == 'CHA'].plot(kind='scatter', x=' edgesFromPrecomputed', y='AnalysisTimes',
-                                                    color='blue', logx=True, logy=True)
+                                                    color='C0', logx=True, logy=True)
     ax2 = corr[corr['CallGraphMode'] == 'CHA_DD'].plot(kind='scatter', x=' edgesFromPrecomputed', y='AnalysisTimes',
-                                                       color='orange', ax=ax1, logx=True, logy=True)
+                                                       color='C1', ax=ax1, logx=True, logy=True)
     ax3 = corr[corr['CallGraphMode'] == 'SPARK'].plot(kind='scatter', x=' edgesFromPrecomputed', y='AnalysisTimes',
-                                                      color='green', ax=ax2, logx=True, logy=True)
+                                                      color='C2', ax=ax2, logx=True, logy=True)
     corr[corr['CallGraphMode'] == 'SPARK_DD'].plot(kind='scatter', x=' edgesFromPrecomputed', y='AnalysisTimes',
-                                                   color='red', ax=ax3, logx=True, logy=True)
+                                                   color='C3', ax=ax3, logx=True, logy=True)
     plt.xlabel("Edges from precomputed call graph")
     plt.ylabel("Analysis Time in seconds")
     plt.savefig("Plotting/Results/CorrelationEdgesFromPrecomputedToRuntime.pdf", dpi=300)
 
     corr = data[['AnalysisTimes', 'numOfEdgesInCallGraph', 'CallGraphMode']]
     ax1 = corr[corr['CallGraphMode'] == 'CHA'].plot(kind='scatter', x='numOfEdgesInCallGraph', y='AnalysisTimes',
-                                                    color='blue', logx=True, logy=True)
+                                                    color='C0', logx=True, logy=True)
     ax2 = corr[corr['CallGraphMode'] == 'CHA_DD'].plot(kind='scatter', x='numOfEdgesInCallGraph', y='AnalysisTimes',
-                                                       color='orange', ax=ax1, logx=True, logy=True)
+                                                       color='C1', ax=ax1, logx=True, logy=True)
     ax3 = corr[corr['CallGraphMode'] == 'SPARK'].plot(kind='scatter', x='numOfEdgesInCallGraph', y='AnalysisTimes',
-                                                      color='green', ax=ax2, logx=True, logy=True)
+                                                      color='C2', ax=ax2, logx=True, logy=True)
     corr[corr['CallGraphMode'] == 'SPARK_DD'].plot(kind='scatter', x='numOfEdgesInCallGraph', y='AnalysisTimes',
-                                                   color='red', ax=ax3, logx=True, logy=True)
+                                                   color='C3', ax=ax3, logx=True, logy=True)
     plt.xlabel("Edges in call graph")
     plt.ylabel("Analysis Time in seconds")
     plt.savefig("Plotting/Results/CorrelationNumberEdgesToRuntime.pdf", dpi=300)
