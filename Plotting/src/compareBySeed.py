@@ -165,7 +165,7 @@ def export_result_details_to_csv(data):
     seed_columns = ['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass']
 
     # Ignore timeout runs and compare seeds for which all runs finished
-    data_no_timeout = data.query('Timedout is False')
+    data_no_timeout = data.query('Timedout == False')
     data_no_timeout = data_no_timeout.drop('Timedout', axis=1)
     cha_data = data_no_timeout[data_no_timeout['CallGraphMode'] == 'CHA'].drop(columns=['CallGraphMode'])
     cha_dd_data = data_no_timeout[data_no_timeout['CallGraphMode'] == 'CHA_DD'].drop(columns=['CallGraphMode'])
@@ -191,10 +191,10 @@ def export_result_details_to_csv(data):
     print("Seeds for which all algorithms started: ", all_data_per_seed.shape[0])
 
     # Report only values for which any of the algorithm actually found errors
-    all_data_per_seed = all_data_per_seed.loc[((all_data_per_seed['Is_In_Error_cha'] is True) |
-                                               (all_data_per_seed['Is_In_Error_cha_dd'] is True) |
-                                               (all_data_per_seed['Is_In_Error_spark'] is True) |
-                                               (all_data_per_seed['Is_In_Error_spark_dd'] is True))]
+    all_data_per_seed = all_data_per_seed.loc[((all_data_per_seed['Is_In_Error_cha'] == True) |
+                                               (all_data_per_seed['Is_In_Error_cha_dd'] == True) |
+                                               (all_data_per_seed['Is_In_Error_spark'] == True) |
+                                               (all_data_per_seed['Is_In_Error_spark_dd'] == True))]
     all_data_per_seed.to_csv("Plotting/Results/SharedSeedsTimeoutsIncludedWithErrors.csv", sep=';')
     print("Seeds for which all algorithms started and some contain errors: ", all_data_per_seed.shape[0])
 
@@ -206,12 +206,12 @@ def export_result_details_to_csv(data):
     all_data_per_seed.to_csv("Plotting/Results/SharedSeedsTimeoutsIncludedWithErrorsSimple.csv", sep=';')
 
     # Check if there is any error reported by demand-driven analysis and not by whole program analysis
-    all_data_per_seed = all_data_per_seed.loc[((all_data_per_seed['Is_In_Error_cha'] is False) &
-                                               (all_data_per_seed['Timedout_cha'] is False) &
-                                               (all_data_per_seed['Is_In_Error_cha_dd'] is True) |
-                                               (all_data_per_seed['Is_In_Error_spark'] is False) &
-                                               (all_data_per_seed['Timedout_spark'] is False) &
-                                               (all_data_per_seed['Is_In_Error_spark_dd'] is True))]
+    all_data_per_seed = all_data_per_seed.loc[((all_data_per_seed['Is_In_Error_cha'] == False) &
+                                               (all_data_per_seed['Timedout_cha'] == False) &
+                                               (all_data_per_seed['Is_In_Error_cha_dd'] == True) |
+                                               (all_data_per_seed['Is_In_Error_spark'] == False) &
+                                               (all_data_per_seed['Timedout_spark'] == False) &
+                                               (all_data_per_seed['Is_In_Error_spark_dd'] == True))]
     print("Seeds for which the whole program did not report errors and the demand-driven version did:",
           all_data_per_seed.shape[0])
     if not all_data_per_seed.empty:
@@ -229,6 +229,46 @@ def plot_graph_sizes(data):
 
     # TODO: Make stacked bar plot per bench
     # TODO: Make stacked bar plot with predecessors
+
+
+def print_performance_correlations(data):
+    columns = ['AnalysisTimes', ' edgesFromPrecomputed','avgNumOfPredecessors', 'numOfEdgesInCallGraph']
+    print("CHA corr", data[data['CallGraphMode'] == 'CHA'][columns].corr(), "\n")
+    print("CHA DD corr", data[data['CallGraphMode'] == 'CHA_DD'][columns].corr(), "\n")
+    print("Spark corr", data[data['CallGraphMode'] == 'SPARK'][columns].corr(), "\n")
+    print("Spark DD corr", data[data['CallGraphMode'] == 'SPARK_DD'][columns].corr(), "\n")
+
+def plot_performance_correlations(data):
+    data[data['CallGraphMode'] == 'SPARK_DD'][['AnalysisTimes', ' edgesFromPrecomputed']].plot(kind='scatter',
+                                                                                               x=' edgesFromPrecomputed', y='AnalysisTimes')
+    plt.savefig("Plotting/Results/CorrelationEdgesFromPrecomputedSparkDD.pdf", dpi=300)
+    plt.close()
+
+    corr = data[['AnalysisTimes', ' edgesFromPrecomputed', 'CallGraphMode']]
+    ax1 = corr[corr['CallGraphMode'] == 'CHA'].plot(kind='scatter', x=' edgesFromPrecomputed', y='AnalysisTimes',
+                                                    color='blue', logx=True, logy=True)
+    ax2 = corr[corr['CallGraphMode'] == 'CHA_DD'].plot(kind='scatter', x=' edgesFromPrecomputed', y='AnalysisTimes',
+                                                       color='orange', ax=ax1, logx=True, logy=True)
+    ax3 = corr[corr['CallGraphMode'] == 'SPARK'].plot(kind='scatter', x=' edgesFromPrecomputed', y='AnalysisTimes',
+                                                      color='green', ax=ax2, logx=True, logy=True)
+    corr[corr['CallGraphMode'] == 'SPARK_DD'].plot(kind='scatter', x=' edgesFromPrecomputed', y='AnalysisTimes',
+                                                   color='red', ax=ax3, logx=True, logy=True)
+    plt.xlabel("Edges from precomputed call graph")
+    plt.ylabel("Analysis Time in seconds")
+    plt.savefig("Plotting/Results/CorrelationEdgesFromPrecomputedToRuntime.pdf", dpi=300)
+
+    corr = data[['AnalysisTimes', 'numOfEdgesInCallGraph', 'CallGraphMode']]
+    ax1 = corr[corr['CallGraphMode'] == 'CHA'].plot(kind='scatter', x='numOfEdgesInCallGraph', y='AnalysisTimes',
+                                                    color='blue', logx=True, logy=True)
+    ax2 = corr[corr['CallGraphMode'] == 'CHA_DD'].plot(kind='scatter', x='numOfEdgesInCallGraph', y='AnalysisTimes',
+                                                       color='orange', ax=ax1, logx=True, logy=True)
+    ax3 = corr[corr['CallGraphMode'] == 'SPARK'].plot(kind='scatter', x='numOfEdgesInCallGraph', y='AnalysisTimes',
+                                                      color='green', ax=ax2, logx=True, logy=True)
+    corr[corr['CallGraphMode'] == 'SPARK_DD'].plot(kind='scatter', x='numOfEdgesInCallGraph', y='AnalysisTimes',
+                                                   color='red', ax=ax3, logx=True, logy=True)
+    plt.xlabel("Edges in call graph")
+    plt.ylabel("Analysis Time in seconds")
+    plt.savefig("Plotting/Results/CorrelationNumberEdgesToRuntime.pdf", dpi=300)
 
 
 def main(dirname):
@@ -266,15 +306,8 @@ def main(dirname):
 
     # Demand-driven call graph performance
     plot_graph_sizes(data)
-    # TODO: Correlation precomputed and size of call graph
-    # TODO: Correlation call graph size and runtime
-    # TODO: Correlation ratio from precomputed and runtime
-
-    # TODO: Correlation average predecessors and runtime
-    # TODO: Correlation average predecessors and call graph size
-    # TODO: Correlation average predecessors in WP and call graph size
-    # TODO: Correlation average predecessors in WP and call graph size
-
+    print_performance_correlations(data)
+    plot_performance_correlations(data)
 
 
 if __name__ == "__main__":
