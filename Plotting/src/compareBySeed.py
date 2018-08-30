@@ -227,6 +227,9 @@ def plot_graph_sizes(data):
 
     make_bar_plot(avg_edges, 'Average number of edges', 'Plotting/Results/EdgesPerCGMode.pdf', log_y=True)
 
+    # TODO: Make stacked bar plot per bench
+    # TODO: Make stacked bar plot with predecessors
+
 
 def main(dirname):
     # Option to see the printed output more easily
@@ -263,6 +266,15 @@ def main(dirname):
 
     # Demand-driven call graph performance
     plot_graph_sizes(data)
+    # TODO: Correlation precomputed and size of call graph
+    # TODO: Correlation call graph size and runtime
+    # TODO: Correlation ratio from precomputed and runtime
+
+    # TODO: Correlation average predecessors and runtime
+    # TODO: Correlation average predecessors and call graph size
+    # TODO: Correlation average predecessors in WP and call graph size
+    # TODO: Correlation average predecessors in WP and call graph size
+
 
 
 if __name__ == "__main__":
