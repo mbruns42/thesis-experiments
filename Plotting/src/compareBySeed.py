@@ -132,9 +132,9 @@ def analyze_difference_in_results(data):
     errors_per_cgmode = all_errors[['CallGraphMode', 'Is_In_Error']].groupby('CallGraphMode').aggregate('sum')
     makeBarPlot(errors_per_cgmode, 'Detected errors', 'Plotting/Results/ErrorsPerCGMode.pdf', 10,  0.5, 1)
 
-    # Set number of errors in relation to runs
-    runs = data[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('count')
-    errors_per_cgmode_normalized = errors_per_cgmode['Is_In_Error']/runs['Timedout']
+    # Set number of errors in relation to runs, second column does not matter
+    runs = data[['CallGraphMode', 'Seed']].groupby('CallGraphMode').aggregate('count')
+    errors_per_cgmode_normalized = errors_per_cgmode['Is_In_Error']/runs['Seed']
     ax = errors_per_cgmode_normalized.plot(kind='bar', rot=10, legend=False)
     for p in ax.patches:
         ax.annotate('{:.{prec}}'.format(p.get_height(), prec=2), (p.get_x() * 1 + 0.15, p.get_height() + 0.001))
