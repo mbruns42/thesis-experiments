@@ -20,7 +20,7 @@ def plot_timeouts(data):
     if timedout.empty:
         print("Data contains no timeouts.")
         return
-    print("Average time for runs with timeout in seconds:", str(int(((timedout[['AnalysisTimes']]/1000).mean()))))
+    print("Average time for runs with timeout in seconds:", str(int(((timedout[['AnalysisTimes']]).mean()))))
     print("Number of runs that timed out:", timedout.shape[0])
     timeouts_per_cgmode = timedout[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('count')
     makeBarPlot(timeouts_per_cgmode, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerCGMode.pdf', 10, 0.35, 1)
