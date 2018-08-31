@@ -62,14 +62,20 @@ def plot_averages_runtime(data):
 
 
 def analyze_seeds(raw_data):
-    cha_dd_seeds = raw_data[raw_data['CallGraphMode'] == 'CHA_DD'][['Rule', 'Seed', 'SeedStatement',
+    cha_seeds = raw_data[raw_data['CallGraphMode'] == 'CHA'][['Rule', 'Seed', 'SeedStatement',
                                                                     'SeedMethod', 'SeedClass']]
     spark_seeds = raw_data[raw_data['CallGraphMode'] == 'SPARK'][['Rule', 'Seed', 'SeedStatement',
+                                                                    'SeedMethod', 'SeedClass']]
+    cha_dd_seeds = raw_data[raw_data['CallGraphMode'] == 'CHA_DD'][['Rule', 'Seed', 'SeedStatement',
+                                                                    'SeedMethod', 'SeedClass']]
+    spark_dd_seeds = raw_data[raw_data['CallGraphMode'] == 'SPARK_DD'][['Rule', 'Seed', 'SeedStatement',
                                                                   'SeedMethod', 'SeedClass']]
-    print("Total seeds in CHA: ", cha_dd_seeds.shape[0])
+    print("Total seeds in CHA: ", cha_seeds.shape[0])
     print("Total seeds in Spark: ", spark_seeds.shape[0])
+    print("Total seeds in CHA DD: ", cha_dd_seeds.shape[0])
+    print("Total seeds in Spark DD: ", spark_dd_seeds.shape[0])
 
-    merged = cha_dd_seeds.merge(spark_seeds, indicator=True, how='outer')
+    merged = cha_seeds.merge(spark_seeds, indicator=True, how='outer')
     cha_only = merged[merged['_merge'] == 'left_only'].shape[0]
     spark_only = merged[merged['_merge'] == 'right_only'].shape[0]
     print("Seeds in CHA but not in Spark: ", cha_only)
@@ -276,7 +282,7 @@ def main(dirname):
     raw_data = read_data(dirname)
 
     # Drop columns without useful information. Analysis always says "ideal" and there is an emtpy column
-    data = raw_data.drop(columns=['Analysis', 'Unnamed: 26'])
+    data = raw_data.drop(columns=['Analysis'])
     print(list(data))
 
     # Drop rows of which duplicates of seeds and call graph mode exist (those are not analysis of actual benchmarks)
