@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib_venn import venn2
 
+seed_columns = ['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass']
 
 def read_data(dirname):
     raw_df = pd.DataFrame()
@@ -41,6 +42,7 @@ def plot_timeouts(data):
     timedout = data.loc[data['Timedout']]
     if timedout.empty:
         print("Data contains no timeouts.")
+        print()
         return
     timeouts_per_cgmode = timedout[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('count')
     make_bar_plot(timeouts_per_cgmode, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerCGMode.pdf', 0)
@@ -52,13 +54,11 @@ def plot_timeouts(data):
                                                                                         'Rule']).aggregate('count')
     make_bar_plot(timeouts_per_rule_per_cg.unstack(0), 'Timed out analysis runs', 'Plotting/Results/'
                                                                                   'TimeoutsPerRulePerCGMode.pdf', 0)
-    print()
 
 
 def plot_averages_runtime(data):
     averages = data[['AnalysisTimes', 'CallGraphMode']].groupby('CallGraphMode').agg('mean')
     make_bar_plot(averages, 'Average runtime in seconds', 'Plotting/Results/RuntimePerCGMode.pdf', 0, 1)
-    print()
 
 
 def analyze_seeds(raw_data):
@@ -155,8 +155,6 @@ def analyze_errors(data):
 
 
 def export_result_details_to_csv(data):
-    seed_columns = ['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass']
-
     # Ignore timeout runs and compare seeds for which all runs finished
     data_no_timeout = data.query('Timedout == False')
     data_no_timeout = data_no_timeout.drop('Timedout', axis=1)
@@ -225,11 +223,22 @@ def plot_graph_sizes(data):
 
 
 def print_performance_correlations(data):
-    columns = ['AnalysisTimes', ' edgesFromPrecomputed','avgNumOfPredecessors', 'numOfEdgesInCallGraph']
+    columns = ['AnalysisTimes', ' edgesFromPrecomputed', 'avgNumOfPredecessors', 'numOfEdgesInCallGraph']
     print("CHA corr", data[data['CallGraphMode'] == 'CHA'][columns].corr(), "\n")
     print("CHA DD corr", data[data['CallGraphMode'] == 'CHA_DD'][columns].corr(), "\n")
     print("Spark corr", data[data['CallGraphMode'] == 'SPARK'][columns].corr(), "\n")
     print("Spark DD corr", data[data['CallGraphMode'] == 'SPARK_DD'][columns].corr(), "\n")
+
+    # Find out how many edges were in the precomputed graph
+    edges_pre = data.copy()
+    edges_pre['EdgesInPrecomputed'] = 0
+    edges_pre.loc[edges_pre['CallGraphMode'] == 'SPARK', ['EdgesInPrecomputed']] = \
+        edges_pre[edges_pre['CallGraphMode'] == 'SPARK']['numOfEdgesInCallGraph']
+    edges_pre.loc[edges_pre['CallGraphMode'] == 'CHA', ['EdgesInPrecomputed']] = \
+        edges_pre[edges_pre['CallGraphMode'] == 'CHA']['numOfEdgesInCallGraph']
+
+    # TODO: Use bench once we have it
+
 
 def plot_performance_correlations(data):
     corr = data[['AnalysisTimes', ' edgesFromPrecomputed', 'CallGraphMode']]
@@ -280,6 +289,7 @@ def main(dirname):
     print("Runs that took over 10 minutes: ", over_ten_minutes.shape[0])
     print("Average time for runs with timeout in seconds:", str(int(((over_ten_minutes[['AnalysisTimes']]).mean()))))
     data['AnalysisTimes'] = data['AnalysisTimes'].clip(upper=600)
+    print()
 
     # Seeds
     analyze_seeds(data)
