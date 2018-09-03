@@ -210,7 +210,7 @@ public class IDEALRunner extends SootSceneSetupDacapo {
     }
 
     private boolean isInErrorState(ForwardBoomerangResults<TransitionFunction> forwardBoomerangResults) {
-        Table<Statement, Val, TransitionFunction> objectDestructingStatements = forwardBoomerangResults.asStatementValWeightTable();
+        Table<Statement, Val, TransitionFunction> objectDestructingStatements = forwardBoomerangResults.getObjectDestructingStatements();
         for (Table.Cell<Statement, Val, TransitionFunction> c : objectDestructingStatements.cellSet()) {
             for (ITransition t : c.getValue().values()) {
                 if (t.to() != null) {
@@ -232,6 +232,6 @@ public class IDEALRunner extends SootSceneSetupDacapo {
     }
 
     protected long getBudget() {
-        return TimeUnit.MINUTES.toMillis(10);
+        return TimeUnit.MINUTES.toMillis(5);
     }
 }
