@@ -291,10 +291,10 @@ def main(dirname):
 
     # Convert times to seconds and limit maximum analysis time to 10 minutes as this was our timeout
     data['AnalysisTimes'] = data['AnalysisTimes'] / 1000
-    over_ten_minutes = data.loc[data['AnalysisTimes'] > 600]
-    print("Runs that took over 10 minutes: ", over_ten_minutes.shape[0])
-    print("Average time for runs with timeout in seconds:", str(int(((over_ten_minutes[['AnalysisTimes']]).mean()))))
-    data['AnalysisTimes'] = data['AnalysisTimes'].clip(upper=600)
+    over_five_minutes = data.loc[data['AnalysisTimes'] > 300]
+    print("Runs that took over 5 minutes: ", over_five_minutes.shape[0])
+    print("Average time for runs with timeout in seconds:", str(int(((over_five_minutes[['AnalysisTimes']]).mean()))))
+    data['AnalysisTimes'] = data['AnalysisTimes'].clip(upper=300)
     print()
 
     # Seeds
