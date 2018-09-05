@@ -200,7 +200,7 @@ def export_result_details_to_csv(data):
     print("Seeds for which all algorithms started and some contain errors: ", all_data_per_seed.shape[0])
 
     # Store values from above again with subset of columns for easier readability
-    all_data_per_seed = all_data_per_seed[['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass',
+    all_data_per_seed = all_data_per_seed[['Rule', 'Bench_cha', 'SeedStatement', 'SeedMethod', 'SeedClass',
                                            'Timedout_cha', 'Timedout_cha_dd', 'Timedout_spark', 'Timedout_spark_dd',
                                            'Is_In_Error_cha', 'Is_In_Error_cha_dd', 'Is_In_Error_spark',
                                            'Is_In_Error_spark_dd']]
