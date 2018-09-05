@@ -187,10 +187,14 @@ def export_result_details_to_csv(data):
     all_data_per_seed.to_csv("Plotting/Results/SharedSeedsTimeoutsIncluded.csv", sep=';')
     print("Seeds for which all algorithms started: ", all_data_per_seed.shape[0])
 
-    # Report only values for which any of the algorithm actually found errors
+    # Report only values for which any of the algorithm actually found errors, but not all
     all_data_per_seed = all_data_per_seed.loc[((all_data_per_seed['Is_In_Error_cha'] == True) |
                                                (all_data_per_seed['Is_In_Error_cha_dd'] == True) |
                                                (all_data_per_seed['Is_In_Error_spark'] == True) |
+                                               (all_data_per_seed['Is_In_Error_spark_dd'] == True))]
+    all_data_per_seed = all_data_per_seed.loc[~((all_data_per_seed['Is_In_Error_cha'] == True) &
+                                               (all_data_per_seed['Is_In_Error_cha_dd'] == True) &
+                                               (all_data_per_seed['Is_In_Error_spark'] == True) &
                                                (all_data_per_seed['Is_In_Error_spark_dd'] == True))]
     all_data_per_seed.to_csv("Plotting/Results/SharedSeedsTimeoutsIncludedWithErrors.csv", sep=';')
     print("Seeds for which all algorithms started and some contain errors: ", all_data_per_seed.shape[0])
@@ -302,7 +306,7 @@ def main(dirname):
 
     # Runtime and timeouts
     plot_timeouts(data)
-    #plot_runtime_curve(data)
+    plot_runtime_curve(data)
     plot_averages_runtime(data)
 
     # Precision
