@@ -250,24 +250,47 @@ def plot_graph_sizes(data):
 
 
 def print_performance_correlations(data):
-    columns = ['AnalysisTimes', ' edgesFromPrecomputed', 'avgNumOfPredecessors', 'numOfEdgesInCallGraph']
-    print("CHA corr", data[data['CallGraphMode'] == 'CHA'][columns].corr(), "\n")
-    print("CHA DD corr", data[data['CallGraphMode'] == 'CHA_DD'][columns].corr(), "\n")
-    print("Spark corr", data[data['CallGraphMode'] == 'SPARK'][columns].corr(), "\n")
-    print("Spark DD corr", data[data['CallGraphMode'] == 'SPARK_DD'][columns].corr(), "\n")
+    edges_spark = data[data['CallGraphMode'] == 'SPARK'].drop_duplicates(['Bench'])[
+        ['Bench', 'numOfEdgesInCallGraph', 'avgNumOfPredecessors']].set_index('Bench')
+    edges_cha = data[data['CallGraphMode'] == 'CHA'].drop_duplicates(['Bench'])[
+        ['Bench', 'numOfEdgesInCallGraph', 'avgNumOfPredecessors']].set_index('Bench')
+    bench_to_edges = pd.DataFrame(columns=['CHA_Edges', 'SPARK_Edges', 'CHA_Pred', 'SPARK_Pred'], index=edges_spark.index)
+    bench_to_edges['SPARK_Edges'] = edges_spark['numOfEdgesInCallGraph']
+    bench_to_edges['CHA_Edges'] = edges_cha['numOfEdgesInCallGraph']
+    bench_to_edges['SPARK_Pred'] = edges_spark['avgNumOfPredecessors']
+    bench_to_edges['CHA_Pred'] = edges_cha['avgNumOfPredecessors']
+    print(bench_to_edges)
 
     # Find out how many edges were in the precomputed graph
-    edges_pre = data.copy()
-    edges_pre['EdgesInPrecomputed'] = 0
-    edges_pre.loc[edges_pre['CallGraphMode'] == 'SPARK', ['EdgesInPrecomputed']] = \
-        edges_pre[edges_pre['CallGraphMode'] == 'SPARK']['numOfEdgesInCallGraph']
-    edges_pre.loc[edges_pre['CallGraphMode'] == 'CHA', ['EdgesInPrecomputed']] = \
-        edges_pre[edges_pre['CallGraphMode'] == 'CHA']['numOfEdgesInCallGraph']
+    with_precomputed = data.copy()
+    with_precomputed['EdgesInPrecomputed'] = float('nan')
+    with_precomputed.loc[with_precomputed['CallGraphMode'] == 'SPARK', ['EdgesInPrecomputed']] = \
+        with_precomputed[with_precomputed['CallGraphMode'] == 'SPARK']['numOfEdgesInCallGraph']
+    with_precomputed.loc[with_precomputed['CallGraphMode'] == 'CHA', ['EdgesInPrecomputed']] = \
+        with_precomputed[with_precomputed['CallGraphMode'] == 'CHA']['numOfEdgesInCallGraph']
+    with_precomputed['PredInPrecomputed'] = float('nan')
+    with_precomputed.loc[with_precomputed['CallGraphMode'] == 'SPARK', ['PredInPrecomputed']] = \
+        with_precomputed[with_precomputed['CallGraphMode'] == 'SPARK']['avgNumOfPredecessors']
+    with_precomputed.loc[with_precomputed['CallGraphMode'] == 'CHA', ['PredInPrecomputed']] = \
+        with_precomputed[with_precomputed['CallGraphMode'] == 'CHA']['avgNumOfPredecessors']
 
-    total_edges_cha = edges_pre[edges_pre['CallGraphMode'] == 'CHA'].drop_duplicates(['Bench'])
-    total_edges_spark = edges_pre[edges_pre['CallGraphMode'] == 'SPARK'].drop_duplicates(['Bench'])
+    #Join with bench table, new column will have suffix, extract value from new column
+    with_precomputed = with_precomputed.merge(bench_to_edges, left_on='Bench', right_index=True, suffixes=['', '_pre'])
+    with_precomputed.loc[with_precomputed['CallGraphMode'] == 'SPARK_DD', ['EdgesInPrecomputed']] = \
+        with_precomputed[with_precomputed['CallGraphMode'] == 'SPARK_DD']['SPARK_Edges']
+    with_precomputed.loc[with_precomputed['CallGraphMode'] == 'CHA_DD', ['EdgesInPrecomputed']] = \
+        with_precomputed[with_precomputed['CallGraphMode'] == 'CHA_DD']['CHA_Edges']
+    with_precomputed.loc[with_precomputed['CallGraphMode'] == 'SPARK_DD', ['PredInPrecomputed']] = \
+        with_precomputed[with_precomputed['CallGraphMode'] == 'SPARK_DD']['SPARK_Pred']
+    with_precomputed.loc[with_precomputed['CallGraphMode'] == 'CHA_DD', ['PredInPrecomputed']] = \
+        with_precomputed[with_precomputed['CallGraphMode'] == 'CHA_DD']['CHA_Pred']
 
-    # TODO: Use bench once we have it
+    columns = ['AnalysisTimes', ' edgesFromPrecomputed', 'avgNumOfPredecessors', 'numOfEdgesInCallGraph',
+               'EdgesInPrecomputed', 'PredInPrecomputed']
+    print("CHA corr", with_precomputed[with_precomputed['CallGraphMode'] == 'CHA'][columns].corr(), "\n")
+    print("CHA DD corr", with_precomputed[with_precomputed['CallGraphMode'] == 'CHA_DD'][columns].corr(), "\n")
+    print("Spark corr", with_precomputed[with_precomputed['CallGraphMode'] == 'SPARK'][columns].corr(), "\n")
+    print("Spark DD corr", with_precomputed[with_precomputed['CallGraphMode'] == 'SPARK_DD'][columns].corr(), "\n")
 
 
 def plot_performance_correlations(data):
@@ -301,7 +324,7 @@ def plot_performance_correlations(data):
 def main(dirname):
     # Option to see the printed output more easily
     pd.set_option('display.width', 250)
-    pd.set_option('display.max_columns', 5)
+    pd.set_option('display.max_columns', 6)
 
     raw_data = read_data(dirname)
 
