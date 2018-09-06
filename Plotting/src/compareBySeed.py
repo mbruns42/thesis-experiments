@@ -193,18 +193,17 @@ def export_result_details_to_csv(data):
                                                (all_data_per_seed['Is_In_Error_spark'] == True) |
                                                (all_data_per_seed['Is_In_Error_spark_dd'] == True))]
     all_data_per_seed = all_data_per_seed.loc[~((all_data_per_seed['Is_In_Error_cha'] == True) &
-                                               (all_data_per_seed['Is_In_Error_cha_dd'] == True) &
-                                               (all_data_per_seed['Is_In_Error_spark'] == True) &
-                                               (all_data_per_seed['Is_In_Error_spark_dd'] == True))]
-    all_data_per_seed.to_csv("Plotting/Results/SharedSeedsTimeoutsIncludedWithErrors.csv", sep=';')
+                                                (all_data_per_seed['Is_In_Error_cha_dd'] == True) &
+                                                (all_data_per_seed['Is_In_Error_spark'] == True) &
+                                                (all_data_per_seed['Is_In_Error_spark_dd'] == True))]
     print("Seeds for which all algorithms started and some contain errors: ", all_data_per_seed.shape[0])
 
-    # Store values from above again with subset of columns for easier readability
+    # Store values from above with subset of columns for easier readability
     all_data_per_seed = all_data_per_seed[['Rule', 'Bench_cha', 'SeedStatement', 'SeedMethod', 'SeedClass',
                                            'Timedout_cha', 'Timedout_cha_dd', 'Timedout_spark', 'Timedout_spark_dd',
                                            'Is_In_Error_cha', 'Is_In_Error_cha_dd', 'Is_In_Error_spark',
                                            'Is_In_Error_spark_dd']]
-    all_data_per_seed.to_csv("Plotting/Results/SharedSeedsTimeoutsIncludedWithErrorsSimple.csv", sep=';')
+    all_data_per_seed.to_csv("Plotting/Results/SharedSeedsWithDifferentResults.csv", sep=';')
 
     # Check if there is any error reported by demand-driven analysis and not by whole program analysis
     all_data_per_seed = all_data_per_seed.loc[((all_data_per_seed['Is_In_Error_cha'] == False) &
