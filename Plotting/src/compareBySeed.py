@@ -226,24 +226,27 @@ def plot_graph_sizes(data):
     not_timedout = data.loc[~data['Timedout']]
     avg_edges = not_timedout[['CallGraphMode', 'numOfEdgesInCallGraph']].groupby('CallGraphMode').agg('mean')
 
-    make_bar_plot(avg_edges, 'Average number of edges', 'Plotting/Results/EdgesPerCGMode.pdf', log_y=True)
+    make_bar_plot(avg_edges, 'Average number of edges', 'Plotting/Results/AvgEdgesPerCGMode.pdf', log_y=True)
 
-    total_edges_cha = not_timedout[not_timedout['CallGraphMode'] == 'CHA'].drop_duplicates(['Bench'])
-    total_edges_spark = not_timedout[not_timedout['CallGraphMode'] == 'SPARK'].drop_duplicates(['Bench'])
-    fig = plt.figure() # Create matplotlib figure
+    edges_spark = not_timedout[not_timedout['CallGraphMode'] == 'SPARK'].drop_duplicates(['Bench'])[
+        ['Bench', 'numOfEdgesInCallGraph']].set_index('Bench')
+    edges_cha = not_timedout[not_timedout['CallGraphMode'] == 'CHA'].drop_duplicates(['Bench'])[
+        ['Bench', 'numOfEdgesInCallGraph']].set_index('Bench')
+    edges_cha_dd = not_timedout[not_timedout['CallGraphMode'] == 'CHA_DD'][
+        ['Bench', 'numOfEdgesInCallGraph']].groupby('Bench').agg('sum')
+    edges_spark_dd = not_timedout[not_timedout['CallGraphMode'] == 'SPARK_DD'][
+        ['Bench', 'numOfEdgesInCallGraph']].groupby('Bench').agg('sum')
 
-    ax = fig.add_subplot(111) # Create matplotlib axes
-    ax2 = ax.twinx() # Create another axes that shares the same x-axis as ax.
-    total_edges_cha[['Bench', 'avgNumOfPredecessors']].plot(kind='bar', x='Bench', color='red', ax=ax, width=0.4,
-                                                            position=1, legend=False, rot=20)
-    total_edges_spark[['Bench', 'avgNumOfPredecessors']].plot(kind='bar', x='Bench', color='blue', ax=ax2, width=0.4,
-                                                              position=0, legend=False, rot=20)
-    #TODO use number of predecessors in bench for correlation?
-    plt.show()
-    print(total_edges_cha)
-
-    # TODO: Make stacked bar plot per bench
-    # TODO: Make stacked bar plot with predecessors
+    bench_to_edges = pd.DataFrame(columns=['CHA', 'CHA_DD', 'SPARK', 'SPARK_DD'], index=edges_spark.index)
+    bench_to_edges['SPARK'] = edges_spark
+    bench_to_edges['CHA'] = edges_cha
+    bench_to_edges['CHA_DD'] = edges_cha_dd
+    bench_to_edges['SPARK_DD'] = edges_spark_dd
+    ax = bench_to_edges.plot(kind='bar', rot=10, logy=True)
+    ax.set_ylabel('Total number of edges')
+    plt.tight_layout()
+    plt.savefig('Plotting/Results/TotalEdgesPerCGMode.pdf', dpi=300)
+    plt.close()
 
 
 def print_performance_correlations(data):
@@ -260,6 +263,9 @@ def print_performance_correlations(data):
         edges_pre[edges_pre['CallGraphMode'] == 'SPARK']['numOfEdgesInCallGraph']
     edges_pre.loc[edges_pre['CallGraphMode'] == 'CHA', ['EdgesInPrecomputed']] = \
         edges_pre[edges_pre['CallGraphMode'] == 'CHA']['numOfEdgesInCallGraph']
+
+    total_edges_cha = edges_pre[edges_pre['CallGraphMode'] == 'CHA'].drop_duplicates(['Bench'])
+    total_edges_spark = edges_pre[edges_pre['CallGraphMode'] == 'SPARK'].drop_duplicates(['Bench'])
 
     # TODO: Use bench once we have it
 
