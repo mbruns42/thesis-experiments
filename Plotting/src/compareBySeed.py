@@ -7,6 +7,7 @@ from matplotlib_venn import venn2
 
 seed_columns = ['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass']
 
+
 def read_data(dirname):
     raw_df = pd.DataFrame()
     for file in os.listdir(dirname):
@@ -63,13 +64,13 @@ def plot_averages_runtime(data):
 
 def analyze_seeds(raw_data):
     cha_seeds = raw_data[raw_data['CallGraphMode'] == 'CHA'][['Rule', 'Seed', 'SeedStatement',
-                                                                    'SeedMethod', 'SeedClass']]
+                                                              'SeedMethod', 'SeedClass']]
     spark_seeds = raw_data[raw_data['CallGraphMode'] == 'SPARK'][['Rule', 'Seed', 'SeedStatement',
-                                                                    'SeedMethod', 'SeedClass']]
+                                                                  'SeedMethod', 'SeedClass']]
     cha_dd_seeds = raw_data[raw_data['CallGraphMode'] == 'CHA_DD'][['Rule', 'Seed', 'SeedStatement',
                                                                     'SeedMethod', 'SeedClass']]
     spark_dd_seeds = raw_data[raw_data['CallGraphMode'] == 'SPARK_DD'][['Rule', 'Seed', 'SeedStatement',
-                                                                  'SeedMethod', 'SeedClass']]
+                                                                        'SeedMethod', 'SeedClass']]
     print("Total seeds in CHA: ", cha_seeds.shape[0])
     print("Total seeds in Spark: ", spark_seeds.shape[0])
     print("Total seeds in CHA DD: ", cha_dd_seeds.shape[0])
@@ -253,7 +254,8 @@ def print_performance_correlations(data):
         ['Bench', 'numOfEdgesInCallGraph', 'avgNumOfPredecessors']].set_index('Bench')
     edges_cha = data[data['CallGraphMode'] == 'CHA'].drop_duplicates(['Bench'])[
         ['Bench', 'numOfEdgesInCallGraph', 'avgNumOfPredecessors']].set_index('Bench')
-    bench_to_edges = pd.DataFrame(columns=['CHA_Edges', 'SPARK_Edges', 'CHA_Pred', 'SPARK_Pred'], index=edges_spark.index)
+    bench_to_edges = pd.DataFrame(columns=['CHA_Edges', 'SPARK_Edges', 'CHA_Pred', 'SPARK_Pred'],
+                                  index=edges_spark.index)
     bench_to_edges['SPARK_Edges'] = edges_spark['numOfEdgesInCallGraph']
     bench_to_edges['CHA_Edges'] = edges_cha['numOfEdgesInCallGraph']
     bench_to_edges['SPARK_Pred'] = edges_spark['avgNumOfPredecessors']
@@ -273,7 +275,7 @@ def print_performance_correlations(data):
     with_precomputed.loc[with_precomputed['CallGraphMode'] == 'CHA', ['PredInPrecomputed']] = \
         with_precomputed[with_precomputed['CallGraphMode'] == 'CHA']['avgNumOfPredecessors']
 
-    #Join with bench table, new column will have suffix, extract value from new column
+    # Join with bench table, new column will have suffix, extract value from new column
     with_precomputed = with_precomputed.merge(bench_to_edges, left_on='Bench', right_index=True, suffixes=['', '_pre'])
     with_precomputed.loc[with_precomputed['CallGraphMode'] == 'SPARK_DD', ['EdgesInPrecomputed']] = \
         with_precomputed[with_precomputed['CallGraphMode'] == 'SPARK_DD']['SPARK_Edges']
