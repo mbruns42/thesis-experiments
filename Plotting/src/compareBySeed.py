@@ -64,7 +64,6 @@ def plot_averages_runtime(data):
 
 
 def analyze_seeds(data):
-    print(data.shape)
     cha_seeds = data[data['CallGraphMode'] == 'CHA'][['Rule', 'Seed', 'SeedStatement',
                                                               'SeedMethod', 'SeedClass']]
     spark_seeds = data[data['CallGraphMode'] == 'SPARK'][['Rule', 'Seed', 'SeedStatement',
@@ -78,7 +77,7 @@ def analyze_seeds(data):
     print("Total seeds in CHA DD: ", cha_dd_seeds.shape[0])
     print("Total seeds in Spark DD: ", spark_dd_seeds.shape[0])
 
-    merged = cha_seeds.merge(spark_seeds, indicator=True, how='outer')
+    merged = cha_dd_seeds.merge(spark_dd_seeds, indicator=True, how='outer')
     cha_only = merged[merged['_merge'] == 'left_only'].shape[0]
     spark_only = merged[merged['_merge'] == 'right_only'].shape[0]
     print("Seeds in CHA but not in Spark: ", cha_only)
@@ -88,7 +87,7 @@ def analyze_seeds(data):
     seeds_both = merged[merged['_merge'] == 'both'].shape[0]
     print("Seeds in both CHA and in Spark: ", seeds_both)
 
-    venn2(subsets=(cha_dd_seeds.shape[0], spark_seeds.shape[0], seeds_both),
+    venn2(subsets=(cha_dd_seeds.shape[0], spark_dd_seeds.shape[0], seeds_both),
           set_labels=('Seeds found by CHA', 'Seeds found by Spark'))
     plt.savefig("Plotting/Results/SeedsVennDiagram.pdf", dpi=300)
     plt.close()
@@ -346,9 +345,8 @@ def main(dirname):
     data = raw_data.drop(columns=['Analysis', 'Unnamed: 27'])
     print(list(data))
 
-    # Drop rows of which duplicates of seeds and call graph mode exist (those are not analysis of actual benchmarks)
-    data = data.drop_duplicates(subset=['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass', 'CallGraphMode'],
-                                keep=False)
+    # Drop duplicates of seeds and call graph mode
+    data = data.drop_duplicates(subset=['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass', 'CallGraphMode'])
 
     # Convert times to seconds and limit maximum analysis time to 10 minutes as this was our timeout
     data['AnalysisTimes'] = data['AnalysisTimes'] / 1000
