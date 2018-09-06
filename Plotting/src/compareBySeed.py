@@ -13,6 +13,7 @@ def read_data(dirname):
     for file in os.listdir(dirname):
         if file.endswith(".csv"):
             data_from_this_csv = pd.read_csv(os.path.join(dirname, file), sep=';', encoding='UTF-8')
+            assert not data_from_this_csv.empty
             raw_df = raw_df.append(data_from_this_csv)
     return raw_df
 
@@ -62,14 +63,15 @@ def plot_averages_runtime(data):
     make_bar_plot(averages, 'Average runtime in seconds', 'Plotting/Results/RuntimePerCGMode.pdf', 0, 1)
 
 
-def analyze_seeds(raw_data):
-    cha_seeds = raw_data[raw_data['CallGraphMode'] == 'CHA'][['Rule', 'Seed', 'SeedStatement',
+def analyze_seeds(data):
+    print(data.shape)
+    cha_seeds = data[data['CallGraphMode'] == 'CHA'][['Rule', 'Seed', 'SeedStatement',
                                                               'SeedMethod', 'SeedClass']]
-    spark_seeds = raw_data[raw_data['CallGraphMode'] == 'SPARK'][['Rule', 'Seed', 'SeedStatement',
+    spark_seeds = data[data['CallGraphMode'] == 'SPARK'][['Rule', 'Seed', 'SeedStatement',
                                                                   'SeedMethod', 'SeedClass']]
-    cha_dd_seeds = raw_data[raw_data['CallGraphMode'] == 'CHA_DD'][['Rule', 'Seed', 'SeedStatement',
+    cha_dd_seeds = data[data['CallGraphMode'] == 'CHA_DD'][['Rule', 'Seed', 'SeedStatement',
                                                                     'SeedMethod', 'SeedClass']]
-    spark_dd_seeds = raw_data[raw_data['CallGraphMode'] == 'SPARK_DD'][['Rule', 'Seed', 'SeedStatement',
+    spark_dd_seeds = data[data['CallGraphMode'] == 'SPARK_DD'][['Rule', 'Seed', 'SeedStatement',
                                                                         'SeedMethod', 'SeedClass']]
     print("Total seeds in CHA: ", cha_seeds.shape[0])
     print("Total seeds in Spark: ", spark_seeds.shape[0])
@@ -217,6 +219,18 @@ def export_result_details_to_csv(data):
           all_data_per_seed.shape[0])
     if not all_data_per_seed.empty:
         all_data_per_seed.to_csv("Plotting/Results/SeedsDemandDrivenMoreErrors.csv", sep=';')
+
+    #Store differences in Spark and Spark DD
+    spark_vs_spark_dd = spark_data.merge(spark_dd_data, on=seed_columns, how='inner', suffixes=('_spark', '_spark_dd'))
+    spark_vs_spark_dd = spark_vs_spark_dd.loc[((spark_vs_spark_dd['Is_In_Error_spark'] == True) |
+                                               (spark_vs_spark_dd['Is_In_Error_spark_dd'] == True))]
+    spark_vs_spark_dd = spark_vs_spark_dd.loc[~((spark_vs_spark_dd['Is_In_Error_spark'] == True) &
+                                                (spark_vs_spark_dd['Is_In_Error_spark_dd'] == True))]
+
+    spark_vs_spark_dd = spark_vs_spark_dd[['Rule', 'Bench_spark', 'SeedStatement', 'SeedMethod', 'SeedClass',
+                                           'Timedout_spark', 'Timedout_spark_dd', 'Is_In_Error_spark',
+                                           'Is_In_Error_spark_dd']]
+    spark_vs_spark_dd.to_csv("Plotting/Results/SharedSeedsWithDifferentResultsJustSpark.csv", sep=';')
     print()
 
 
@@ -260,7 +274,6 @@ def print_performance_correlations(data):
     bench_to_edges['CHA_Edges'] = edges_cha['numOfEdgesInCallGraph']
     bench_to_edges['SPARK_Pred'] = edges_spark['avgNumOfPredecessors']
     bench_to_edges['CHA_Pred'] = edges_cha['avgNumOfPredecessors']
-    print(bench_to_edges)
 
     # Find out how many edges were in the precomputed graph
     with_precomputed = data.copy()
