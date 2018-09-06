@@ -100,12 +100,12 @@ def analyze_seeds(raw_data):
 
 
 def plot_runtime_curve(data):
-    cha_times = data[data['CallGraphMode'] == 'CHA']['AnalysisTimes'].sample(500).sort_values().reset_index(drop=True)
-    cha_dd_times = data[data['CallGraphMode'] == 'CHA_DD']['AnalysisTimes'].sample(500).sort_values(). \
+    cha_times = data[data['CallGraphMode'] == 'CHA']['AnalysisTimes'].sample(400).sort_values().reset_index(drop=True)
+    cha_dd_times = data[data['CallGraphMode'] == 'CHA_DD']['AnalysisTimes'].sample(400).sort_values(). \
         reset_index(drop=True)
-    spark_times = data[data['CallGraphMode'] == 'SPARK']['AnalysisTimes'].sample(500).sort_values() \
+    spark_times = data[data['CallGraphMode'] == 'SPARK']['AnalysisTimes'].sample(400).sort_values() \
         .reset_index(drop=True)
-    spark_dd_times = data[data['CallGraphMode'] == 'SPARK_DD']['AnalysisTimes'].sample(500).sort_values(). \
+    spark_dd_times = data[data['CallGraphMode'] == 'SPARK_DD']['AnalysisTimes'].sample(400).sort_values(). \
         reset_index(drop=True)
 
     plt.plot(cha_times, label='CHA')
@@ -228,6 +228,20 @@ def plot_graph_sizes(data):
 
     make_bar_plot(avg_edges, 'Average number of edges', 'Plotting/Results/EdgesPerCGMode.pdf', log_y=True)
 
+    total_edges_cha = not_timedout[not_timedout['CallGraphMode'] == 'CHA'].drop_duplicates(['Bench'])
+    total_edges_spark = not_timedout[not_timedout['CallGraphMode'] == 'SPARK'].drop_duplicates(['Bench'])
+    fig = plt.figure() # Create matplotlib figure
+
+    ax = fig.add_subplot(111) # Create matplotlib axes
+    ax2 = ax.twinx() # Create another axes that shares the same x-axis as ax.
+    total_edges_cha[['Bench', 'avgNumOfPredecessors']].plot(kind='bar', x='Bench', color='red', ax=ax, width=0.4,
+                                                            position=1, legend=False, rot=20)
+    total_edges_spark[['Bench', 'avgNumOfPredecessors']].plot(kind='bar', x='Bench', color='blue', ax=ax2, width=0.4,
+                                                              position=0, legend=False, rot=20)
+    #TODO use number of predecessors in bench for correlation?
+    plt.show()
+    print(total_edges_cha)
+
     # TODO: Make stacked bar plot per bench
     # TODO: Make stacked bar plot with predecessors
 
@@ -286,7 +300,7 @@ def main(dirname):
     raw_data = read_data(dirname)
 
     # Drop columns without useful information. Analysis always says "ideal" and there is an emtpy column
-    data = raw_data.drop(columns=['Analysis'])
+    data = raw_data.drop(columns=['Analysis', 'Unnamed: 27'])
     print(list(data))
 
     # Drop rows of which duplicates of seeds and call graph mode exist (those are not analysis of actual benchmarks)
