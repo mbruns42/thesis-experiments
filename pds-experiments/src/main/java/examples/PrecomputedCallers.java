@@ -1,50 +1,41 @@
 package examples;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 public class PrecomputedCallers{
 
-    public void precomputedCaller(File file, Set<Category> set) throws FileNotFoundException {
-        FormattedPrinter printer = new CategoryPrinter();
-        seedMethod(file, set, printer);
+    public void precomputedCaller() {
+        Configuration config = new DefaultConfiguration();
+        buildConfig(config, null);
     }
-    public void seedMethod(File file, Set<Category> set, FormattedPrinter printer) throws FileNotFoundException {
-        PrintStream stream = new PrintStream(file);
-        for (Category category : set)
-            printer.print(stream, category);
+    public void buildConfig(Configuration config, Vector<Option> options) {
+        if (options == null)
+            options = new Vector<>();
+        config.load(options);
     }
-    interface FormattedPrinter{
-        void print(PrintStream stream, Category category);
+    interface Configuration {
+        void load(Vector<Option> options);
     }
-    class CategoryPrinter implements FormattedPrinter{
-        public void print(PrintStream stream, Category category) {
-            String formattedCategory = format(category);
-            stream.print(formattedCategory);
-            if (category.hasSubcategory()){
-                FormattedPrinter printer = new SubcategoryPrinter();
-                printer.print(stream, category.getSubcategory());
+    class DefaultConfiguration implements Configuration {
+        public void load(Vector<Option> options) {
+            options.addAll(getDefaultOptions());
+            if (options.get(0).isActive()){
+                Configuration config = new ExtendedConfiguration();
+                buildConfig(config, options);
             }
         }
-        private String format(Category category){ return ""; }
     }
-    class SubcategoryPrinter implements FormattedPrinter{
-        public void print(PrintStream stream, Category category) {
-            String formattedSubcategory = format(category);
-            stream.print(formattedSubcategory);
-            stream.close();
+    class ExtendedConfiguration implements Configuration {
+        public void load(Vector<Option> options) {
+            Option header = options.get(0);
         }
-        private String format(Category category){ return ""; }
+    }
+    public static List<Option> getDefaultOptions(){ return new ArrayList<>(); }
+
+    abstract class Option {
+        public abstract boolean isActive();
     }
 
-    class Category{
-        public boolean hasSubcategory(){
-            return true;
-        }
-        public Category getSubcategory(){
-            return new Category();
-        }
-    }
 }
