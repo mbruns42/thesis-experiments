@@ -3,7 +3,6 @@ import sys
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from matplotlib_venn import venn2
 
 seed_columns = ['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass']
 
@@ -87,10 +86,6 @@ def analyze_seeds(data):
     seeds_both = merged[merged['_merge'] == 'both'].shape[0]
     print("Seeds in both CHA and in Spark: ", seeds_both)
 
-    venn2(subsets=(cha_dd_seeds.shape[0], spark_dd_seeds.shape[0], seeds_both),
-          set_labels=('Seeds found by CHA', 'Seeds found by Spark'))
-    plt.savefig("Plotting/Results/SeedsVennDiagram.pdf", dpi=300)
-    plt.close()
     p1 = plt.bar([1, 2], [seeds_both, seeds_both], tick_label=['CHA', 'SPARK'])
     p2 = plt.bar([1, 2], [cha_only, spark_only], bottom=[seeds_both, seeds_both])
     plt.legend((p1[0], p2[0]), ('Found by both', 'Found only by one'))
