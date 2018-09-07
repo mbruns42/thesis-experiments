@@ -64,13 +64,13 @@ def plot_averages_runtime(data):
 
 def analyze_seeds(data):
     cha_seeds = data[data['CallGraphMode'] == 'CHA'][['Rule', 'Seed', 'SeedStatement',
-                                                              'SeedMethod', 'SeedClass']]
+                                                      'SeedMethod', 'SeedClass']]
     spark_seeds = data[data['CallGraphMode'] == 'SPARK'][['Rule', 'Seed', 'SeedStatement',
-                                                                  'SeedMethod', 'SeedClass']]
+                                                          'SeedMethod', 'SeedClass']]
     cha_dd_seeds = data[data['CallGraphMode'] == 'CHA_DD'][['Rule', 'Seed', 'SeedStatement',
-                                                                    'SeedMethod', 'SeedClass']]
+                                                            'SeedMethod', 'SeedClass']]
     spark_dd_seeds = data[data['CallGraphMode'] == 'SPARK_DD'][['Rule', 'Seed', 'SeedStatement',
-                                                                        'SeedMethod', 'SeedClass']]
+                                                                'SeedMethod', 'SeedClass']]
     print("Total seeds in CHA: ", cha_seeds.shape[0])
     print("Total seeds in Spark: ", spark_seeds.shape[0])
     print("Total seeds in CHA DD: ", cha_dd_seeds.shape[0])
@@ -106,9 +106,9 @@ def plot_runtime_curve(data):
         reset_index(drop=True)
 
     plt.plot(cha_times, label='CHA')
-    plt.plot(cha_dd_times, label='CHA DD')
-    plt.plot(spark_times, label='SPARK')
-    plt.plot(spark_dd_times, label='SPARK DD')
+    plt.plot(cha_dd_times, label='CHA DD', linestyle=':')
+    plt.plot(spark_times, label='SPARK', linestyle='-.')
+    plt.plot(spark_dd_times, label='SPARK DD', linestyle='--')
 
     plt.xlabel("Analysis runs ordered by runtimes")
     plt.ylabel("Runtime in seconds")
@@ -214,7 +214,7 @@ def export_result_details_to_csv(data):
     if not all_data_per_seed.empty:
         all_data_per_seed.to_csv("Plotting/Results/SeedsDemandDrivenMoreErrors.csv", sep=';')
 
-    #Store differences in Spark and Spark DD
+    # Store differences in Spark and Spark DD
     spark_vs_spark_dd = spark_data.merge(spark_dd_data, on=seed_columns, how='inner', suffixes=('_spark', '_spark_dd'))
     spark_vs_spark_dd = spark_vs_spark_dd.loc[((spark_vs_spark_dd['Is_In_Error_spark'] == True) |
                                                (spark_vs_spark_dd['Is_In_Error_spark_dd'] == True))]
