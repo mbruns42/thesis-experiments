@@ -94,12 +94,12 @@ def analyze_seeds(data):
 
 
 def plot_runtime_curve(data):
-    cha_times = data[data['CallGraphMode'] == 'CHA']['AnalysisTimes'].sample(400).sort_values().reset_index(drop=True)
-    cha_dd_times = data[data['CallGraphMode'] == 'CHA_DD']['AnalysisTimes'].sample(400).sort_values(). \
+    cha_times = data[data['CallGraphMode'] == 'CHA']['AnalysisTimes'].sample(700).sort_values().reset_index(drop=True)
+    cha_dd_times = data[data['CallGraphMode'] == 'CHA_DD']['AnalysisTimes'].sample(700).sort_values(). \
         reset_index(drop=True)
-    spark_times = data[data['CallGraphMode'] == 'SPARK']['AnalysisTimes'].sample(400).sort_values() \
+    spark_times = data[data['CallGraphMode'] == 'SPARK']['AnalysisTimes'].sample(700).sort_values() \
         .reset_index(drop=True)
-    spark_dd_times = data[data['CallGraphMode'] == 'SPARK_DD']['AnalysisTimes'].sample(400).sort_values(). \
+    spark_dd_times = data[data['CallGraphMode'] == 'SPARK_DD']['AnalysisTimes'].sample(700).sort_values(). \
         reset_index(drop=True)
 
     plt.plot(cha_times, label='CHA')
