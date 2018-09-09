@@ -13,21 +13,6 @@ import numpy as np
 # Run with file containing output as only parameter, see example file callGraphTimes.txt, like
 # python src/parseCallGraphTimeOutput.py callGraphTimes.txt
 
-
-def autolabel(ax, rects, xpos='center'):
-    """ Writes the value the bar represents on top of the bar. Can be configured to arrange it to the left or right
-        by passing the strings 'left' or 'right' as the xpos parameter. Labeling in the center of the bar is default.
-    """
-    xpos = xpos.lower()  # normalize the case of the parameter
-    ha = {'center': 'center', 'right': 'left', 'left': 'right'}
-    offset = {'center': 0.5, 'right': 0.57, 'left': 0.43}  # x_txt = x + w*off
-
-    for rect in rects:
-        height = rect.get_height()
-        ax.text(rect.get_x() + rect.get_width() * offset[xpos], 1.0 * height,
-                '{:,}'.format(height), ha=ha[xpos], va='bottom', fontsize=10)
-
-
 def plot(bench, cha_edges, cha_times, spark_edges, spark_times):
     """ Makes the bar chart and stores it to a high-res pdf
     """
@@ -35,28 +20,24 @@ def plot(bench, cha_edges, cha_times, spark_edges, spark_times):
     width = 0.35  # the width of the bars
 
     fig, ax = plt.subplots()
-    bar1 = ax.bar(ind - width / 2, cha_times, width, color='C0', label='CHA')
-    bar2 = ax.bar(ind + width / 2, spark_times, width, color='C2', label='Spark')
+    ax.bar(ind - width / 2, cha_times, width, color='C0', label='CHA')
+    ax.bar(ind + width / 2, spark_times, width, color='C2', label='Spark')
     ax.set_ylabel('Runtime in milliseconds')
     ax.set_xticks(ind)
     ax.set_xticklabels(bench)
     plt.xticks(rotation=30)
     ax.legend()
-    autolabel(ax, bar1)
-    autolabel(ax, bar2)
     plt.savefig("Results/CallGraphRuntimes.pdf", dpi=300)
     plt.close()
     fig, ax = plt.subplots()
 
-    bar1 = ax.bar(ind - width / 2, cha_edges, width, color='C0', label='CHA')
-    bar2 = ax.bar(ind + width / 2, spark_edges, width, color='C2', label='Spark')
+    ax.bar(ind - width / 2, cha_edges, width, color='C0', label='CHA')
+    ax.bar(ind + width / 2, spark_edges, width, color='C2', label='Spark')
     ax.set_ylabel('Number of Edges')
     ax.set_xticks(ind)
     ax.set_xticklabels(bench)
     plt.xticks(rotation=30)
     ax.legend()
-    autolabel(ax, bar1)
-    autolabel(ax, bar2)
     plt.savefig("Results/CallGraphEdges.pdf", dpi=300)
     plt.close()
 
