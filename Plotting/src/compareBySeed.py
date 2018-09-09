@@ -50,9 +50,16 @@ def plot_timeouts(data):
 
     timeouts_per_rule_per_cg = timedout[['CallGraphMode', 'Rule', 'Timedout']].groupby(['CallGraphMode',
                                                                                         'Rule']).aggregate('count')
-    make_bar_plot(timeouts_per_rule_per_cg.unstack(0), 'Timed out analysis runs', 'Plotting/Results/'
-                                                                                  'TimeoutsPerRulePerCGMode.pdf', 20)
-
+    ax = timeouts_per_rule_per_cg.unstack(0).plot(kind='bar', rot=70, legend=False, logy=True)
+    for p in ax.patches:
+        autolabel(ax, p, 0)
+    ax.legend()
+    ax.set_ylabel('Timed out analysis runs')
+    plt.tight_layout()
+    fig = plt.gcf()
+    fig.set_size_inches(5,7)
+    plt.savefig('Plotting/Results/TimeoutsPerRulePerCGMode.pdf', dpi=300)
+    plt.close()
 
 def plot_averages_runtime(data):
     averages = data[['AnalysisTimes', 'CallGraphMode']].groupby('CallGraphMode').agg('mean')
