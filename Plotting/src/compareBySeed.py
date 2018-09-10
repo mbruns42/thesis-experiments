@@ -140,7 +140,6 @@ def analyze_errors(data):
     for p in ax.patches:
         autolabel(ax, p, 2)
     ax.set_ylabel('Error detection rate in relation to runs')
-    ax.legend(ax.patches, ('CHA', 'CHA_DD', 'SPARK', 'SPARK_DD'))
     plt.tight_layout()
     plt.savefig('Plotting/Results/ErrorsPerCGModeNormalized.pdf', dpi=300)
     plt.close()
