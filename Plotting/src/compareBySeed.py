@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 seed_columns = ['Rule', 'Seed', 'SeedStatement', 'SeedMethod', 'SeedClass']
+color_dict = { 'CHA':'C0', 'CHA_DD':'C1', 'SPARK':'C2', 'SPARK_DD':'C3'}
 
 
 def read_data(dirname):
@@ -302,27 +303,15 @@ def print_performance_correlations(data):
 
 def plot_performance_correlations(data):
     corr = data[['AnalysisTimes', ' edgesFromPrecomputed', 'CallGraphMode']]
-    ax1 = corr[corr['CallGraphMode'] == 'CHA'].plot(kind='scatter', x=' edgesFromPrecomputed', y='AnalysisTimes',
-                                                    color='C0', logx=True, logy=True)
-    ax2 = corr[corr['CallGraphMode'] == 'CHA_DD'].plot(kind='scatter', x=' edgesFromPrecomputed', y='AnalysisTimes',
-                                                       color='C1', ax=ax1, logx=True, logy=True)
-    ax3 = corr[corr['CallGraphMode'] == 'SPARK'].plot(kind='scatter', x=' edgesFromPrecomputed', y='AnalysisTimes',
-                                                      color='C2', ax=ax2, logx=True, logy=True)
-    corr[corr['CallGraphMode'] == 'SPARK_DD'].plot(kind='scatter', x=' edgesFromPrecomputed', y='AnalysisTimes',
-                                                   color='C3', ax=ax3, logx=True, logy=True)
+    corr.plot.scatter(x=' edgesFromPrecomputed', y='AnalysisTimes',
+                      color=[color_dict[i] for i in corr['CallGraphMode']], logx=True, logy=True)
     plt.xlabel("Edges from precomputed call graph")
     plt.ylabel("Analysis Time in seconds")
     plt.savefig("Plotting/Results/CorrelationEdgesFromPrecomputedToRuntime.pdf", dpi=300)
 
     corr = data[['AnalysisTimes', 'numOfEdgesInCallGraph', 'CallGraphMode']]
-    ax1 = corr[corr['CallGraphMode'] == 'CHA'].plot(kind='scatter', x='numOfEdgesInCallGraph', y='AnalysisTimes',
-                                                    color='C0', logx=True, logy=True)
-    ax2 = corr[corr['CallGraphMode'] == 'CHA_DD'].plot(kind='scatter', x='numOfEdgesInCallGraph', y='AnalysisTimes',
-                                                       color='C1', ax=ax1, logx=True, logy=True)
-    ax3 = corr[corr['CallGraphMode'] == 'SPARK'].plot(kind='scatter', x='numOfEdgesInCallGraph', y='AnalysisTimes',
-                                                      color='C2', ax=ax2, logx=True, logy=True)
-    corr[corr['CallGraphMode'] == 'SPARK_DD'].plot(kind='scatter', x='numOfEdgesInCallGraph', y='AnalysisTimes',
-                                                   color='C3', ax=ax3, logx=True, logy=True)
+    corr.plot.scatter(x='numOfEdgesInCallGraph', y='AnalysisTimes',
+                      color=[color_dict[i] for i in corr['CallGraphMode']], logx=True, logy=True)
     plt.xlabel("Edges in call graph")
     plt.ylabel("Analysis Time in seconds")
     plt.savefig("Plotting/Results/CorrelationNumberEdgesToRuntime.pdf", dpi=300)
