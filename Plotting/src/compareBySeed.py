@@ -125,22 +125,15 @@ def plot_runtime_curve(data):
 
 def analyze_errors(data):
     all_errors = data.loc[data['Is_In_Error']]
-    cha_errors = all_errors.query('CallGraphMode == "CHA"')
-    cha_dd_errors = all_errors.query('CallGraphMode == "CHA_DD"')
-    spark_errors = all_errors.query('CallGraphMode == "SPARK"')
-    spark_dd_errors = all_errors.query('CallGraphMode == "SPARK_DD"')
-
     # Compute absolute number of error per algorithm
     print("Total errors: ", all_errors.shape[0])
-    print("Errors according to CHA: ", cha_errors.shape[0])
-    print("Errors according to CHA DD: ", cha_dd_errors.shape[0])
-    print("Errors according to Spark: ", spark_errors.shape[0])
-    print("Errors according to Spark DD: ", spark_dd_errors.shape[0])
-
-    errors_per_cgmode = all_errors[['CallGraphMode', 'Is_In_Error']].groupby('CallGraphMode').aggregate('count')
-    make_bar_plot(errors_per_cgmode, 'Detected errors', 'Plotting/Results/ErrorsPerCGMode.pdf', 10)
+    print("Errors according to CHA: ", all_errors.query('CallGraphMode == "CHA"').shape[0])
+    print("Errors according to CHA DD: ", all_errors.query('CallGraphMode == "CHA_DD"').shape[0])
+    print("Errors according to Spark: ", all_errors.query('CallGraphMode == "SPARK"').shape[0])
+    print("Errors according to Spark DD: ", all_errors.query('CallGraphMode == "SPARK_DD"').shape[0])
 
     # Set number of errors in relation to runs, second column does not matter
+    errors_per_cgmode = all_errors[['CallGraphMode', 'Is_In_Error']].groupby('CallGraphMode').aggregate('count')
     runs = data[['CallGraphMode', 'Seed']].groupby('CallGraphMode').aggregate('count')
     errors_per_cgmode_normalized = errors_per_cgmode['Is_In_Error'] / runs['Seed']
     ax = errors_per_cgmode_normalized.plot(kind='bar', rot=0, legend=False)
@@ -150,9 +143,6 @@ def analyze_errors(data):
     plt.tight_layout()
     plt.savefig('Plotting/Results/ErrorsPerCGModeNormalized.pdf', dpi=300)
     plt.close()
-
-    errors_per_rule = all_errors[['Rule', 'Is_In_Error']].groupby('Rule').aggregate('count')
-    make_bar_plot(errors_per_rule, 'Detected errors', 'Plotting/Results/ErrorsPerRule.pdf', 10)
 
     errors_per_rule_per_cg = all_errors[['CallGraphMode', 'Rule', 'Is_In_Error']].groupby(['CallGraphMode',
                                                                                            'Rule']).aggregate('count')
