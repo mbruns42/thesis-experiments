@@ -315,6 +315,7 @@ def plot_performance_correlations(data):
     plt.xlabel("Edges in call graph")
     plt.ylabel("Analysis Time in seconds")
     plt.savefig("Plotting/Results/CorrelationNumberEdgesToRuntime.pdf", dpi=300)
+    plt.close()
 
 
 def main(dirname):
