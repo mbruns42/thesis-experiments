@@ -289,10 +289,15 @@ def print_performance_correlations(data):
 
     columns = ['AnalysisTimes', ' edgesFromPrecomputed', 'avgNumOfPredecessors', 'numOfEdgesInCallGraph',
                'EdgesInPrecomputed', 'PredInPrecomputed']
-    print("CHA corr", with_precomputed[with_precomputed['CallGraphMode'] == 'CHA'][columns].corr(), "\n")
-    print("CHA DD corr", with_precomputed[with_precomputed['CallGraphMode'] == 'CHA_DD'][columns].corr(), "\n")
-    print("Spark corr", with_precomputed[with_precomputed['CallGraphMode'] == 'SPARK'][columns].corr(), "\n")
-    print("Spark DD corr", with_precomputed[with_precomputed['CallGraphMode'] == 'SPARK_DD'][columns].corr(), "\n")
+    cha_corr = with_precomputed[with_precomputed['CallGraphMode'] == 'CHA'][columns].corr()
+    print("CHA Correlations to analysis times:\n", cha_corr.round(2)['AnalysisTimes'])
+    cha_dd_corr = with_precomputed[with_precomputed['CallGraphMode'] == 'CHA_DD'][columns].corr()
+    print("CHA_DD Correlations to analysis times:\n", cha_dd_corr.round(2)['AnalysisTimes'])
+    spark_corr = with_precomputed[with_precomputed['CallGraphMode'] == 'SPARK'][columns].corr()
+    print("SPARK Correlations to analysis times:\n", spark_corr.round(2)['AnalysisTimes'])
+    spark_dd_corr = with_precomputed[with_precomputed['CallGraphMode'] == 'SPARK_DD'][columns].corr()
+    print("SPARK_DD Correlations to analysis times:\n", spark_dd_corr.round(2)['AnalysisTimes'])
+    print()
 
 
 def plot_performance_correlations(data):
