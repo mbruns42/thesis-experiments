@@ -247,6 +247,7 @@ def plot_graph_sizes(data):
     bench_to_edges['SPARK_DD'] = edges_spark_dd
     ax = bench_to_edges.plot(kind='bar', rot=10, logy=True)
     ax.set_ylabel('Total number of edges')
+    ax.legend(loc='upper right', ncol=4)
     plt.tight_layout()
     plt.savefig('Plotting/Results/TotalEdgesPerCGMode.pdf', dpi=300)
     plt.close()
