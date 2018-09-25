@@ -198,12 +198,12 @@ def export_result_details_to_csv(data):
     all_data_per_seed.to_csv("Plotting/Results/SharedSeedsWithDifferentResults.csv", sep=';')
 
     # Check if there is any error reported by demand-driven analysis and not by whole program analysis
-    all_data_per_seed = all_data_per_seed.loc[((all_data_per_seed['Is_In_Error_cha'] == False) &
+    all_data_per_seed = all_data_per_seed.loc[(((all_data_per_seed['Is_In_Error_cha'] == False) &
                                                (all_data_per_seed['Timedout_cha'] == False) &
-                                               (all_data_per_seed['Is_In_Error_cha_dd'] == True) |
-                                               (all_data_per_seed['Is_In_Error_spark'] == False) &
+                                               (all_data_per_seed['Is_In_Error_cha_dd'] == True)) |
+                                               ((all_data_per_seed['Is_In_Error_spark'] == False) &
                                                (all_data_per_seed['Timedout_spark'] == False) &
-                                               (all_data_per_seed['Is_In_Error_spark_dd'] == True))]
+                                               (all_data_per_seed['Is_In_Error_spark_dd'] == True)))]
     print("Seeds for which the whole program did not report errors and the demand-driven version did:",
           all_data_per_seed.shape[0])
     if not all_data_per_seed.empty:
