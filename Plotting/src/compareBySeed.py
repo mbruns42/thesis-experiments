@@ -46,8 +46,11 @@ def plot_timeouts(data):
         print("Data contains no timeouts.")
         print()
         return
-    timeouts_per_cgmode = timedout[['CallGraphMode', 'Timedout']].groupby('CallGraphMode').aggregate('count')
-    make_bar_plot(timeouts_per_cgmode, 'Timed out analysis runs', 'Plotting/Results/TimeoutsPerCGMode.pdf', 0)
+    timeouts_per_cgmode = timedout[['Seed','CallGraphMode']].groupby('CallGraphMode').aggregate('count')
+    seeds_per_cgmode = data[['Seed','CallGraphMode']].groupby('CallGraphMode').aggregate('count')
+    normalized_timeouts = timeouts_per_cgmode/seeds_per_cgmode
+    make_bar_plot(normalized_timeouts, 'Ratio of runs which timed out', 'Plotting/Results/TimeoutsPerCGMode.pdf', 0,
+                  precision=2)
 
     timeouts_per_rule_per_cg = timedout[['CallGraphMode', 'Rule', 'Timedout']].groupby(['CallGraphMode',
                                                                                         'Rule']).aggregate('count')
